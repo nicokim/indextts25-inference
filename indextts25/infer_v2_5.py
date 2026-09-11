@@ -31,7 +31,6 @@ from indextts25.s2mel.modules.bigvgan import bigvgan
 from indextts25.s2mel.modules.campplus.DTDNN import CAMPPlus
 from indextts25.s2mel.modules.audio import mel_spectrogram
 from transformers import AutoTokenizer
-from modelscope import AutoModelForCausalLM
 from transformers import SeamlessM4TFeatureExtractor, Wav2Vec2BertModel
 import random
 import torch.nn.functional as F
@@ -233,7 +232,9 @@ class IndexTTS2:
         print(">> bigvgan weights restored from:", bigvgan_dir)
 
         self.tokenizer = get_tokenizer(multilingual=True, model_dir=self.model_dir)
-        self.ja_text_process = JapaneseG2PProcessor(g2p_ratio=0)
+        # El G2P japonés necesita fugashi/MeCab. Se construye recién si se sintetiza
+        # en japonés, para no exigirle esa dependencia a quien usa español o inglés.
+        self._ja_text_process = None
         self.text_process = TextNormalizer(enable_glossary=True)
         self.text_process.load()
 
@@ -279,6 +280,12 @@ class IndexTTS2:
         self.model_version = self.cfg.version if hasattr(self.cfg, "version") else None
 
     @torch.no_grad()
+    @property
+    def ja_text_process(self):
+        if self._ja_text_process is None:
+            self._ja_text_process = JapaneseG2PProcessor(g2p_ratio=0)
+        return self._ja_text_process
+
     def get_emb(self, input_features, attention_mask):
         vq_emb = self.semantic_model(
             input_features=input_features,
@@ -924,6 +931,9 @@ class QwenEmotion:
     def __init__(self, model_dir):
         self.model_dir = model_dir
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_dir)
+        # modelscope sólo hace falta si se usa el clasificador de emoción por texto
+        from modelscope import AutoModelForCausalLM
+
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_dir,
             torch_dtype="float16",  # "auto"

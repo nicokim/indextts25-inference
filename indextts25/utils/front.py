@@ -6,7 +6,11 @@ import re
 from typing import List, Union, overload
 import warnings
 from indextts25.utils.common import tokenize_by_CJK_char, de_tokenized_by_CJK_char
-from sentencepiece import SentencePieceProcessor
+try:  # sólo lo usa TextTokenizer (tokenizer sentencepiece de 2.0).
+    # 2.5 usa tiktoken, así que sentencepiece es opcional.
+    from sentencepiece import SentencePieceProcessor
+except ImportError:  # pragma: no cover
+    SentencePieceProcessor = None
 
 
 class TextNormalizer:
@@ -119,6 +123,18 @@ class TextNormalizer:
         import platform
         if self.zh_normalizer is not None and self.en_normalizer is not None:
             return
+        # Los normalizadores de zh/en vienen de WeTextProcessing, que pelea con
+        # nemo-text-processing por pynini y es un extra opcional en esta librería.
+        # Si no está, se sigue adelante: español y japonés van por NeMo y no lo usan.
+        try:
+            self._load_zh_en()
+        except ImportError as e:
+            self.zh_normalizer = self.en_normalizer = None
+            self._zh_en_error = e
+
+    def _load_zh_en(self):
+        import platform
+
         if platform.system() != "Linux":  # Mac and Windows
             from wetext import Normalizer
 

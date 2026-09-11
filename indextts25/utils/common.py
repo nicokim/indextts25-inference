@@ -52,10 +52,22 @@ def save_pcm_wav(path, wav, sampling_rate):
 
     Do not pass an already-normalized waveform; it would be attenuated by 32767.
     """
-    wav = wav.detach().to(device="cpu", dtype=torch.float32) / PCM16_MAX
-    wav = wav.clamp_(-1.0, 1.0)
-    encoding_args = {"encoding": "PCM_S", "bits_per_sample": 16} if _torchaudio_honors_wav_encoding_args() else {}
-    torchaudio.save(path, wav, sampling_rate, **encoding_args)
+    # Se escribe con la stdlib en vez de torchaudio.save(): desde torchaudio 2.9 esa
+    # función enruta por TorchCodec, que es una dependencia binaria extra y además
+    # rompe si no está instalada. Un WAV PCM de 16 bits no justifica esa cadena.
+    import wave as _wave
+
+    wav = wav.detach().to(device="cpu", dtype=torch.float32)
+    wav = wav.clamp(-PCM16_MAX, PCM16_MAX)
+    if wav.ndim == 1:
+        wav = wav.unsqueeze(0)
+    canales = wav.shape[0]
+    pcm = wav.round().to(torch.int16).transpose(0, 1).contiguous().numpy()
+    with _wave.open(str(path), "wb") as f:
+        f.setnchannels(canales)
+        f.setsampwidth(2)
+        f.setframerate(int(sampling_rate))
+        f.writeframes(pcm.tobytes())
 
 
 def load_audio(audiopath, sampling_rate):

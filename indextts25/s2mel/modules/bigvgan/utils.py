@@ -3,12 +3,15 @@
 
 import glob
 import os
-import matplotlib
+try:  # sólo lo usa plot_spectrogram(), que es debug de entrenamiento
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pylab as plt
+except ImportError:  # pragma: no cover
+    matplotlib = plt = None
 import torch
 from torch.nn.utils import weight_norm
 
-matplotlib.use("Agg")
-import matplotlib.pylab as plt
 from .meldataset import MAX_WAV_VALUE
 from scipy.io.wavfile import write
 

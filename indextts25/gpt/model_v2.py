@@ -6,12 +6,26 @@ import torch.nn.functional as F
 
 import transformers
 from transformers import GPT2Config, LogitsProcessorList
-from indextts25.gpt.transformers_gpt2 import GPT2PreTrainedModel, GPT2Model
+# De-vendorizado: el fork de transformers (648 KB) importaba OffloadedCache, que
+# transformers 5.x eliminó. GPT2InferenceModel sólo necesita la clase base.
+from transformers import GPT2PreTrainedModel, GPT2Model
+try:  # transformers >=5 sacó GenerationMixin de PreTrainedModel
+    from transformers.generation import GenerationMixin
+except ImportError:  # pragma: no cover
+    from transformers.generation.utils import GenerationMixin
 
 # from transformers import GPT2Config, GPT2PreTrainedModel, LogitsProcessorList
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
-from transformers.utils.model_parallel_utils import (assert_device_map,
-                                                     get_device_map)
+try:  # transformers >=5 eliminó este módulo. Sólo lo usan parallelize()/deparallelize(),
+    # que son model-parallel legacy y no intervienen en inferencia de una sola GPU.
+    from transformers.utils.model_parallel_utils import (assert_device_map,
+                                                         get_device_map)
+except ModuleNotFoundError:  # pragma: no cover
+    def get_device_map(*a, **k):
+        raise RuntimeError("model parallelism no disponible con transformers >= 5")
+
+    def assert_device_map(*a, **k):
+        raise RuntimeError("model parallelism no disponible con transformers >= 5")
 
 from indextts25.gpt.conformer_encoder import ConformerEncoder
 from indextts25.gpt.perceiver import PerceiverResampler
@@ -43,7 +57,23 @@ class ResBlock(nn.Module):
         return F.relu(self.net(x) + x)
 
 
-class GPT2InferenceModel(GPT2PreTrainedModel):
+def _past_len(past):
+    """Longitud ya cacheada, sirviendo tanto para el Cache de transformers >=5 como
+    para la tupla anidada de 4.x. NO usar `if past:`: un Cache vacío es truthy, y en el
+    primer paso eso hace recortar input_ids y se pierde el prefijo de condicionamiento."""
+    if past is None:
+        return 0
+    if hasattr(past, "get_seq_length"):
+        try:
+            return int(past.get_seq_length() or 0)
+        except TypeError:
+            return 0
+    if len(past) == 0 or past[0] is None or past[0][0] is None:
+        return 0
+    return int(past[0][0].shape[2])
+
+
+class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
     def __init__(self, config, gpt, text_pos_emb, embeddings, norm, linear, kv_cache=False):
         super().__init__(config)
         # Note: the argument named `text_pos_emb` here actually represents the mel position embedding
@@ -93,7 +123,8 @@ class GPT2InferenceModel(GPT2PreTrainedModel):
         if not self.kv_cache:
             past_key_values = None
         # only last token for inputs_ids if past is defined in kwargs
-        if past_key_values:
+        past_len = _past_len(past_key_values)
+        if past_len > 0:
             input_ids = input_ids[:, -1].unsqueeze(-1)
             if token_type_ids is not None:
                 token_type_ids = token_type_ids[:, -1].unsqueeze(-1)
@@ -105,7 +136,7 @@ class GPT2InferenceModel(GPT2PreTrainedModel):
             # create position_ids on the fly for batch generation
             position_ids = attention_mask.long().cumsum(-1) - 1
             position_ids.masked_fill_(attention_mask == 0, 0)
-            if past_key_values:
+            if past_len > 0:
                 position_ids = position_ids[:, -1].unsqueeze(-1)
         else:
             position_ids = None
@@ -204,9 +235,15 @@ class GPT2InferenceModel(GPT2PreTrainedModel):
         :meth:`~transformers.PreTrainedModel.beam_search` or :meth:`~transformers.PreTrainedModel.beam_sample` is
         called. This is required to match :obj:`past_key_values` with the correct beam_idx at every generation step.
         """
+        # transformers >=5 pasa un objeto Cache que sabe reordenarse solo; en 4.x
+        # llegaba una tupla anidada de tensores (y ahora puede traer None adentro).
+        if hasattr(past, "reorder_cache"):
+            past.reorder_cache(beam_idx)
+            return past
         return tuple(
             tuple(
-                past_state.index_select(0, beam_idx.to(past_state.device))
+                None if past_state is None
+                else past_state.index_select(0, beam_idx.to(past_state.device))
                 for past_state in layer_past
             )
             for layer_past in past

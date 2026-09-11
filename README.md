@@ -84,6 +84,41 @@ RTX 5090, texto de 824 caracteres, mediana de 3 corridas:
 **`fp16` no acelera**: con batch 1 el cuello es ancho de banda y lanzamiento de kernels, y
 los casts del autocast no se amortizan. Sirve sólo para ahorrar VRAM.
 
+## Compatibilidad de versiones
+
+Probado de punta a punta en los dos extremos del rango:
+
+| | torch | transformers | numpy |
+|---|---|---|---|
+| mínimo probado | 2.8.0 | 4.52.1 | 1.26 |
+| **máximo probado** | **2.9.1** | **5.17.0** | **2.5.3** |
+
+La misma frase con la misma semilla da **correlación 0,999977** entre ambos stacks
+(no bit-idéntica: cambian los kernels CUDA entre versiones de torch).
+
+Upstream está pinneado a `transformers==4.52.1` y rompe con 5.x. Acá se resolvió:
+
+- **De-vendorizado el fork de transformers** (648 KB): importaba `OffloadedCache`, que 5.x
+  eliminó. `GPT2InferenceModel` usa la clase base de transformers y hereda `GenerationMixin`
+  explícitamente, porque 5.x lo sacó de `PreTrainedModel`.
+- **`_reorder_cache` compatible con ambos**: en 5.x llega un objeto `Cache` que se reordena
+  solo; en 4.x era una tupla anidada.
+- **La causa del cuelgue silencioso**: `prepare_inputs_for_generation` hacía `if past_key_values:`.
+  En 4.x el primer paso llegaba falsy, pero **5.x crea un `Cache` vacío que es truthy**, así que
+  recortaba `input_ids` al último token y tiraba el prefijo de condicionamiento — la generación
+  terminaba con un solo token y sin error. Ahora se mira la longitud real.
+- **`model_parallel_utils`** (eliminado en 5.x) sólo lo usan `parallelize`/`deparallelize`:
+  import opcional.
+- **`torchaudio.save()` reemplazado por la stdlib**: desde torchaudio 2.9 enruta por TorchCodec,
+  que es una dependencia binaria extra y falla si no está.
+- **Dependencias pesadas ahora opcionales**: `sentencepiece` (es el tokenizer de 2.0; 2.5 usa
+  tiktoken), `matplotlib` (sólo grafica espectrogramas en debug), `modelscope` (sólo el
+  clasificador de emoción por texto), `audiotools` y el `loss` de dac (sólo entrenamiento),
+  y `WeTextProcessing` (sólo zh/en).
+
+**Nota sobre CUDA**: torch 2.14 existe únicamente para cu130, que necesita driver ≥580.
+Con un driver 570 (CUDA 12.8) el techo real es torch 2.9.1+cu128.
+
 ## Diferencias con upstream
 
 1. **`nemo-text-processing` es dependencia real.** Upstream no la declara aunque

@@ -1,16 +1,12 @@
-__version__ = "1.0.0"
+"""Subconjunto de `descript-audio-codec` usado por el s2mel.
 
-# preserved here for legacy reasons
+De todo dac acá sólo hace falta `dac.nn.quantize.VectorQuantize` (lo importa
+`s2mel/modules/length_regulator.py`). El `__init__` original importaba `audiotools`
+para registrar rutas de serialización de sus propios modelos, y `model`/`utils`, que
+arrastran el codificador completo, la CLI y audiotools. Nada de eso interviene en
+inferencia, así que se dejan afuera.
+"""
+__version__ = "1.0.0"
 __model_version__ = "latest"
 
-import audiotools
-
-audiotools.ml.BaseModel.INTERN += ["dac.**"]
-audiotools.ml.BaseModel.EXTERN += ["einops"]
-
-
-from . import nn
-from . import model
-from . import utils
-from .model import DAC
-from .model import DACFile
+from . import nn  # noqa: F401
