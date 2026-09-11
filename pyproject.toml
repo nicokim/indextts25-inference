@@ -1,0 +1,53 @@
+[project]
+name = "indextts25-inference"
+version = "0.1.0"
+description = "IndexTTS-2.5 inference library: zero-shot TTS with emotion, speed and streaming control"
+readme = "README.md"
+authors = [{ name = "Bilibili IndexTTS Team" }]
+license = "LicenseRef-Bilibili-IndexTTS"
+license-files = ["LICEN[CS]E*"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Natural Language :: Spanish",
+  "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.7",
+  "torchaudio>=2.7",
+  "transformers>=4.52",
+  "tokenizers>=0.21",
+  "tiktoken>=0.7",
+  "openai-whisper>=20231117",   # el tokenizer multilingüe sale de acá
+  "safetensors>=0.5",
+  "huggingface_hub>=0.20",
+  "librosa>=0.10",
+  "omegaconf>=2.3",
+  "einops>=0.8",
+  "munch>=4.0",
+  "numpy>=1.26",
+  "tqdm>=4.60",
+  # Upstream NO la declara, pero indextts/utils/nemo_tn.py la necesita para es/ja
+  # y sin ella la normalización falla EN SILENCIO: los números van crudos al tokenizer.
+  "nemo-text-processing>=1.1; sys_platform == 'linux'",
+]
+
+[project.optional-dependencies]
+# Motor GPT2 acelerado (KV cache paginada + CUDA graphs). Medido en RTX 5090:
+# 1,77x en párrafos y time-to-first-audio de 1,06 -> 0,82 s.
+flash = ["flash-attn>=2.8", "triton>=3.0"]
+# Normalización de zh/en. Pelea por pynini con nemo-text-processing: instalar sólo si hace falta.
+zh = ["WeTextProcessing; sys_platform == 'linux'"]
+ja = ["fugashi>=1.2", "unidic-lite>=1.0"]
+
+[project.urls]
+Homepage = "https://github.com/index-tts/index-tts"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["indextts25"]
