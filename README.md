@@ -84,6 +84,27 @@ RTX 5090, texto de 824 caracteres, mediana de 3 corridas:
 **`fp16` no acelera**: con batch 1 el cuello es ancho de banda y lanzamiento de kernels, y
 los casts del autocast no se amortizan. Sirve sólo para ahorrar VRAM.
 
+## Stack recomendado
+
+Medido en RTX 5090 con driver 595 / CUDA 13.2, 10-12 repeticiones por métrica:
+
+| | throughput | TTFA | VRAM |
+|---|---|---|---|
+| **torch 2.9.1+cu130 + flash** | **125,3 ± 4,8 car/s** | 1,036 ± 0,078 s | 14,25 GB |
+| torch 2.8+cu128 + flash | 119,9 ± 5,1 car/s | 1,071 ± 0,113 s | 14,25 GB |
+
+Empatan dentro del ruido (t=2,43 en throughput, t=0,86 en TTFA). Se recomienda
+**torch 2.9.1+cu130** por quedar alineado con un driver CUDA 13.
+
+```bash
+pip install torch==2.9.1 torchaudio==2.9.1 --index-url https://download.pytorch.org/whl/cu130
+pip install "indextts25-inference[flash]"
+pip install "https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3.post1/flash_attn-2.8.3+cu13torch2.9cxx11abiTRUE-cp312-cp312-linux_x86_64.whl"
+```
+
+`flash-attn` publica wheel cu13 **sólo para torch 2.9**, así que ese es el techo mientras
+uses `attn_backend="flash"`. Con `sdpa` no hay restricción, pero se pierde ~1,8x.
+
 ## Compatibilidad de versiones
 
 Probado de punta a punta en los dos extremos del rango:
@@ -96,7 +117,10 @@ Probado de punta a punta en los dos extremos del rango:
 La misma frase con la misma semilla da **correlación 0,999977** entre ambos stacks
 (no bit-idéntica: cambian los kernels CUDA entre versiones de torch).
 
-Upstream está pinneado a `transformers==4.52.1` y rompe con 5.x. Acá se resolvió:
+Upstream está pinneado a `transformers==4.52.1` y rompe con 5.x. Acá se resolvió
+**para `attn_backend="sdpa"`**; con `"flash"` hay que quedarse en transformers 4.x,
+porque el motor accel de upstream depende de detalles internos que 5.x cambió
+(captura de CUDA graphs y slot mapping de la KV paginada).
 
 - **De-vendorizado el fork de transformers** (648 KB): importaba `OffloadedCache`, que 5.x
   eliminó. `GPT2InferenceModel` usa la clase base de transformers y hereda `GenerationMixin`

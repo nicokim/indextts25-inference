@@ -62,8 +62,15 @@ class GPT2AccelAttention(nn.Module):
         if encoder_hidden_states is not None:
             raise NotImplementedError("Cross attention not supported in accel mode")
 
+        # El motor accel captura los CUDA graphs con inputs_embeds aplanado
+        # ([total_tokens, C], formato varlen). transformers 4.x lo entregaba en 3D;
+        # 5.x lo pasa tal cual. Se normaliza acá y se devuelve en la forma recibida.
+        aplanado = hidden_states.dim() == 2
+        if aplanado:
+            hidden_states = hidden_states.unsqueeze(0)
+
         qkv = self.c_attn(hidden_states)
-        query, key, value = qkv.split(self.split_size, dim=2)
+        query, key, value = qkv.split(self.split_size, dim=-1)
 
         # [B, T, H*D] -> [B, H, T, D]
         query = self._split_heads(query, self.num_heads, self.head_dim)
@@ -97,6 +104,8 @@ class GPT2AccelAttention(nn.Module):
 
         attn_output = self.c_proj(attn_output)
         attn_output = self.resid_dropout(attn_output)
+        if aplanado:
+            attn_output = attn_output.squeeze(0)
 
         outputs = (attn_output, None)
         if output_attentions:

@@ -35,9 +35,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Motor GPT2 acelerado (KV cache paginada + CUDA graphs). Medido en RTX 5090:
-# 1,77x en párrafos y time-to-first-audio de 1,06 -> 0,82 s.
-flash = ["flash-attn>=2.8", "triton>=3.0"]
+# Motor GPT2 acelerado (KV cache paginada + CUDA graphs). Medido en RTX 5090: ~1,8x
+# en párrafos. El wheel hay que elegirlo según el torch y el CUDA del driver; ver README.
+#   CUDA 13 (driver >=580) + torch 2.9:  flash_attn-2.8.3+cu13torch2.9cxx11abiTRUE
+#   CUDA 12 (driver >=525) + torch 2.8:  flash_attn-2.8.3.post1+cu12torch2.8cxx11abiTRUE
+# OJO: el motor accel NO funciona con transformers 5.x (rompe la captura de CUDA
+# graphs y el slot mapping de la KV paginada). Con attn_backend="flash", quedate en 4.x.
+flash = ["flash-attn>=2.8", "triton>=3.0", "transformers<5"]
 # Normalización de zh/en. Pelea por pynini con nemo-text-processing: instalar sólo si hace falta.
 zh = ["WeTextProcessing; sys_platform == 'linux'"]
 ja = ["fugashi>=1.2", "unidic-lite>=1.0"]
