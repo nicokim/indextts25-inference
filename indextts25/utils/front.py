@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
-from functools import lru_cache
 import os
-import traceback
+import logging
 import re
-from typing import List, Union, overload
-import warnings
-from indextts25.utils.common import tokenize_by_CJK_char, de_tokenized_by_CJK_char
-try:  # sólo lo usa TextTokenizer (tokenizer sentencepiece de 2.0).
-    # 2.5 usa tiktoken, así que sentencepiece es opcional.
-    from sentencepiece import SentencePieceProcessor
-except ImportError:  # pragma: no cover
-    SentencePieceProcessor = None
+from functools import lru_cache
+
+logger = logging.getLogger(__name__)
 
 
 class TextNormalizer:
     def __init__(self, enable_glossary=False):
         self.zh_normalizer = None
         self.en_normalizer = None
+        self._zh_en_error = None
         self.char_rep_map = {
             "：": ",",
             "；": ",",
@@ -117,20 +112,16 @@ class TextNormalizer:
         has_pinyin = bool(re.search(TextNormalizer.PINYIN_TONE_PATTERN, s, re.IGNORECASE))
         return has_pinyin
 
-    def load(self):
-        # print(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-        # sys.path.append(model_dir)
-        import platform
-        if self.zh_normalizer is not None and self.en_normalizer is not None:
-            return
-        # Los normalizadores de zh/en vienen de WeTextProcessing, que pelea con
-        # nemo-text-processing por pynini y es un extra opcional en esta librería.
-        # Si no está, se sigue adelante: español y japonés van por NeMo y no lo usan.
-        try:
-            self._load_zh_en()
-        except ImportError as e:
-            self.zh_normalizer = self.en_normalizer = None
-            self._zh_en_error = e
+    def load(self) -> bool:
+        """Loads the WeTextProcessing zh/en normalizers (extra [zh]) the first time they
+        are needed. Returns whether they are available; without them, en/zh go via NeMo."""
+        if self.zh_normalizer is None and self._zh_en_error is None:
+            try:
+                self._load_zh_en()
+            except (ImportError, OSError) as e:
+                self.zh_normalizer = self.en_normalizer = None
+                self._zh_en_error = e
+        return self.zh_normalizer is not None
 
     def _load_zh_en(self):
         import platform
@@ -143,12 +134,13 @@ class TextNormalizer:
         else:
             from tn.chinese.normalizer import Normalizer as NormalizerZh
             from tn.english.normalizer import Normalizer as NormalizerEn
-            # use new cache dir for build tagger rules with disable remove_interjections and remove_erhua
-            cache_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tagger_cache")
-            if not os.path.exists(cache_dir):
-                os.makedirs(cache_dir)
-                with open(os.path.join(cache_dir, ".gitignore"), "w") as f:
-                    f.write("*\n")
+            # wetext, like NeMo, leaves its logger at INFO with its own handler: loads print to stderr.
+            logging.getLogger("wetext").setLevel(logging.WARNING)
+            # Grammars compiled without remove_interjections/remove_erhua. They are cached in
+            # ~/.cache, not inside the installed package (which may be read-only).
+            cache_dir = os.path.join(os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache"),
+                                     "indextts25", "wetext_tagger")
+            os.makedirs(cache_dir, exist_ok=True)
             self.zh_normalizer = NormalizerZh(
                 cache_dir=cache_dir, remove_interjections=False, remove_erhua=False, overwrite_cache=False
             )
@@ -186,13 +178,16 @@ class TextNormalizer:
             text = text.replace(key, val)
         return text
 
-    def normalize(self, text: str) -> str:
-        if not self.zh_normalizer or not self.en_normalizer:
-            print("Error, text normalizer is not initialized !!!")
-            return ""
+    def normalize(self, text: str, lang: str = None) -> str:
+        """Normalizes with WeTextProcessing. With lang='en' it does not guess the language:
+        use_chinese() sent English text with no letters ('2024') to the Chinese normalizer."""
+        if not self.load():
+            # Without WeTextProcessing the text passes through as is: returning "" made it
+            # synthesize ~2 s of noise without any error.
+            return text
         # 保护 G2P 发音标注 <word|pronunciation>，防止被 normalizer 破坏
         text, _pron_placeholders = self._protect_pronunciation_annotations(text)
-        if self.use_chinese(text):
+        if lang != "en" and self.use_chinese(text):
             text = re.sub(TextNormalizer.ENGLISH_CONTRACTION_PATTERN, r"\1 is", text, flags=re.IGNORECASE)
             # 应用术语词汇表（优先级最高，在所有保护之前）
             if self.enable_glossary:
@@ -205,8 +200,8 @@ class TextNormalizer:
             try:
                 result = self.zh_normalizer.normalize(replaced_text)
             except Exception:
-                result = ""
-                print(traceback.format_exc())
+                result = replaced_text  # unnormalized, never empty
+                logger.warning("WeTextProcessing (zh) failed, using the raw text", exc_info=True)
             # 恢复人名
             result = self.restore_names(result, original_name_list)
             # 恢复拼音声调
@@ -228,7 +223,7 @@ class TextNormalizer:
                 result = self.restore_tech_terms(result, tech_list)
             except Exception:
                 result = text
-                print(traceback.format_exc())
+                logger.warning("WeTextProcessing (en) failed, using the raw text", exc_info=True)
             pattern = re.compile("|".join(re.escape(p) for p in self.char_rep_map.keys()))
             result = pattern.sub(lambda x: self.char_rep_map[x.group()], result)
             
@@ -358,22 +353,6 @@ class TextNormalizer:
 
         return transformed_text
 
-    def load_glossary(self, glossary_dict):
-        """
-        加载外部术语词汇表
-
-        Args:
-            glossary_dict: 术语词典，格式为 {"术语": {"en": "英文读法", "zh": "中文读法"}}
-
-        Example:
-            normalizer.load_glossary({
-                "M.2": {"en": "M dot two", "zh": "M 二"},
-                "PCIe": {"en": "PCIE", "zh": "PCIE"}
-            })
-        """
-        if glossary_dict and isinstance(glossary_dict, dict):
-            self.term_glossary.update(glossary_dict)
-
     def load_glossary_from_yaml(self, glossary_path):
         """
         从 YAML 文件加载术语词汇表
@@ -398,17 +377,6 @@ class TextNormalizer:
                     self.term_glossary = external_glossary
                     return True
         return False
-
-    def save_glossary_to_yaml(self, glossary_path):
-        """
-        保存术语词汇表到 YAML 文件
-
-        Args:
-            glossary_path: YAML 文件路径
-        """
-        import yaml
-        with open(glossary_path, 'w', encoding='utf-8') as f:
-            yaml.dump(self.term_glossary, f, allow_unicode=True, default_flow_style=False)
 
     def save_pinyin_tones(self, original_text):
         """
@@ -448,325 +416,3 @@ class TextNormalizer:
         # print("normalized_text: ", normalized_text)
         # print("transformed_text: ", transformed_text)
         return transformed_text
-
-
-class TextTokenizer:
-    def __init__(self, vocab_file: str, normalizer: TextNormalizer = None):
-        self.vocab_file = vocab_file
-        self.normalizer = normalizer
-
-        if self.vocab_file is None:
-            raise ValueError("vocab_file is None")
-        if not os.path.exists(self.vocab_file):
-            raise ValueError(f"vocab_file {self.vocab_file} does not exist")
-        if self.normalizer:
-            self.normalizer.load()
-        # 加载词表
-        self.sp_model = SentencePieceProcessor(model_file=self.vocab_file)
-
-        self.pre_tokenizers = [
-            # 预处理器
-            tokenize_by_CJK_char,
-        ]
-
-    @property
-    def vocab_size(self):
-        return self.sp_model.GetPieceSize()
-
-    @property
-    def unk_token(self):
-        return "<unk>"
-
-    @property
-    def pad_token(self):
-        return None
-
-    @property
-    def bos_token(self):
-        return "<s>"
-
-    @property
-    def eos_token(self):
-        return "</s>"
-
-    @property
-    def pad_token_id(self):
-        return -1
-
-    @property
-    def bos_token_id(self):
-        return 0
-
-    @property
-    def eos_token_id(self):
-        return 1
-
-    @property
-    def unk_token_id(self):
-        return self.sp_model.unk_id()
-
-    @property
-    def special_tokens_map(self):
-        return {
-            "unk_token": self.unk_token,
-            "pad_token": self.pad_token,
-            "bos_token": self.bos_token,
-            "eos_token": self.eos_token,
-        }
-
-    def get_vocab(self):
-        vocab = {self.convert_ids_to_tokens(i): i for i in range(self.vocab_size)}
-        return vocab
-
-    @overload
-    def convert_ids_to_tokens(self, ids: int) -> str: ...
-
-    @overload
-    def convert_ids_to_tokens(self, ids: List[int]) -> List[str]: ...
-
-    def convert_ids_to_tokens(self, ids: Union[List[int], int]):
-        return self.sp_model.IdToPiece(ids)
-
-    def convert_tokens_to_ids(self, tokens: Union[List[str], str]) -> List[int]:
-        if isinstance(tokens, str):
-            tokens = [tokens]
-        return [self.sp_model.PieceToId(token) for token in tokens]
-
-    def tokenize(self, text: str) -> List[str]:
-        return self.encode(text, out_type=str)
-
-    def encode(self, text: str, **kwargs):
-        if len(text) == 0:
-            return []
-        if len(text.strip()) == 1:
-            return self.sp_model.Encode(text, out_type=kwargs.pop("out_type", int), **kwargs)
-        # 预处理
-        if self.normalizer:
-            text = self.normalizer.normalize(text)
-        if len(self.pre_tokenizers) > 0:
-            for pre_tokenizer in self.pre_tokenizers:
-                text = pre_tokenizer(text)
-        return self.sp_model.Encode(text, out_type=kwargs.pop("out_type", int), **kwargs)
-
-    def batch_encode(self, texts: List[str], **kwargs):
-        # 预处理
-        if self.normalizer:
-            texts = [self.normalizer.normalize(text) for text in texts]
-        if len(self.pre_tokenizers) > 0:
-            for pre_tokenizer in self.pre_tokenizers:
-                texts = [pre_tokenizer(text) for text in texts]
-        return self.sp_model.Encode(texts, out_type=kwargs.pop("out_type", int), **kwargs)
-
-    def decode(self, ids: Union[List[int], int], do_lower_case=False, **kwargs):
-        if isinstance(ids, int):
-            ids = [ids]
-        decoded = self.sp_model.Decode(ids, out_type=kwargs.pop("out_type", str), **kwargs)
-        return de_tokenized_by_CJK_char(decoded, do_lower_case=do_lower_case)
-
-    @staticmethod
-    def split_segments_by_token(
-        tokenized_str: List[str],
-        split_tokens: List[str],
-        max_text_tokens_per_segment: int,
-        quick_streaming_tokens: int = 0
-    ) -> List[List[str]]:
-        """
-        将tokenize后的结果按特定token进一步分割
-        """
-        # 处理特殊情况
-        if len(tokenized_str) == 0:
-            return []
-        segments: List[List[str]] = []
-        current_segment = []
-        current_segment_tokens_len = 0
-        for i in range(len(tokenized_str)):
-            token = tokenized_str[i]
-            current_segment.append(token)
-            current_segment_tokens_len += 1
-            if not  ("," in split_tokens or "▁," in split_tokens ) and ("," in current_segment or "▁," in current_segment): 
-                # 如果当前tokens中有,，则按,分割
-                sub_segments = TextTokenizer.split_segments_by_token(
-                    current_segment, [",", "▁,"], max_text_tokens_per_segment=max_text_tokens_per_segment, quick_streaming_tokens = quick_streaming_tokens
-                )
-            elif "-" not in split_tokens and "-" in current_segment:
-                # 没有,，则按-分割
-                sub_segments = TextTokenizer.split_segments_by_token(
-                    current_segment, ["-"], max_text_tokens_per_segment=max_text_tokens_per_segment, quick_streaming_tokens = quick_streaming_tokens
-                )
-            elif current_segment_tokens_len <= max_text_tokens_per_segment:
-                if token in split_tokens and current_segment_tokens_len > 2:
-                    if i < len(tokenized_str) - 1:
-                        if tokenized_str[i + 1] in ["'", "▁'"]:
-                            # 后续token是'，则不切分
-                            current_segment.append(tokenized_str[i + 1])
-                            i += 1
-                    segments.append(current_segment)
-                    current_segment = []
-                    current_segment_tokens_len = 0
-                continue
-            # 如果当前tokens的长度超过最大限制
-            else:
-                # 按照长度分割
-                sub_segments = []
-                for j in range(0, len(current_segment), max_text_tokens_per_segment):
-                    if j + max_text_tokens_per_segment < len(current_segment):
-                        sub_segments.append(current_segment[j : j + max_text_tokens_per_segment])
-                    else:
-                        sub_segments.append(current_segment[j:])
-                warnings.warn(
-                    f"The tokens length of segment exceeds limit: {max_text_tokens_per_segment}, "
-                    f"Tokens in segment: {current_segment}."
-                    "Maybe unexpected behavior",
-                    RuntimeWarning,
-                )
-            segments.extend(sub_segments)
-            current_segment = []
-            current_segment_tokens_len = 0
-        if current_segment_tokens_len > 0:
-            assert current_segment_tokens_len <= max_text_tokens_per_segment
-            segments.append(current_segment)
-        # 如果相邻的句子加起来长度小于最大限制，且此前token总数超过quick_streaming_tokens，则合并
-        merged_segments = []
-        total_token = 0
-        for segment in segments:
-            total_token += len(segment)
-            if len(segment) == 0:
-                continue
-            if len(merged_segments) == 0:
-                merged_segments.append(segment)
-            elif len(merged_segments[-1]) + len(segment) <= max_text_tokens_per_segment and total_token > quick_streaming_tokens:
-                merged_segments[-1] = merged_segments[-1] + segment
-            # 或小于最大长度限制的一半，则合并
-            elif len(merged_segments[-1]) + len(segment) <= max_text_tokens_per_segment / 2:
-                merged_segments[-1] = merged_segments[-1] + segment
-            else:
-                merged_segments.append(segment)
-        return merged_segments
-
-    punctuation_marks_tokens = [
-        ".",
-        "!",
-        "?",
-        "▁.",
-        # "▁!", # unk
-        "▁?",
-        "▁...", # ellipsis
-    ]
-    def split_segments(self, tokenized: List[str], max_text_tokens_per_segment=120, quick_streaming_tokens = 0) -> List[List[str]]:
-        return TextTokenizer.split_segments_by_token(
-            tokenized, self.punctuation_marks_tokens, max_text_tokens_per_segment=max_text_tokens_per_segment, quick_streaming_tokens = quick_streaming_tokens
-        )
-
-
-if __name__ == "__main__":
-    # 测试程序
-
-    text_normalizer = TextNormalizer(enable_glossary=True)
-
-    cases = [
-        "IndexTTS 正式发布1.0版本了，效果666",
-        "晕XUAN4是一种GAN3觉",
-        "我爱你！",
-        "I love you!",
-        "“我爱你”的英语是“I love you”",
-        "2.5平方电线",
-        "共465篇，约315万字",
-        "2002年的第一场雪，下在了2003年",
-        "速度是10km/h",
-        "现在是北京时间2025年01月11日 20:00",
-        "他这条裤子是2012年买的，花了200块钱",
-        "电话：135-4567-8900",
-        "1键3连",
-        "他这条视频点赞3000+，评论1000+，收藏500+",
-        "这是1024元的手机，你要吗？",
-        "受不liao3你了",
-        "“衣裳”不读衣chang2，而是读衣shang5",
-        "最zhong4要的是：不要chong2蹈覆辙",
-        "不zuo1死就不会死",
-        "See you at 8:00 AM",
-        "8:00 AM 开会",
-        "Couting down 3, 2, 1, go!",
-        "数到3就开始：1、2、3",
-        "This sales for 2.5% off, only $12.5.",
-        "5G网络是4G网络的升级版，2G网络是3G网络的前身",
-        "苹果于2030/1/2发布新 iPhone 2X 系列手机，最低售价仅 ¥12999",
-        "这酒...里...有毒...",
-        # 异常case
-        "只有,,,才是最好的",
-        "babala2是什么？",  # babala二是什么?
-        "用beta1测试",  # 用beta一测试
-        "have you ever been to beta2?",  # have you ever been to beta two?
-        "where's the money?",  # where is the money?
-        "who's there?",  # who is there?
-        "which's the best?",  # which is the best?
-        "how's it going?",  # how is it going?
-        "今天是个好日子 it's a good day",  # 今天是个好日子 it is a good day
-        # 术语
-        "such as XTTS, CosyVoice2, Fish-Speech, and F5-TTS",  # such as xtts,cosyvoice two,fish-speech,and f five-tts
-        "GPT-5-Nano is the smallest and fastest variant in the GPT-5 model family.",  # GPT-five-Nano is the smallest and fastest variant in the GPT-five model family
-        "GPT-5-Nano 是 GPT-5 模型家族中最小且速度最快的变体",  # GPT-五-Nano 是 GPT-五 系统中最小且速度最快的变体
-        "2025/09/08 IndexTTS-2 全球发布",  # 二零二五年九月八日 IndexTTS-二全球发布
-        "Here are some highly-rated M.2 NVMe SSDs: Samsung 9100 PRO PCIe 5.0 SSD M.2, $139.99",  # Here are some highly-rated M dot two NVMe SSD's, Samsung nine thousand one hundred PRO PCIE five SSD M dot two . one hundred and thirty nine dollars and ninety nine cents
-        "we dive deep into the showdown between DisplayPort 1.4 and HDMI 2.1 to determine which is the best choice for gaming enthusiasts",
-        # 人名
-        "约瑟夫·高登-莱维特（Joseph Gordon-Levitt is an American actor）",
-        "蒂莫西·唐纳德·库克（英文名：Timothy Donald Cook），通称蒂姆·库克（Tim Cook），美国商业经理、工业工程师和工业开发商，现任苹果公司首席执行官。",
-        # 长句子
-        "《盗梦空间》是由美国华纳兄弟影片公司出品的电影，由克里斯托弗·诺兰执导并编剧，莱昂纳多·迪卡普里奥、玛丽昂·歌迪亚、约瑟夫·高登-莱维特、艾利奥特·佩吉、汤姆·哈迪等联袂主演，2010年7月16日在美国上映，2010年9月1日在中国内地上映，2020年8月28日在中国内地重映。影片剧情游走于梦境与现实之间，被定义为“发生在意识结构内的当代动作科幻片”，讲述了由莱昂纳多·迪卡普里奥扮演的造梦师，带领特工团队进入他人梦境，从他人的潜意识中盗取机密，并重塑他人梦境的故事。",
-        "清晨拉开窗帘，阳光洒在窗台的Bloomixy花艺礼盒上——薰衣草香薰蜡烛唤醒嗅觉，永生花束折射出晨露般光泽。设计师将“自然绽放美学”融入每个细节：手工陶瓷花瓶可作首饰收纳，香薰精油含依兰依兰舒缓配方。限量款附赠《365天插花灵感手册》，让每个平凡日子都有花开仪式感。\n宴会厅灯光暗下的刹那，Glimmeria星月系列耳坠开始发光——瑞士冷珐琅工艺让蓝宝石如银河流动，钛合金骨架仅3.2g无负重感。设计师秘密：内置微型重力感应器，随步伐产生0.01mm振幅，打造“行走的星光”。七夕限定礼盒含星座定制铭牌，让爱意如星辰永恒闪耀。",
-        "电影1：“黑暗骑士”（演员：克里斯蒂安·贝尔、希斯·莱杰；导演：克里斯托弗·诺兰）；电影2：“盗梦空间”（演员：莱昂纳多·迪卡普里奥；导演：克里斯托弗·诺兰）；电影3：“钢琴家”（演员：艾德里安·布洛迪；导演：罗曼·波兰斯基）；电影4：“泰坦尼克号”（演员：莱昂纳多·迪卡普里奥；导演：詹姆斯·卡梅隆）；电影5：“阿凡达”（演员：萨姆·沃辛顿；导演：詹姆斯·卡梅隆）；电影6：“南方公园：大电影”（演员：马特·斯通、托马斯·艾恩格瑞；导演：特雷·帕克）",
-    ]
-    # 测试分词器
-    tokenizer = TextTokenizer(
-        vocab_file="checkpoints/bpe.model",
-        normalizer=text_normalizer,
-    )
-
-    codes = tokenizer.batch_encode(
-        cases,
-        out_type=int,
-    )
-
-    print(f"vocab_size: {tokenizer.vocab_size}")
-    # print(f"pad_token: {tokenizer.pad_token}, pad_token_id: {tokenizer.pad_token_id}")
-    print(f"bos_token: {tokenizer.bos_token}, bos_token_id: {tokenizer.bos_token_id}")
-    print(f"eos_token: {tokenizer.eos_token}, eos_token_id: {tokenizer.eos_token_id}")
-    print(f"unk_token: {tokenizer.unk_token}, unk_token_id: {tokenizer.unk_token_id}")
-    # 测试拼音 (8474-10201)
-    for id in range(8474, 10201):
-        pinyin = tokenizer.convert_ids_to_tokens(id)
-        if re.match(TextNormalizer.PINYIN_TONE_PATTERN, pinyin, re.IGNORECASE) is None:
-            print(f"{pinyin} should be matched")
-    for badcase in [
-        "beta1", "better1", "voice2", "bala2", "babala2", "hunger2"
-    ]:
-        if re.match(TextNormalizer.PINYIN_TONE_PATTERN, badcase, re.IGNORECASE) is not None:
-            print(f"{badcase} should not be matched!")
-    # 不应该有 unk_token_id
-    for t in set([*TextTokenizer.punctuation_marks_tokens, ",", "▁,", "-", "▁..."]):
-        tokens = tokenizer.convert_tokens_to_ids(t)
-        if tokenizer.unk_token_id in tokens:
-            print(f"Warning: {t} is unknown token")
-        print(f"`{t}`", "->", tokens, "->", tokenizer.convert_ids_to_tokens(tokens))
-    for ch in set(tokenizer.normalizer.zh_char_rep_map.values()):
-        # 测试 normalize后的字符能被分词器识别
-        print(f"`{ch}`", "->", tokenizer.sp_model.Encode(ch, out_type=str))
-        print(f"` {ch}`", "->", tokenizer.sp_model.Encode(f" {ch}", out_type=str))
-    max_text_tokens_per_segment=120
-    for i in range(len(cases)):
-        print(f"原始文本: {cases[i]}")
-        print(f"Normalized: {text_normalizer.normalize(cases[i])}")
-        tokens = tokenizer.tokenize(cases[i])
-        print("Tokenzied: ", ", ".join([f"`{t}`" for t in tokens]))
-        segments = tokenizer.split_segments(tokens, max_text_tokens_per_segment=max_text_tokens_per_segment)
-        print("Segments count:", len(segments))
-        if len(segments) > 1:
-            for j in range(len(segments)):
-                print(f"  {j}, count:", len(segments[j]), ", tokens:", "".join(segments[j]))
-                if len(segments[j]) > max_text_tokens_per_segment:
-                    print(f"Warning: segment {j} is too long, length: {len(segments[j])}")
-        #print(f"Token IDs (first 10): {codes[i][:10]}")
-        if tokenizer.unk_token in codes[i]:
-            print(f"Warning: `{cases[i]}` contains UNKNOWN token")
-        print(f"Decoded: {tokenizer.decode(codes[i], do_lower_case=True)}")
-        print("-" * 50)

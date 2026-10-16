@@ -6,7 +6,6 @@ from indextts25.s2mel.modules.gpt_fast.model import ModelArgs, Transformer
 from indextts25.s2mel.modules.wavenet import WN
 from indextts25.s2mel.modules.commons import sequence_mask
 
-from torch.nn.utils import weight_norm
 
 def modulate(x, shift, scale):
     return x * (1 + scale.unsqueeze(1)) + shift.unsqueeze(1)
@@ -60,27 +59,6 @@ class TimestepEmbedder(nn.Module):
         return t_emb
 
 
-class StyleEmbedder(nn.Module):
-    """
-    Embeds class labels into vector representations. Also handles label dropout for classifier-free guidance.
-    """
-    def __init__(self, input_size, hidden_size, dropout_prob):
-        super().__init__()
-        use_cfg_embedding = dropout_prob > 0
-        self.embedding_table = nn.Embedding(int(use_cfg_embedding), hidden_size)
-        self.style_in = weight_norm(nn.Linear(input_size, hidden_size, bias=True))
-        self.input_size = input_size
-        self.dropout_prob = dropout_prob
-
-    def forward(self, labels, train, force_drop_ids=None):
-        use_dropout = self.dropout_prob > 0
-        if (train and use_dropout) or (force_drop_ids is not None):
-            labels = self.token_drop(labels, force_drop_ids)
-        else:
-            labels = self.style_in(labels)
-        embeddings = labels
-        return embeddings
-
 class FinalLayer(nn.Module):
     """
     The final layer of DiT.
@@ -88,7 +66,7 @@ class FinalLayer(nn.Module):
     def __init__(self, hidden_size, patch_size, out_channels):
         super().__init__()
         self.norm_final = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6)
-        self.linear = weight_norm(nn.Linear(hidden_size, patch_size * patch_size * out_channels, bias=True))
+        self.linear = nn.Linear(hidden_size, patch_size * patch_size * out_channels, bias=True)
         self.adaLN_modulation = nn.Sequential(
             nn.SiLU(),
             nn.Linear(hidden_size, 2 * hidden_size, bias=True)
@@ -124,7 +102,8 @@ class DiT(torch.nn.Module):
         self.out_channels = args.DiT.in_channels
         self.num_heads = args.DiT.num_heads
 
-        self.x_embedder = weight_norm(nn.Linear(args.DiT.in_channels, args.DiT.hidden_dim, bias=True))
+        # Unused in forward, but present in the checkpoint.
+        self.x_embedder = nn.Linear(args.DiT.in_channels, args.DiT.hidden_dim, bias=True)
 
         self.content_type = args.DiT.content_type  # 'discrete' or 'continuous'
         self.content_codebook_size = args.DiT.content_codebook_size # for discrete content
@@ -133,11 +112,10 @@ class DiT(torch.nn.Module):
         self.cond_projection = nn.Linear(args.DiT.content_dim, args.DiT.hidden_dim, bias=True) # continuous content
 
         self.is_causal = args.DiT.is_causal
+        if self.is_causal:  # forward() builds no mask: only 2.5's non-causal DiT is supported
+            raise NotImplementedError("causal DiT not supported")
 
         self.t_embedder = TimestepEmbedder(args.DiT.hidden_dim)
-
-        # self.style_embedder1 = weight_norm(nn.Linear(1024, args.DiT.hidden_dim, bias=True))
-        # self.style_embedder2 = weight_norm(nn.Linear(1024, args.style_encoder.dim, bias=True))
 
         input_pos = torch.arange(16384)
         self.register_buffer("input_pos", input_pos)
@@ -181,7 +159,7 @@ class DiT(torch.nn.Module):
             self.style_in = nn.Linear(args.style_encoder.dim, args.DiT.hidden_dim)
 
     def setup_caches(self, max_batch_size, max_seq_length):
-        self.transformer.setup_caches(max_batch_size, max_seq_length, use_kv_cache=False)
+        self.transformer.setup_caches(max_batch_size, max_seq_length)
         
     def forward(self, x, prompt_x, x_lens, t, style, cond, mask_content=False):
         """
@@ -235,8 +213,9 @@ class DiT(torch.nn.Module):
             
         x_mask = sequence_mask(x_lens + self.style_as_token + self.time_as_token, max_length=x_in.size(1)).to(x.device).unsqueeze(1) #torch.Size([1, 1, 1863])True
         input_pos = self.input_pos[:x_in.size(1)]  # (T,) range（0，1863）
-        x_mask_expanded = x_mask[:, None, :].repeat(1, 1, x_in.size(1), 1) if not self.is_causal else None # torch.Size([1, 1, 1863, 1863]
-        x_res = self.transformer(x_in, t1.unsqueeze(1), input_pos, x_mask_expanded) # [2, 1863, 512]
+        # Inference always passes x_lens = T, so the attention mask is all True and is
+        # omitted (a [B, 1, T, T] mask used to be built every Euler step for all 13 layers).
+        x_res = self.transformer(x_in, t1.unsqueeze(1), input_pos) # [2, 1863, 512]
         x_res = x_res[:, 1:] if self.time_as_token else x_res
         x_res = x_res[:, 1:] if self.style_as_token else x_res
         

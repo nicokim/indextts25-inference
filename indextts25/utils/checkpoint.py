@@ -12,24 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-from pathlib import Path
-
 import torch
-import yaml
 
 
-def load_checkpoint(model: torch.nn.Module, model_pth: str) -> dict:
-    checkpoint = torch.load(model_pth, map_location='cpu')
+def load_checkpoint(model: torch.nn.Module, model_pth: str) -> None:
+    """Loads weights, ignoring keys the model does not have (e.g. the GPT's training
+    text_head). A missing key is an error: it would leave randomly initialized layers."""
+    checkpoint = torch.load(model_pth, map_location='cpu', mmap=True)
     checkpoint = checkpoint['model'] if 'model' in checkpoint else checkpoint
-    missing, unexpected = model.load_state_dict(checkpoint, strict=False)
+    missing = model.load_state_dict(checkpoint, strict=False).missing_keys
     if missing:
-        print(f">> load_checkpoint: missing keys ({len(missing)}): {missing[:5]}{'...' if len(missing) > 5 else ''}")
-    if unexpected:
-        print(f">> load_checkpoint: skipping unexpected keys ({len(unexpected)}): {unexpected[:5]}{'...' if len(unexpected) > 5 else ''}")
-    info_path = str(Path(model_pth).with_suffix('.yaml'))
-    configs = {}
-    if os.path.exists(info_path):
-        with open(info_path, 'r') as fin:
-            configs = yaml.load(fin, Loader=yaml.FullLoader)
-    return configs
+        raise RuntimeError(f"{model_pth}: missing {len(missing)} keys, e.g. {missing[:5]}")
+
+
+def fold_weight_norm(state_dict: dict, device) -> dict:
+    """Folds each `*.weight_g`/`*.weight_v` pair (torch.nn.utils.weight_norm, dim=0)
+    into a plain `*.weight`, computed on `device` with the same operation as the hook.
+
+    The modules are defined without weight_norm: inference does not need to recompute
+    g·v/||v|| on every forward, and the legacy API is deprecated in torch.
+    """
+    folded = {}
+    for key, value in state_dict.items():
+        name = key.rsplit(".", 1)[-1]
+        if name == "weight_g":
+            base = key[: -len("_g")]
+            folded[base] = torch._weight_norm(state_dict[base + "_v"].to(device), value.to(device), 0)
+        elif name != "weight_v":
+            folded[key] = value
+    return folded

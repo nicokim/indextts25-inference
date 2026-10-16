@@ -29,12 +29,43 @@
   调用抛异常时，记 warning 并返回原文，绝不中断合成。
 """
 
-import os
-import time
 import logging
+import os
+import pickle
 from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
+
+# Compiling a language's grammar takes ~25 s on every startup; the already-built
+# Normalizer is pickled and loads in ~0.6 s. NeMo's cache_dir is not used: exporting
+# re-optimizes the graph and some decimals ending in 0 are read differently
+# ("1,80" -> "uno coma ocho cero"); the pickle is exactly the in-memory object.
+_CACHE_DIR = os.path.join(
+    os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache"), "indextts25", "nemo_tn")
+
+
+def _build_normalizer(nemo_lang: str, input_case: str):
+    from importlib.metadata import version
+
+    from nemo_text_processing.text_normalization.normalize import Normalizer
+
+    path = os.path.join(_CACHE_DIR, f"{nemo_lang}-{input_case}-nemo{version('nemo_text_processing')}"
+                                    f"-pynini{version('pynini')}.pkl")
+    try:
+        with open(path, "rb") as f:
+            return pickle.load(f)
+    except Exception:  # no cache, or corrupt/from another version: rebuild it
+        pass
+    normalizer = Normalizer(input_case=input_case, lang=nemo_lang)
+    try:
+        os.makedirs(_CACHE_DIR, exist_ok=True)
+        tmp = f"{path}.{os.getpid()}.tmp"
+        with open(tmp, "wb") as f:
+            pickle.dump(normalizer, f)
+        os.replace(tmp, path)  # atomic: two processes starting together don't clobber each other
+    except OSError as e:  # no write permission: keep working, without the cache
+        logger.warning(f"could not cache the NeMo grammar in {_CACHE_DIR}: {e}")
+    return normalizer
 
 
 # ---------------------------------------------------------------------------
@@ -51,7 +82,8 @@ _SERVICE_TO_NEMO: Dict[str, str] = {
     "zh": "zh",
     "es": "es",
     "en": "en",
-    # "ja": NeMo 无日语 TN grammar，故意不列入 -> 跳过归一化
+    # "ja" is left out on purpose: NeMo >=1.2 ships a Japanese grammar, but enabling it
+    # changes the output and it was not validated by ear. Japanese passes unnormalized.
 }
 
 # ISO 639-3 -> 服务码
@@ -104,9 +136,10 @@ class TextNormalizer:
 
         normalizer = None
         try:
-            from nemo_text_processing.text_normalization.normalize import Normalizer
-
-            normalizer = Normalizer(input_case=self.input_case, lang=nemo_lang)
+            # NeMo leaves its logger at INFO with its own handler ("so applications can
+            # adjust it"): without this, every grammar load prints to stderr.
+            logging.getLogger("NeMo-text-processing").setLevel(logging.WARNING)
+            normalizer = _build_normalizer(nemo_lang, self.input_case)
             logger.info(f"nemo Normalizer(lang={nemo_lang}) initialized")
         except Exception as e:
             logger.warning(
@@ -166,71 +199,3 @@ def get_text_normalizer(input_case: str = "cased") -> TextNormalizer:
 def normalize_text(text: Optional[str], lang: Optional[str]) -> Optional[str]:
     """便捷入口：用共享单例对 ``text`` 按 ``lang`` 做归一化。"""
     return get_text_normalizer().normalize(text, lang)
-
-def print_nemo_results(lang, result_dir='nemo_tn_result'):
-    """读取 result_{lang}.tsv 并逐行打印 nemo_result 列。"""
-    result_path = os.path.join(result_dir, f'result_{lang}_front.tsv')
-    if not os.path.exists(result_path):
-        print(f"[SKIP] {result_path} not found")
-        return
-    with open(result_path, 'r', encoding='utf-8') as f:
-        f.readline()  # skip header
-        for line in f:
-            parts = line.strip().split('\t')
-            if len(parts) >= 4:
-                print(parts[3])
-
-def get_nemo_result_main():
-    target_langs = ['ja']
-    normalize_root = 'nemo_tn_testdata'
-    output_dir = 'nemo_tn_result'
-    os.makedirs(output_dir, exist_ok=True)
-
-    normalizer = get_text_normalizer()
-
-    for lang in target_langs:
-        testset = os.path.join(normalize_root, f'testset_{lang}.tsv')
-        if not os.path.exists(testset):
-            print(f"[SKIP] {testset} not found")
-            continue
-
-        output_path = os.path.join(output_dir, f'result_{lang}.tsv')
-        total, match, mismatch = 0, 0, 0
-        t_start = time.perf_counter()
-
-        with open(testset, 'r', encoding='utf-8') as fin, \
-             open(output_path, 'w', encoding='utf-8') as fout:
-            header = fin.readline().strip()
-            fout.write(f"{header}\tnemo_result\tstatus\n")
-
-            for line in fin:
-                line = line.strip()
-                if not line:
-                    continue
-                parts = line.split('\t')
-                if len(parts) < 3:
-                    continue
-                sid, original, gt = parts[0], parts[1], parts[2]
-
-                nemo_result = normalizer.normalize(original, lang)
-                # 去掉首尾空格后比较
-                nemo_result = nemo_result.strip() if nemo_result else ""
-                gt = gt.strip()
-                status = "✅" if nemo_result == gt else "❌"
-                total += 1
-                if status == "✅":
-                    match += 1
-                else:
-                    mismatch += 1
-
-                fout.write(f"{sid}\t{original}\t{gt}\t{nemo_result}\t{status}\n")
-
-        elapsed = time.perf_counter() - t_start
-        avg_ms = elapsed / total * 1000 if total > 0 else 0
-        print(f"[{lang.upper()}] total={total}, match={match}, mismatch={mismatch}, "
-              f"accuracy={match/total*100:.1f}%, "
-              f"avg={avg_ms:.1f}ms/sentence, total_time={elapsed:.2f}s  -> {output_path}")
-        
-
-if __name__ == '__main__':
-    print_nemo_results('zh')

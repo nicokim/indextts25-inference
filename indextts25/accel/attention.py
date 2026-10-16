@@ -105,18 +105,12 @@ def store_kvcache(
 
 
 class Attention(nn.Module):
-    def __init__(
-        self,
-        num_heads: int,
-        head_dim: int,
-        scale: float,
-        num_kv_heads: int,
-    ):
+    """Attention over the paged KV cache: writes k/v into their slots and uses flash-attn
+    (varlen for prefill, with_kvcache for decode). The engine sets the context."""
+
+    def __init__(self, scale: float):
         super().__init__()
-        self.num_heads = num_heads
-        self.head_dim = head_dim
         self.scale = scale
-        self.num_kv_heads = num_kv_heads
         self.k_cache = self.v_cache = torch.tensor([])
 
     def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor):

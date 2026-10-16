@@ -1,66 +1,33 @@
+"""IndexTTS-2.5 GPT (UnifiedVoice): text + conditioning -> semantic codes.
+
+2.5 mode only: the speaker is the 192-float CAMPPlus vector (`spk_emb_proj`) and the
+emotion comes from a Conformer + Perceiver over the w2v-bert features. Generates with
+the transformers GPT2 (attn_backend="sdpa") or the accel engine (attn_backend="flash").
+"""
 import functools
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-import transformers
-from transformers import GPT2Config, LogitsProcessorList
-# De-vendorizado: el fork de transformers (648 KB) importaba OffloadedCache, que
-# transformers 5.x eliminó. GPT2InferenceModel sólo necesita la clase base.
-from transformers import GPT2PreTrainedModel, GPT2Model
-try:  # transformers >=5 sacó GenerationMixin de PreTrainedModel
-    from transformers.generation import GenerationMixin
-except ImportError:  # pragma: no cover
-    from transformers.generation.utils import GenerationMixin
-
-# from transformers import GPT2Config, GPT2PreTrainedModel, LogitsProcessorList
+from transformers import GenerationMixin, GPT2Config, GPT2Model, GPT2PreTrainedModel, LogitsProcessorList
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
-try:  # transformers >=5 eliminó este módulo. Sólo lo usan parallelize()/deparallelize(),
-    # que son model-parallel legacy y no intervienen en inferencia de una sola GPU.
-    from transformers.utils.model_parallel_utils import (assert_device_map,
-                                                         get_device_map)
-except ModuleNotFoundError:  # pragma: no cover
-    def get_device_map(*a, **k):
-        raise RuntimeError("model parallelism no disponible con transformers >= 5")
-
-    def assert_device_map(*a, **k):
-        raise RuntimeError("model parallelism no disponible con transformers >= 5")
 
 from indextts25.gpt.conformer_encoder import ConformerEncoder
 from indextts25.gpt.perceiver import PerceiverResampler
-from indextts25.utils.arch_util import AttentionBlock
-from indextts25.utils.typical_sampling import TypicalLogitsWarper
 from indextts25.utils.tokenizer import LANGUAGE_DICT
+from indextts25.utils.typical_sampling import TypicalLogitsWarper
 
 
 def null_position_embeddings(range, dim):
-    return torch.zeros((range.shape[0], range.shape[1], dim), device=range.device)
-
-
-class ResBlock(nn.Module):
-    """
-    Basic residual convolutional block that uses GroupNorm.
-    """
-
-    def __init__(self, chan):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Conv1d(chan, chan, kernel_size=3, padding=1),
-            nn.GroupNorm(chan // 8, chan),
-            nn.ReLU(),
-            nn.Conv1d(chan, chan, kernel_size=3, padding=1),
-            nn.GroupNorm(chan // 8, chan)
-        )
-
-    def forward(self, x):
-        return F.relu(self.net(x) + x)
+    # A scalar zero: adding it changes nothing and, unlike an fp32 tensor the size of
+    # the input, it does not promote the embeddings to fp32 when the GPT runs in bf16.
+    return torch.zeros((), device=range.device)
 
 
 def _past_len(past):
-    """Longitud ya cacheada, sirviendo tanto para el Cache de transformers >=5 como
-    para la tupla anidada de 4.x. NO usar `if past:`: un Cache vacío es truthy, y en el
-    primer paso eso hace recortar input_ids y se pierde el prefijo de condicionamiento."""
+    """Already-cached length, for both the transformers >=5 Cache and the nested tuple
+    of 4.x. Do NOT use `if past:`: an empty Cache is truthy, so on the first step it
+    would trim input_ids and drop the conditioning prefix."""
     if past is None:
         return 0
     if hasattr(past, "get_seq_length"):
@@ -73,41 +40,21 @@ def _past_len(past):
     return int(past[0][0].shape[2])
 
 
+# Explicit GenerationMixin: transformers 5.x removed it from PreTrainedModel.
 class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
-    def __init__(self, config, gpt, text_pos_emb, embeddings, norm, linear, kv_cache=False):
+    """Adapts the GPT2 to `generate()`: the [pad][cond][text] prefix goes in as cached
+    embeddings (`store_mel_emb`) behind fake input_ids, and each generated code is
+    embedded with `embeddings` + its mel position."""
+
+    def __init__(self, config, gpt, text_pos_emb, embeddings, norm, linear):
         super().__init__(config)
-        # Note: the argument named `text_pos_emb` here actually represents the mel position embedding
+        # Despite the name, `text_pos_emb` is the mel position embedding.
         self.transformer = gpt
         self.text_pos_embedding = text_pos_emb
         self.embeddings = embeddings
         self.final_norm = norm
         self.lm_head = nn.Sequential(norm, linear)
-        self.kv_cache = kv_cache
-
-        # Model parallel
-        self.model_parallel = False
-        self.device_map = None
         self.cached_mel_emb = None
-
-    def parallelize(self, device_map=None):
-        self.device_map = (
-            get_device_map(len(self.transformer.h), range(max(1, torch.cuda.device_count())))
-            if device_map is None
-            else device_map
-        )
-        assert_device_map(self.device_map, len(self.transformer.h))
-        self.transformer.parallelize(self.device_map)
-        self.lm_head = self.lm_head.to(self.transformer.first_device)
-        self.model_parallel = True
-
-    def deparallelize(self):
-        self.transformer.deparallelize()
-        self.transformer = self.transformer.to("cpu")
-        self.lm_head = self.lm_head.to("cpu")
-        self.model_parallel = False
-        torch.cuda.empty_cache()
-        if torch.backends.mps.is_available():
-            torch.mps.empty_cache()
 
     def get_output_embeddings(self):
         return self.lm_head
@@ -120,8 +67,6 @@ class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
 
     def prepare_inputs_for_generation(self, input_ids, past_key_values=None, **kwargs):
         token_type_ids = kwargs.get("token_type_ids", None)  # usually None
-        if not self.kv_cache:
-            past_key_values = None
         # only last token for inputs_ids if past is defined in kwargs
         past_len = _past_len(past_key_values)
         if past_len > 0:
@@ -187,8 +132,12 @@ class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
             emb = torch.cat([mel_emb, text_emb], dim=1)
         else:
             emb = self.embeddings(input_ids)
+            # Code k goes at mel position k (start_mel at 0), as in training: upstream
+            # shifted it by one position and text conditioning got worse (+0.5 nats/token
+            # of NLL on real audio). The position comes from the cache length, not from
+            # attention_mask, which transformers 5.x omits when it is all ones.
             emb = emb + self.text_pos_embedding.get_fixed_embedding(
-                attention_mask.shape[1] - mel_len, attention_mask.device
+                _past_len(past_key_values) - mel_len, emb.device
             )
         transformer_outputs = self.transformer(
             inputs_embeds=emb,
@@ -205,15 +154,6 @@ class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
             return_dict=return_dict,
         )
         hidden_states = transformer_outputs[0]
-
-        # Set device for model parallelism
-        if self.model_parallel:
-            if torch.backends.mps.is_available():
-                self.to(self.transformer.first_device)
-            else:
-                torch.cuda.set_device(self.transformer.first_device)
-            hidden_states = hidden_states.to(self.lm_head.weight.device)
-
         lm_logits = self.lm_head(hidden_states)
 
         if not return_dict:
@@ -230,13 +170,9 @@ class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
 
     @staticmethod
     def _reorder_cache(past, beam_idx):
-        """
-        This function is used to re-order the :obj:`past_key_values` cache if
-        :meth:`~transformers.PreTrainedModel.beam_search` or :meth:`~transformers.PreTrainedModel.beam_sample` is
-        called. This is required to match :obj:`past_key_values` with the correct beam_idx at every generation step.
-        """
-        # transformers >=5 pasa un objeto Cache que sabe reordenarse solo; en 4.x
-        # llegaba una tupla anidada de tensores (y ahora puede traer None adentro).
+        """Reorders the KV cache across beams (beam search / beam sample)."""
+        # transformers >=5 passes a Cache object that reorders itself; 4.x passed a
+        # nested tuple of tensors (which may now contain None entries).
         if hasattr(past, "reorder_cache"):
             past.reorder_cache(beam_idx)
             return past
@@ -248,34 +184,6 @@ class GPT2InferenceModel(GPT2PreTrainedModel, GenerationMixin):
             )
             for layer_past in past
         )
-
-
-class ConditioningEncoder(nn.Module):
-    def __init__(self,
-                 spec_dim,
-                 embedding_dim,
-                 attn_blocks=6,
-                 num_attn_heads=4,
-                 do_checkpointing=False,
-                 mean=False):
-        super().__init__()
-        attn = []
-        self.init = nn.Conv1d(spec_dim, embedding_dim, kernel_size=1)
-        for a in range(attn_blocks):
-            attn.append(AttentionBlock(embedding_dim, num_attn_heads))
-        self.attn = nn.Sequential(*attn)
-        self.dim = embedding_dim
-        self.do_checkpointing = do_checkpointing
-        self.mean = mean
-
-    def forward(self, x):
-        h = self.init(x)
-        h = self.attn(h)
-        if self.mean:
-            return h.mean(dim=2)
-        else:
-            return h
-            # return h[:, :, 0]
 
 
 class LearnedPositionEmbeddings(nn.Module):
@@ -293,79 +201,49 @@ class LearnedPositionEmbeddings(nn.Module):
         return self.emb(torch.tensor([ind], device=dev)).unsqueeze(0)
 
 
-def build_hf_gpt_transformer(layers, model_dim, heads, max_mel_seq_len, max_text_seq_len, checkpointing):
-    """
-    GPT-2 implemented by the HuggingFace library.
-    """
-    from transformers import GPT2Config, GPT2Model
+def build_hf_gpt_transformer(layers, model_dim, heads, max_mel_seq_len, max_text_seq_len):
+    """transformers GPT-2 without its own embeddings: positions come from the mel and
+    text LearnedPositionEmbeddings."""
     gpt_config = GPT2Config(vocab_size=256,  # Unused.
                             n_positions=max_mel_seq_len + max_text_seq_len,
                             n_ctx=max_mel_seq_len + max_text_seq_len,
                             n_embd=model_dim,
                             n_layer=layers,
                             n_head=heads,
-                            gradient_checkpointing=checkpointing,
-                            use_cache=not checkpointing)
+                            activation_function="gelu_pytorch_tanh",
+                            use_cache=False,
+                            # The defaults (50256, from GPT-2's vocab) fall outside this
+                            # vocab and transformers 5.x warns about it on stderr.
+                            bos_token_id=None, eos_token_id=None)
     gpt = GPT2Model(gpt_config)
     # Override the built in positional embeddings
     del gpt.wpe
     gpt.wpe = functools.partial(null_position_embeddings, dim=model_dim)
     # Built-in token embeddings are unused.
     del gpt.wte
-    return gpt, LearnedPositionEmbeddings(max_mel_seq_len, model_dim), LearnedPositionEmbeddings(max_text_seq_len, model_dim), \
-        None, None
-
-
-class MelEncoder(nn.Module):
-    def __init__(self, channels, mel_channels=80, resblocks_per_reduction=2):
-        super().__init__()
-        self.channels = channels
-        self.encoder = nn.Sequential(nn.Conv1d(mel_channels, channels // 4, kernel_size=3, padding=1),
-                                     nn.Sequential(*[ResBlock(channels // 4) for _ in range(resblocks_per_reduction)]),
-                                     nn.Conv1d(channels // 4, channels // 2, kernel_size=3, stride=2, padding=1),
-                                     nn.GroupNorm(channels // 16, channels // 2),
-                                     nn.ReLU(),
-                                     nn.Sequential(*[ResBlock(channels // 2) for _ in range(resblocks_per_reduction)]),
-                                     nn.Conv1d(channels // 2, channels, kernel_size=3, stride=2, padding=1),
-                                     nn.GroupNorm(channels // 8, channels),
-                                     nn.ReLU(),
-                                     nn.Sequential(*[ResBlock(channels) for _ in range(resblocks_per_reduction)]),
-                                     )
-        self.reduction = 4
-
-    def forward(self, x):
-        for e in self.encoder:
-            x = e(x)
-        return x.permute(0, 2, 1)
+    # transformers 4.x registers a per-layer n_pos² causal mask (~134 MB in total)
+    # that only eager attention uses; this GPT runs on SDPA. 5.x no longer creates it.
+    for block in gpt.h:
+        block.attn._buffers.pop("bias", None)
+    return gpt, LearnedPositionEmbeddings(max_mel_seq_len, model_dim), LearnedPositionEmbeddings(max_text_seq_len, model_dim)
 
 
 class UnifiedVoice(nn.Module):
-    def __init__(self, layers=8, model_dim=512, heads=8, max_text_tokens=120, max_mel_tokens=250, max_conditioning_inputs=1,
-                 mel_length_compression=1024, number_text_tokens=256,
-                 start_text_token=0, stop_text_token=1, number_mel_codes=8194, start_mel_token=8192, stop_mel_token=8193,
-                 train_solo_embeddings=False, use_mel_codes_as_input=True,
-                 checkpointing=True, types=1,
-                 condition_num_latent=32, condition_type="perceiver", condition_module=None, emo_condition_module=None, use_accel=False,
-                 spk_cond_mode="conformer"):
+    def __init__(self, layers=8, model_dim=512, heads=8, max_text_tokens=120, max_mel_tokens=250,
+                 max_conditioning_inputs=1, number_text_tokens=256, start_text_token=0, stop_text_token=1,
+                 number_mel_codes=8194, start_mel_token=8192, stop_mel_token=8193, emo_condition_module=None,
+                 use_accel=False, **_):
         """
+        Takes the `gpt:` section of config.yaml; the IndexTTS-2.0 conditioning keys
+        (condition_type, condition_module, ...) are ignored.
+
         Args:
-            layers: Number of layers in transformer stack.
-            model_dim: Operating dimensions of the transformer
-            heads: Number of transformer heads. Must be divisible by model_dim. Recommend model_dim//64
-            max_text_tokens: Maximum number of text tokens that will be encountered by model.
-            max_mel_tokens: Maximum number of MEL tokens that will be encountered by model.
-            max_conditioning_inputs: Maximum number of conditioning inputs provided to the model. If (1), conditioning input can be of format (b,80,s), otherwise (b,n,80,s).
-            mel_length_compression: The factor between <number_input_samples> and <mel_tokens>. Used to compute MEL code padding given wav input length.
-            number_text_tokens:
-            start_text_token:
-            stop_text_token:
-            number_mel_codes:
-            start_mel_token:
-            stop_mel_token:
-            train_solo_embeddings:
-            use_mel_codes_as_input:
-            checkpointing:
-            condition_type: perceiver, gst or default encoder
+            layers: number of transformer layers.
+            model_dim: model dimension.
+            heads: attention heads (model_dim must be divisible by it).
+            max_text_tokens / max_mel_tokens: max number of text tokens and of codes.
+            emo_condition_module: config of the emotion Conformer.
+            use_accel: build the accel engine (flash-attn) in post_init_gpt2_config.
         """
         super().__init__()
         self.number_text_tokens = number_text_tokens
@@ -380,34 +258,8 @@ class UnifiedVoice(nn.Module):
         self.max_text_tokens = max_text_tokens
         self.model_dim = model_dim
         self.max_conditioning_inputs = max_conditioning_inputs
-        self.mel_length_compression = mel_length_compression
-        self.condition_type = condition_type
-        self.cond_num = condition_num_latent
-        self.cond_mask_pad = nn.ConstantPad1d((self.cond_num, 0), True)
         self.emo_cond_mask_pad = nn.ConstantPad1d((1, 0), True)
-        self.spk_cond_mode = spk_cond_mode
-        if spk_cond_mode == "campplus":
-            self.spk_emb_proj = nn.Linear(192, model_dim)
-        else:
-            if condition_type == "perceiver":
-                self.conditioning_encoder = ConditioningEncoder(1024, model_dim, num_attn_heads=heads)
-                self.perceiver_encoder = PerceiverResampler(model_dim, dim_context=model_dim, num_latents=self.cond_num)
-            elif condition_type == "conformer_perceiver" or condition_type == "conformer_encoder":
-                self.conditioning_encoder = ConformerEncoder(input_size=1024,
-                                                             output_size=condition_module['output_size'],
-                                                             linear_units=condition_module['linear_units'],
-                                                             attention_heads=condition_module['attention_heads'],
-                                                             num_blocks=condition_module['num_blocks'],
-                                                             input_layer=condition_module['input_layer'])
-                if condition_type == "conformer_perceiver":
-                    self.perceiver_encoder = PerceiverResampler(model_dim, dim_context=condition_module['output_size'],
-                                                                ff_mult=condition_module['perceiver_mult'],
-                                                                heads=condition_module['attention_heads'],
-                                                                num_latents=self.cond_num)
-            else:
-                self.conditioning_encoder = ConditioningEncoder(1024, model_dim, num_attn_heads=heads, mean=True)
-            self.speed_emb = nn.Embedding(2, model_dim)
-            self.speed_emb.weight.data.normal_(mean=0.0, std=0.0)
+        self.spk_emb_proj = nn.Linear(192, model_dim)
 
         self.emo_conditioning_encoder = ConformerEncoder(input_size=1024,
                                                          output_size=emo_condition_module['output_size'],
@@ -416,47 +268,27 @@ class UnifiedVoice(nn.Module):
                                                          num_blocks=emo_condition_module['num_blocks'],
                                                          input_layer=emo_condition_module['input_layer'])
         self.emo_perceiver_encoder = PerceiverResampler(1024, dim_context=emo_condition_module['output_size'],
-                                                            ff_mult=emo_condition_module['perceiver_mult'],
-                                                            heads=emo_condition_module['attention_heads'],
-                                                            num_latents=1)
+                                                        ff_mult=emo_condition_module['perceiver_mult'],
+                                                        heads=emo_condition_module['attention_heads'],
+                                                        num_latents=1)
 
-
-
-        self.text_embedding = nn.Embedding(self.number_text_tokens * types + 1, model_dim)
-        if spk_cond_mode == "campplus":
-            self.lang_embedding = nn.Embedding(len(LANGUAGE_DICT) + 1, model_dim)
+        self.text_embedding = nn.Embedding(self.number_text_tokens + 1, model_dim)
+        self.lang_embedding = nn.Embedding(len(LANGUAGE_DICT) + 1, model_dim)
         self.emo_layer = nn.Linear(model_dim, model_dim)
         self.emovec_layer = nn.Linear(1024, model_dim)
-
-        if use_mel_codes_as_input:
-            self.mel_embedding = nn.Embedding(self.number_mel_codes, model_dim)
-        else:
-            self.mel_embedding = MelEncoder(model_dim, resblocks_per_reduction=1)
-        self.gpt, self.mel_pos_embedding, self.text_pos_embedding, self.mel_layer_pos_embedding, self.text_layer_pos_embedding = \
-            build_hf_gpt_transformer(layers, model_dim, heads, self.max_mel_tokens + 2 + self.max_conditioning_inputs,
-                                     self.max_text_tokens + 2, checkpointing)
-        if train_solo_embeddings:
-            self.mel_solo_embedding = nn.Parameter(torch.randn(1, 1, model_dim) * .02, requires_grad=True)
-            self.text_solo_embedding = nn.Parameter(torch.randn(1, 1, model_dim) * .02, requires_grad=True)
-        else:
-            self.mel_solo_embedding = 0
-            self.text_solo_embedding = 0
-
+        self.mel_embedding = nn.Embedding(self.number_mel_codes, model_dim)
+        self.gpt, self.mel_pos_embedding, self.text_pos_embedding = build_hf_gpt_transformer(
+            layers, model_dim, heads, self.max_mel_tokens + 2 + self.max_conditioning_inputs,
+            self.max_text_tokens + 2)
         self.final_norm = nn.LayerNorm(model_dim)
-        self.text_head = nn.Linear(model_dim, self.number_text_tokens * types + 1)
+        # The checkpoint also carries text_head (77 M parameters, ~300 MB), used only by
+        # the training forward: it is not created and its key is ignored on load.
         self.mel_head = nn.Linear(model_dim, self.number_mel_codes)
 
-        # Initialize the embeddings per the GPT-2 scheme
-        embeddings = [self.text_embedding]
-        if use_mel_codes_as_input:
-            embeddings.append(self.mel_embedding)
-        for module in embeddings:
-            module.weight.data.normal_(mean=0.0, std=.02)
-
         self.use_accel = use_accel
-        self.accel_engine = None  # Will be initialized in post_init_gpt2_config
+        self.accel_engine = None  # built in post_init_gpt2_config
 
-    def post_init_gpt2_config(self, use_deepspeed=False, kv_cache=False, half=False):
+    def post_init_gpt2_config(self):
         seq_length = self.max_mel_tokens + self.max_text_tokens + 2
         gpt_config = GPT2Config(
             vocab_size=self.number_mel_codes,
@@ -465,41 +297,41 @@ class UnifiedVoice(nn.Module):
             n_embd=self.model_dim,
             n_layer=self.layers,
             n_head=self.heads,
-            gradient_checkpointing=False,
+            activation_function="gelu_pytorch_tanh",
             use_cache=True,
+            # generate() gets the mel tokens explicitly; 50256 only triggered a warning.
+            bos_token_id=None, eos_token_id=None,
         )
 
-        if self.use_accel and torch.cuda.is_available():
-            # Check if flash attention is available
-            try:
-                import flash_attn
-            except ImportError:
-                raise ImportError("flash_attn is required for acceleration but not installed. Please install from https://github.com/Dao-AILab/flash-attention/releases/")
+        if self.use_accel and self.mel_head.weight.is_cuda:
+            from indextts25.accel import AccelInferenceEngine, GPT2AccelModel
 
-            from indextts25.accel import GPT2AccelModel, AccelInferenceEngine
+            device = self.mel_head.weight.device
+            # Built on "meta" (no memory and no random init, which cost ~4.5 s on CPU) and
+            # assign=True shares the tensors with self.gpt, in their dtype, instead of
+            # copying them: in fp32 that was ~1.9 GB of duplicated VRAM, and with half=True
+            # the fp16 copy also forced the bf16 autocast to recast every weight on each
+            # CUDA graph step. The attention hands q/k/v to flash-attn in fp16 anyway.
+            # wte/wpe are unused: the codes are embedded outside.
+            with torch.device("meta"):
+                accel_gpt = GPT2AccelModel(gpt_config)
+            accel_gpt.load_state_dict(self.gpt.state_dict(), strict=False, assign=True)
+            del accel_gpt.wte, accel_gpt.wpe
+            accel_gpt = accel_gpt.to(device).eval()
 
-            # Create accel model
-            accel_gpt = GPT2AccelModel(gpt_config)
-            accel_gpt.load_state_dict(self.gpt.state_dict(), strict=False)
-
-            if half:
-                accel_gpt = accel_gpt.half().cuda()
-            else:
-                accel_gpt = accel_gpt.cuda()
-            accel_gpt.eval()
-
-            lm_head_with_norm = nn.Sequential(self.final_norm, self.mel_head)
-            self.accel_engine = AccelInferenceEngine(
-                model=accel_gpt,
-                lm_head=lm_head_with_norm,
-                num_layers=self.layers,
-                num_heads=self.heads,
-                head_dim=self.model_dim // self.heads,
-                block_size=256,
-                num_blocks=16,  # Reduce to save memory (16*256 = 4096 tokens capacity)
-                use_cuda_graph=True,
-            )
-            print("acceleration engine initialized")
+            with torch.cuda.device(device):
+                self.accel_engine = AccelInferenceEngine(
+                    model=accel_gpt,
+                    lm_head=nn.Sequential(self.final_norm, self.mel_head),
+                    num_layers=self.layers,
+                    num_heads=self.heads,
+                    head_dim=self.model_dim // self.heads,
+                    block_size=256,
+                    # Just enough for the longest possible sequence (prompt + max_mel_tokens):
+                    # 10 blocks instead of 16, ~190 MB less KV in fp16.
+                    num_blocks=-(-(self.max_text_tokens + self.max_mel_tokens + 8) // 256),
+                    use_cuda_graph=True,
+                )
         self.inference_model = GPT2InferenceModel(
             gpt_config,
             self.gpt,
@@ -507,180 +339,8 @@ class UnifiedVoice(nn.Module):
             self.mel_embedding,
             self.final_norm,
             self.mel_head,
-            kv_cache=kv_cache,
-        )
-        if use_deepspeed and half and torch.cuda.is_available():
-            import deepspeed
-            self.ds_engine = deepspeed.init_inference(model=self.inference_model,
-                                                      mp_size=1,
-                                                      replace_with_kernel_inject=True,
-                                                      dtype=torch.float16)
-            self.inference_model = self.ds_engine.module.eval()
-        elif use_deepspeed and torch.cuda.is_available():
-            import deepspeed
-            self.ds_engine = deepspeed.init_inference(model=self.inference_model,
-                                                      mp_size=1,
-                                                      replace_with_kernel_inject=True,
-                                                      dtype=torch.float32)
-            self.inference_model = self.ds_engine.module.eval()
-        else:
-            self.inference_model = self.inference_model.eval()
-
-        # self.inference_model = PrunedGPT2InferenceModel(gpt_config, self.gpt, self.mel_pos_embedding, self.mel_embedding, self.final_norm, self.mel_head)
+        ).eval()
         self.gpt.wte = self.mel_embedding
-
-    def build_aligned_inputs_and_targets(self, input, start_token, stop_token):
-        inp = F.pad(input, (1, 0), value=start_token)
-        tar = F.pad(input, (0, 1), value=stop_token)
-        return inp, tar
-
-    def set_mel_padding(self, mel_input_tokens, mel_lengths):
-        """
-        Given mel tokens that are derived from a padded audio clip and the actual lengths of each batch element in
-        that audio clip, reformats the tokens with STOP_MEL_TOKEN in place of the zero padding. This is required
-        preformatting to create a working TTS model.
-        """
-        for b in range(len(mel_lengths)):
-            # Due to the convolutional nature of how these tokens are generated,
-            # it would be best if the model predicts a token past the actual last token.
-            actual_end = mel_lengths[b]
-            if actual_end < mel_input_tokens.shape[-1]:
-                mel_input_tokens[b, actual_end:] = self.stop_mel_token
-        return mel_input_tokens
-
-    def set_text_padding(self, text_input_tokens, text_lengths):
-        """
-        Given mel tokens that are derived from a padded audio clip and the actual lengths of each batch element in
-        that audio clip, reformats the tokens with STOP_MEL_TOKEN in place of the zero padding. This is required
-        preformatting to create a working TTS model.
-        """
-        for b in range(len(text_lengths)):
-            # Due to the convolutional nature of how these tokens are generated,
-            # it would be best if the model predicts a token past the actual last token.
-            actual_end = text_lengths[b]
-            if actual_end < text_input_tokens.shape[-1]:
-                text_input_tokens[b, actual_end:] = self.stop_text_token
-        return text_input_tokens
-
-    def get_logits(self, speech_conditioning_inputs, first_inputs, first_head, second_inputs=None, second_head=None, get_attns=False, return_latent=False):
-        if second_inputs is not None:
-            emb = torch.cat([speech_conditioning_inputs, first_inputs, second_inputs], dim=1)
-        else:
-            emb = torch.cat([speech_conditioning_inputs, first_inputs], dim=1)
-
-        gpt_out = self.gpt(inputs_embeds=emb, return_dict=True, output_attentions=get_attns)
-        if get_attns:
-            return gpt_out.attentions
-
-        offset = speech_conditioning_inputs.shape[1]
-        enc = gpt_out.last_hidden_state[:, offset:]
-        enc = self.final_norm(enc)
-
-        if return_latent:
-            return enc[:, :first_inputs.shape[1]], enc[:, -second_inputs.shape[1]:]
-
-        first_logits = enc[:, :first_inputs.shape[1]]
-        first_logits = first_head(first_logits)
-        first_logits = first_logits.permute(0, 2, 1)
-        if second_inputs is not None:
-            second_logits = enc[:, -second_inputs.shape[1]:]
-            second_logits = second_head(second_logits)
-            second_logits = second_logits.permute(0, 2, 1)
-            return first_logits, second_logits
-        else:
-            return first_logits
-
-    def get_conditioning(self, speech_conditioning_input, cond_mel_lengths=None):
-        if self.condition_type == "perceiver":
-            if speech_conditioning_input.ndim == 4:
-                speech_conditioning_input = speech_conditioning_input.squeeze(1)
-            speech_conditioning_input = self.conditioning_encoder(speech_conditioning_input)  # (b, d, s)
-            conds = self.perceiver_encoder(speech_conditioning_input.transpose(1, 2))  # (b, 32, d)
-        elif self.condition_type == "conformer_perceiver":
-            speech_conditioning_input, mask = self.conditioning_encoder(speech_conditioning_input.transpose(1, 2),
-                                                                        cond_mel_lengths)  # (b, s, d), (b, 1, s)
-            if self.condition_type == "conformer_perceiver":
-                # conds_mask = torch.cat([torch.ones((mask.shape[0], self.cond_num), dtype=torch.bool), mask.squeeze(1)], dim=1)
-                conds_mask = self.cond_mask_pad(mask.squeeze(1))
-                conds = self.perceiver_encoder(speech_conditioning_input, conds_mask)  # (b, 32, d)
-        elif self.condition_type == "gst":
-            if speech_conditioning_input.ndim == 4:
-                speech_conditioning_input = speech_conditioning_input.squeeze(1)
-            conds = self.gst_encoder(speech_conditioning_input.transpose(1, 2))  # (b, 1, d)
-        else:
-            speech_conditioning_input = (
-                speech_conditioning_input.unsqueeze(1)
-                if len(speech_conditioning_input.shape) == 3
-                else speech_conditioning_input
-            )
-            conds = []
-            for j in range(speech_conditioning_input.shape[1]):
-                conds.append(self.conditioning_encoder(speech_conditioning_input[:, j]))
-            conds = torch.stack(conds, dim=1)
-            conds = conds.mean(dim=1)
-            conds = conds.unsqueeze(1)
-        return conds
-
-
-    def get_emo_conditioning(self, speech_conditioning_input, cond_mel_lengths=None):
-        speech_conditioning_input, mask = self.emo_conditioning_encoder(speech_conditioning_input.transpose(1, 2),
-                                                                        cond_mel_lengths)  # (b, s, d), (b, 1, s)
-        conds_mask = self.emo_cond_mask_pad(mask.squeeze(1))
-        conds = self.emo_perceiver_encoder(speech_conditioning_input, conds_mask)  # (b, 1, d)
-        return conds.squeeze(1)
-
-
-    def forward(self, speech_conditioning_latent, text_inputs, text_lengths, mel_codes, mel_codes_lengths, emo_speech_conditioning_latent,
-                cond_mel_lengths=None, emo_cond_mel_lengths=None, emo_vec=None, use_speed=None, do_spk_cond=False):
-        """
-        Forward pass that uses both text and voice in either text conditioning mode or voice conditioning mode
-
-        speech_conditioning_input: MEL float tensor, (b,1024)
-        text_inputs: long tensor, (b,t)
-        text_lengths: long tensor, (b,)
-        mel_inputs:  long tensor, (b,m)
-        wav_lengths: long tensor, (b,)
-
-        If return_attentions is specified, only logits are returned.
-        If return_latent is specified, loss & logits are not computed or returned. Only the predicted latents are returned.
-        """
-
-        if do_spk_cond:
-            if self.spk_cond_mode == "campplus":
-                speech_conditioning_latent = self.spk_emb_proj(speech_conditioning_latent)
-                if speech_conditioning_latent.ndim != 3:
-                    speech_conditioning_latent = speech_conditioning_latent.unsqueeze(1)
-            else:
-                speech_conditioning_latent = self.get_conditioning(speech_conditioning_latent.transpose(1,2), cond_mel_lengths)
-        else:
-            speech_conditioning_latent = speech_conditioning_latent
-
-        if emo_vec is None:
-            emo_vec_syn_ori = self.get_emo_conditioning(emo_speech_conditioning_latent.transpose(1,2), emo_cond_mel_lengths)
-            emo_vec_syn = self.emovec_layer(emo_vec_syn_ori)
-            emo_vec = self.emo_layer(emo_vec_syn)
-
-        text_inputs = self.set_text_padding(text_inputs, text_lengths)
-        text_inputs = F.pad(text_inputs, (0, 1), value=self.stop_text_token)
-
-        mel_codes = self.set_mel_padding(mel_codes, mel_codes_lengths)
-        mel_codes = F.pad(mel_codes, (0, 1), value=self.stop_mel_token)
-
-        if self.spk_cond_mode == "campplus":
-            conds = torch.cat((speech_conditioning_latent + emo_vec.unsqueeze(1), torch.zeros(speech_conditioning_latent.size(0), 2, speech_conditioning_latent.size(2)).to(speech_conditioning_latent.device)), 1)
-        else:
-            duration_emb = self.speed_emb(torch.zeros_like(use_speed))
-            duration_emb_half = self.speed_emb(torch.ones_like(use_speed))
-            conds = torch.cat((speech_conditioning_latent + emo_vec.unsqueeze(1), duration_emb_half.unsqueeze(1), duration_emb.unsqueeze(1)), 1)
-        text_inputs, text_targets = self.build_aligned_inputs_and_targets(text_inputs, self.start_text_token, self.stop_text_token)
-        text_emb = self.text_embedding(text_inputs) + self.text_pos_embedding(text_inputs)
-        mel_codes, mel_targets = self.build_aligned_inputs_and_targets(mel_codes, self.start_mel_token, self.stop_mel_token)
-
-        mel_emb = self.mel_embedding(mel_codes)
-        mel_emb = mel_emb + self.mel_pos_embedding(mel_codes)
-
-        text_logits, mel_logits = self.get_logits(conds, text_emb, self.text_head, mel_emb, self.mel_head, get_attns=False, return_latent=True)
-        return mel_logits[:, :-2]  # Despite the name, these are not logits. Strip off the two tokens added by this forward pass.
 
     def prepare_gpt_inputs(
         self,
@@ -688,7 +348,6 @@ class UnifiedVoice(nn.Module):
         text_inputs: torch.Tensor,
         langs: torch.Tensor = None,
     ):
-        
         """
         Prepare the inputs for the GPT2InferenceModel to generate.
         Args:
@@ -708,13 +367,15 @@ class UnifiedVoice(nn.Module):
         attention_masks = []
         target_len = conditional_latents.shape[1] + L + 2
         for i in range(b):
-            valid_mask = (text_inputs[i] != self.stop_text_token) & (text_inputs[i] != self.start_text_token)
+            # Only padding stops are removed. The start (id 0) is also "!" in this
+            # tokenizer: filtering it out deleted the exclamation marks from the text.
+            valid_mask = text_inputs[i] != self.stop_text_token
             text_input = text_inputs[i][valid_mask]
             text_input = F.pad(text_input, (1, 0), value=self.start_text_token)
             text_input = F.pad(text_input, (0, 1), value=self.stop_text_token)
             text_input_pos = torch.arange(0, text_input.size(-1), device=device)
             text_emb = self.text_embedding(text_input) + self.text_pos_embedding.emb(text_input_pos)
-            if langs is not None and self.spk_cond_mode == "campplus":
+            if langs is not None:
                 text_emb += self.lang_embedding(langs[i])
             # concatenate [conditional latents][text embeddings]
             conds_text_emb = [
@@ -750,83 +411,28 @@ class UnifiedVoice(nn.Module):
         fake_inputs[:, -1] = self.start_mel_token
         return fake_inputs, batched_mel_emb, attention_mask
 
-    def inference_speech(self, speech_condition, text_inputs, langs=None,
-                         emo_speech_condition=None, cond_lengths=None, emo_cond_lengths=None, emo_vec=None,
-                         use_speed=False, campplus_embedding=None, wav=None,
-                         input_tokens=None, num_return_sequences=1,
-                         max_generate_length=None, typical_sampling=False, typical_mass=.9, **hf_generate_kwargs):
+    def inference_speech(self, text_inputs, langs, emo_vec, campplus_embedding, max_generate_length=None,
+                         typical_sampling=False, typical_mass=.9, **hf_generate_kwargs):
         """
         Args:
-            speech_condition: (b, d, frames) or (d, frames)
-            text_inputs: (b, L)
-            cond_mel_lengths: lengths of the conditioning mel spectrograms in shape (b,) or (1,)
-            input_tokens: additional tokens for generation in shape (b, s) or (s,)
-            max_generate_length: limit the number of generated tokens
-            hf_generate_kwargs: kwargs for `GPT2InferenceModel.generate(**hf_generate_kwargs)`
+            text_inputs: (b, L) text ids.
+            langs: (b,) language id.
+            emo_vec: (b, dim) already-merged emotion vector (merge_emovec).
+            campplus_embedding: (b, 192) CAMPPlus speaker style.
+            max_generate_length: cap on the number of codes to generate.
+            hf_generate_kwargs: for `GPT2InferenceModel.generate()`. The accel engine uses
+                temperature, top_k, top_p and repetition_penalty, without beams.
+        Returns:
+            the generated codes, (b, n).
         """
-
-        if speech_condition.ndim == 2:
-            speech_condition = speech_condition.unsqueeze(0)
-        if emo_speech_condition is None:
-            emo_speech_condition = speech_condition
-        if cond_lengths is None:
-            cond_lengths = torch.tensor([speech_condition.shape[-1]], device=speech_condition.device)
-        if emo_cond_lengths is None:
-            emo_cond_lengths = torch.tensor([emo_speech_condition.shape[-1]], device=speech_condition.device) 
-
-        if self.spk_cond_mode == "campplus":
-            if campplus_embedding is not None:
-                speech_conditioning_latent = campplus_embedding
-            elif wav is not None:
-                if not hasattr(self, 'sv_pipeline'):
-                    from modelscope.pipelines import pipeline
-                    self.sv_pipeline = pipeline(
-                        task='speaker-verification',
-                        model='iic/speech_campplus_sv_zh-cn_16k-common',
-                        device='cpu'
-                    )
-                speech_conditioning_latent = torch.tensor(self.sv_pipeline([wav], output_emb=True)['embs']).to(text_inputs.device)
-            else:
-                raise ValueError("campplus mode requires campplus_embedding or wav")
-            speech_conditioning_latent = self.spk_emb_proj(speech_conditioning_latent)
-            speech_conditioning_latent = speech_conditioning_latent.unsqueeze(0) if speech_conditioning_latent.ndim != 3 else speech_conditioning_latent
-        else:
-            speech_conditioning_latent = self.get_conditioning(speech_condition.transpose(1,2), cond_lengths)
-
-        if emo_vec is None:
-            print('compute emo vec')
-            emo_vec = self.get_emo_conditioning(emo_speech_condition.transpose(1,2), emo_cond_lengths)
-            emo_vec = self.emovec_layer(emo_vec)
-            emo_vec = self.emo_layer(emo_vec)
-        else:
-            print('Use the specified emotion vector')
-
-        if self.spk_cond_mode == "campplus":
-            conds_latent = torch.cat((speech_conditioning_latent + emo_vec.unsqueeze(1), torch.zeros(speech_conditioning_latent.size(0), 2, speech_conditioning_latent.size(2)).to(speech_conditioning_latent.device)), 1)
-        else:
-            tmp = torch.zeros(text_inputs.size(0)).to(text_inputs.device)
-            duration_emb = self.speed_emb(torch.zeros_like(tmp).long())
-            duration_emb_half = self.speed_emb(torch.ones_like(tmp).long())
-            conds_latent = torch.cat((speech_conditioning_latent + emo_vec.unsqueeze(1), duration_emb_half.unsqueeze(1), duration_emb.unsqueeze(1)), 1)
+        speech_conditioning_latent = self.spk_emb_proj(campplus_embedding)
+        if speech_conditioning_latent.ndim != 3:
+            speech_conditioning_latent = speech_conditioning_latent.unsqueeze(0)
+        conds_latent = speech_conditioning_latent + emo_vec.unsqueeze(1)
+        conds_latent = torch.cat((conds_latent, conds_latent.new_zeros(conds_latent.size(0), 2, conds_latent.size(2))), 1)
         input_ids, inputs_embeds, attention_mask = self.prepare_gpt_inputs(conds_latent, text_inputs, langs)
         self.inference_model.store_mel_emb(inputs_embeds)
-        if input_tokens is None:
-            inputs = input_ids
-        else:
-            if input_tokens.ndim == 1:
-                input_tokens = input_tokens.unsqueeze(0)
-            assert num_return_sequences % input_tokens.shape[0] == 0, \
-                    "The num_return_sequences must be divisible by the batch number of input_tokens"
-            assert num_return_sequences % text_inputs.shape[0] == 0, \
-                    "The num_return_sequences must be divisible by the batch number of text_inputs"
-            b = num_return_sequences // input_ids.shape[0]
-            if b > 1:
-                input_ids = input_ids.repeat(b, 1)
-                attention_mask = attention_mask.repeat(b, 1)
-            input_tokens = input_tokens.repeat(num_return_sequences // input_tokens.shape[0], 1)
-            inputs = torch.cat([input_ids, input_tokens], dim=1)
-            attention_mask = F.pad(attention_mask, (0, input_tokens.shape[1]), value=1)
-        trunc_index = inputs.shape[1]
+        trunc_index = input_ids.shape[1]
         logits_processor = LogitsProcessorList()
         if typical_sampling:
             # employ custom typical sampling
@@ -834,32 +440,38 @@ class UnifiedVoice(nn.Module):
                 raise ValueError(f"`typical_mass` has to be a float > 0 and < 1, but is {typical_mass}")
             min_tokens_to_keep = 2 if hf_generate_kwargs.get("num_beams", 1) > 1 else 1
             logits_processor.append(TypicalLogitsWarper(mass=typical_mass, min_tokens_to_keep=min_tokens_to_keep))
-        max_length = (trunc_index + self.max_mel_tokens - 1) if max_generate_length is None else trunc_index + max_generate_length
-        
-        # Use accel engine if available (single sequence only)
-        if self.accel_engine is not None and num_return_sequences == 1:
-            output = self.accel_engine.generate(
-                inputs,  # fake input_ids (all 1s + start_mel_token)
-                max_new_tokens=max_length - trunc_index,
-                attention_mask=attention_mask,
-                temperature=hf_generate_kwargs.get('temperature', 1),
-                stop_tokens=[self.stop_mel_token],
-                tts_embeddings=inputs_embeds,  # [pad][cond][text] embeddings (87 tokens, NO start_mel_token)
-                tts_mel_embedding=self.inference_model.embeddings,  # mel_embedding layer
-                tts_text_pos_embedding=self.inference_model.text_pos_embedding,  # text_pos_embedding layer
-            )
+        max_length = trunc_index + (self.max_mel_tokens - 1 if max_generate_length is None else max_generate_length)
+
+        if self.accel_engine is not None:
+            with torch.cuda.device(input_ids.device):
+                output = self.accel_engine.generate(
+                    input_ids,  # fake input_ids (all 1s + start_mel_token)
+                    max_new_tokens=max_length - trunc_index,
+                    # do_sample=False is greedy, as in transformers
+                    temperature=hf_generate_kwargs.get('temperature', 1) if hf_generate_kwargs.get('do_sample', True) else 0,
+                    top_k=hf_generate_kwargs.get('top_k', 0),
+                    top_p=hf_generate_kwargs.get('top_p', 1.0),
+                    repetition_penalty=hf_generate_kwargs.get('repetition_penalty', 1.0),
+                    stop_tokens=[self.stop_mel_token],
+                    tts_embeddings=inputs_embeds,  # [pad][cond][text], without the start_mel_token
+                    tts_mel_embedding=self.inference_model.embeddings,
+                    tts_text_pos_embedding=self.inference_model.text_pos_embedding,
+                )
         else:
-            output = self.inference_model.generate(inputs, 
+            output = self.inference_model.generate(input_ids,
                                                 bos_token_id=self.start_mel_token, pad_token_id=self.stop_mel_token,
                                                 eos_token_id=self.stop_mel_token, attention_mask=attention_mask,
                                                 max_length=max_length, logits_processor=logits_processor,
-                                                num_return_sequences=num_return_sequences,
+                                                num_return_sequences=1,
                                                 **hf_generate_kwargs)
-        if isinstance(output, torch.Tensor):
-            return output[:, trunc_index:], speech_conditioning_latent
-        # GenerateOutput
-        output.sequences = output.sequences[:, trunc_index:]
-        return output, speech_conditioning_latent
+        return output[:, trunc_index:]
+
+    def get_emo_conditioning(self, speech_conditioning_input, cond_mel_lengths=None):
+        speech_conditioning_input, mask = self.emo_conditioning_encoder(speech_conditioning_input.transpose(1, 2),
+                                                                        cond_mel_lengths)  # (b, s, d), (b, 1, s)
+        conds_mask = self.emo_cond_mask_pad(mask.squeeze(1))
+        conds = self.emo_perceiver_encoder(speech_conditioning_input, conds_mask)  # (b, 1, d)
+        return conds.squeeze(1)
 
     def get_emovec(self, emo_speech_conditioning_latent, emo_cond_lengths):
         emo_vec_syn_ori = self.get_emo_conditioning(emo_speech_conditioning_latent.transpose(1,2), emo_cond_lengths)

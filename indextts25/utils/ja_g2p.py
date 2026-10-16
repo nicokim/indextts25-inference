@@ -100,25 +100,3 @@ class JapaneseG2PProcessor:
             self._process_segment(p) if p.strip() else p
             for p in parts
         )
-
-
-# ----------------------------------------------------------------------
-if __name__ == '__main__':
-    processor = JapaneseG2PProcessor(g2p_ratio=0.5)
-    test_text = 'ちょうど 探しに行こうかなって 思っていたんだ。'
-    test_text = '足が長く見えるように、真ん中のエンブレムのところまで、伸ばした感じで、メインの骨格を作りました。'
-    print('原文:', test_text)
-    tokens = processor.tokenize(test_text)
-    print('分词结果:')
-    for surface, reading in tokens:
-        print(f'  {surface!r:10s} → {reading!r}')
-    for _ in range(3):
-        print('增强:', processor.process_ja_text(test_text))
-#     processor = JapaneseG2PProcessor(g2p_ratio=0)
-    # f = open("./japan_label.list", 'w')
-    # for x in open("./japan.list", 'r').readlines():
-        # org = x.strip().split('|')[4]
-        # tar = processor.process_ja_text(org)
-        # f.write(f'{org},{tar}\n')
-#     f.close()
-

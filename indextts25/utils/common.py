@@ -1,153 +1,32 @@
-import os
-import random
-import re
+import math
+import wave
+from functools import lru_cache
 
 import torch
-import torchaudio
-
-MATPLOTLIB_FLAG = False
 
 # Full-scale value used everywhere we convert between normalized waveforms and
 # 16-bit PCM. 32767 rather than 32768 so that the positive peak cannot overflow.
 PCM16_MAX = 32767.0
 
 
-def _torchaudio_honors_wav_encoding_args():
-    """Whether ``torchaudio.save()`` still respects ``encoding``/``bits_per_sample``.
-
-    torchaudio < 2.9 derives the WAV subtype from the input dtype, so float32 input
-    silently produces a 32-bit float WAV. We pass the arguments there to keep the
-    16-bit PCM output IndexTTS has always written.
-
-    torchaudio >= 2.9 delegates encoding to TorchCodec, which ignores both arguments
-    and warns when they are supplied. Its WAV default is already 16-bit signed PCM,
-    so we omit them instead of spamming a warning on every save.
-
-    An unparseable version is treated as the newer path: omitting the arguments is
-    harmless there, whereas passing them to TorchCodec always warns.
-    """
-    raw = getattr(torchaudio, "__version__", "") or ""
-    parts = []
-    for chunk in raw.split("+")[0].split(".")[:2]:
-        if not chunk.isdigit():
-            return False
-        parts.append(int(chunk))
-    return len(parts) == 2 and tuple(parts) < (2, 9)
-
-
 def save_pcm_wav(path, wav, sampling_rate):
-    """Write a **PCM-scale** waveform to ``path`` as a 16-bit PCM WAV file.
-
-    ``wav`` holds values in ``[-32767, 32767]`` and may be either an integer tensor
-    or the float tensor produced by ``torch.clamp(PCM16_MAX * wav, ...)``. It is
-    normalized to ``[-1, 1]`` float32 here, because that is the only input range
-    ``torchaudio.save()`` interprets identically across versions:
-
-    * torchaudio <= 2.8 rescales integer input by dtype range when encoding.
-    * torchaudio >= 2.9 routes through TorchCodec's ``AudioEncoder``, whose
-      compatibility shim does a bare ``src.float()`` with no rescaling and then
-      treats the result as ``[-1, 1]`` audio. Feeding it PCM-scale samples clips
-      almost every frame to full scale -- no exception, no warning, just a
-      saturated file (see index-tts/index-tts#724).
-
-    Do not pass an already-normalized waveform; it would be attenuated by 32767.
-    """
-    # Se escribe con la stdlib en vez de torchaudio.save(): desde torchaudio 2.9 esa
-    # función enruta por TorchCodec, que es una dependencia binaria extra y además
-    # rompe si no está instalada. Un WAV PCM de 16 bits no justifica esa cadena.
-    import wave as _wave
-
+    """Writes `wav` (PCM scale, values in [-32767, 32767], int or float) as a 16-bit PCM
+    WAV. Uses the stdlib: torchaudio.save() routes through TorchCodec since 2.9."""
     wav = wav.detach().to(device="cpu", dtype=torch.float32)
     wav = wav.clamp(-PCM16_MAX, PCM16_MAX)
     if wav.ndim == 1:
         wav = wav.unsqueeze(0)
-    canales = wav.shape[0]
+    channels = wav.shape[0]
     pcm = wav.round().to(torch.int16).transpose(0, 1).contiguous().numpy()
-    with _wave.open(str(path), "wb") as f:
-        f.setnchannels(canales)
+    with wave.open(str(path), "wb") as f:
+        f.setnchannels(channels)
         f.setsampwidth(2)
         f.setframerate(int(sampling_rate))
         f.writeframes(pcm.tobytes())
 
 
-def load_audio(audiopath, sampling_rate):
-    audio, sr = torchaudio.load(audiopath)
-    # print(f"wave shape: {audio.shape}, sample_rate: {sr}")
-
-    if audio.size(0) > 1:  # mix to mono
-        audio = audio[0].unsqueeze(0)
-
-    if sr != sampling_rate:
-        try:
-            audio = torchaudio.functional.resample(audio, sr, sampling_rate)
-        except Exception as e:
-            print(f"Warning: {audiopath}, wave shape: {audio.shape}, sample_rate: {sr}")
-            return None
-    # clip audio invalid values
-    audio.clip_(-1, 1)
-    return audio
-
-
-def tokenize_by_CJK_char(line: str, do_upper_case=True) -> str:
-    """
-    Tokenize a line of text with CJK char.
-
-    Note: All return charaters will be upper case.
-
-    Example:
-      input = "你好世界是 hello world 的中文"
-      output = "你 好 世 界 是 HELLO WORLD 的 中 文"
-
-    Args:
-      line:
-        The input text.
-
-    Return:
-      A new string tokenize by CJK char.
-    """
-    # The CJK ranges is from https://github.com/alvations/nltk/blob/79eed6ddea0d0a2c212c1060b477fc268fec4d4b/nltk/tokenize/util.py
-    CJK_RANGE_PATTERN = (
-        r"([\u1100-\u11ff\u2e80-\ua4cf\ua840-\uD7AF\uF900-\uFAFF\uFE30-\uFE4F\uFF65-\uFFDC\U00020000-\U0002FFFF])"
-    )
-    chars = re.split(CJK_RANGE_PATTERN, line.strip())
-    return " ".join([w.strip().upper() if do_upper_case else w.strip() for w in chars if w.strip()])
-
-
-def de_tokenized_by_CJK_char(line: str, do_lower_case=False) -> str:
-    """
-    Example:
-      input = "你 好 世 界 是 HELLO WORLD 的 中 文"
-      output = "你好世界是 hello world 的中文"
-
-    do_lower_case:
-      input = "SEE YOU!"
-      output = "see you!"
-    """
-    # replace english words in the line with placeholders
-    english_word_pattern = re.compile(r"([A-Z]+(?:[\s'-][A-Z-]+)*)", re.IGNORECASE)
-    english_sents = english_word_pattern.findall(line)
-    for i, sent in enumerate(english_sents):
-        line = line.replace(sent, f"<sent_{i}>")
-
-    words = line.split()
-    # restore english sentences
-    sent_placeholder_pattern = re.compile(r"(<sent_(\d+)>)")
-    for i in range(len(words)):
-        all_matches = sent_placeholder_pattern.findall(words[i])
-        if len(all_matches) > 1:
-            # restore the english word
-            for h,j in all_matches:
-                placeholder_index = int(j)
-                words[i] = words[i].replace(h, english_sents[placeholder_index])
-                if do_lower_case:
-                    words[i] = words[i].lower()
-    return "".join(words)
-
-
 def make_pad_mask(lengths: torch.Tensor, max_len: int = 0) -> torch.Tensor:
     """Make mask tensor containing indices of padded part.
-
-    See description of make_non_pad_mask.
 
     Args:
         lengths (torch.Tensor): Batch of lengths (B,).
@@ -170,15 +49,71 @@ def make_pad_mask(lengths: torch.Tensor, max_len: int = 0) -> torch.Tensor:
     return mask
 
 
-def safe_log(x: torch.Tensor, clip_val: float = 1e-7) -> torch.Tensor:
-    """
-    Computes the element-wise logarithm of the input tensor with clipping to avoid near-zero values.
+# --- Subset of torchaudio (BSD-2-Clause, (c) 2017 Facebook Inc.) ----------------------
+# functional._get_sinc_resample_kernel/_apply_sinc_resample_kernel and compliance.kaldi.fbank,
+# specialized to the arguments inference uses. Same operations in the same order: the
+# result is bit-for-bit identical, without depending on torchaudio (in maintenance mode
+# since 2.9; 2.11 was its last release).
 
-    Args:
-        x (Tensor): Input tensor.
-        clip_val (float, optional): Minimum value to clip the input tensor. Defaults to 1e-7.
+@lru_cache(maxsize=8)
+def _sinc_kernel(orig: int, new: int, lowpass_filter_width: int = 6, rolloff: float = 0.99):
+    base = min(orig, new) * rolloff
+    width = math.ceil(lowpass_filter_width * orig / base)
+    idx = torch.arange(-width, width + orig, dtype=torch.float64, device="cpu")[None, None] / orig
+    t = torch.arange(0, -new, -1, device="cpu")[:, None, None] / new + idx
+    t *= base
+    t = t.clamp_(-lowpass_filter_width, lowpass_filter_width)
+    window = torch.cos(t * math.pi / lowpass_filter_width / 2) ** 2
+    t *= math.pi
+    kernels = torch.where(t == 0, torch.tensor(1.0).to(t), t.sin() / t)
+    kernels *= window * (base / orig)
+    return kernels.to(torch.float32), width
 
-    Returns:
-        Tensor: Element-wise logarithm of the input tensor with clipping applied.
-    """
-    return torch.log(torch.clip(x, min=clip_val))
+
+def resample(wav: torch.Tensor, orig_freq: int, new_freq: int) -> torch.Tensor:
+    """== torchaudio.transforms.Resample(orig_freq, new_freq)(wav) (sinc_interp_hann)."""
+    if orig_freq == new_freq:
+        return wav
+    g = math.gcd(int(orig_freq), int(new_freq))
+    orig, new = int(orig_freq) // g, int(new_freq) // g
+    kernel, width = _sinc_kernel(orig, new)
+    shape = wav.size()
+    wav = wav.view(-1, shape[-1])
+    n, length = wav.shape
+    wav = torch.nn.functional.pad(wav, (width, width + orig))
+    out = torch.nn.functional.conv1d(wav[:, None], kernel.to(wav.device), stride=orig)
+    out = out.transpose(1, 2).reshape(n, -1)
+    out = out[..., : torch.ceil(torch.as_tensor(new * length / orig)).long()]
+    return out.view(shape[:-1] + out.shape[-1:])
+
+
+def kaldi_fbank(wav: torch.Tensor, num_mel_bins: int = 80, sample_frequency: float = 16000.0) -> torch.Tensor:
+    """== torchaudio.compliance.kaldi.fbank(wav, num_mel_bins=..., dither=0,
+    sample_frequency=...) with all other arguments at their defaults (povey window,
+    25/10 ms, pre-emphasis 0.97, snip_edges)."""
+    device, dtype = wav.device, wav.dtype
+    x = wav[0]
+    shift = int(sample_frequency * 10.0 * 0.001)
+    size = int(sample_frequency * 25.0 * 0.001)
+    padded = 1 if size == 0 else 2 ** (size - 1).bit_length()
+    m = 1 + (x.size(0) - size) // shift
+    frames = x.as_strided((m, size), (shift * x.stride(0), x.stride(0)))
+    frames = frames - torch.mean(frames, dim=1).unsqueeze(1)
+    prev = torch.nn.functional.pad(frames.unsqueeze(0), (1, 0), mode="replicate").squeeze(0)
+    frames = frames - 0.97 * prev[:, :-1]
+    frames = frames * torch.hann_window(size, periodic=False, device=device, dtype=dtype).pow(0.85).unsqueeze(0)
+    frames = torch.nn.functional.pad(frames.unsqueeze(0), (0, padded - size), mode="constant", value=0).squeeze(0)
+    spectrum = torch.fft.rfft(frames).abs().pow(2.0)
+    # kaldi.get_mel_banks(num_mel_bins, padded, sample_frequency, 20.0, 0.0) without VTLN
+    mel = lambda f: 1127.0 * math.log(1.0 + f / 700.0)
+    lo, hi = mel(20.0), mel(0.5 * sample_frequency)
+    delta = (hi - lo) / (num_mel_bins + 1)
+    b = torch.arange(num_mel_bins, device="cpu").unsqueeze(1)
+    left, center, right = lo + b * delta, lo + (b + 1.0) * delta, lo + (b + 2.0) * delta
+    fft_mel = 1127.0 * (1.0 + (sample_frequency / padded) * torch.arange(padded / 2, device="cpu") / 700.0).log()
+    fft_mel = fft_mel.unsqueeze(0)
+    up, down = (fft_mel - left) / (center - left), (right - fft_mel) / (right - center)
+    banks = torch.max(torch.zeros(1, device="cpu"), torch.min(up, down)).to(device=device, dtype=dtype)
+    banks = torch.nn.functional.pad(banks, (0, 1), mode="constant", value=0)
+    eps = torch.tensor(torch.finfo(torch.float).eps).to(device=device, dtype=dtype)
+    return torch.max(torch.mm(spectrum, banks.T), eps).log()
