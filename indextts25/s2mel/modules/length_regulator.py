@@ -1,4 +1,3 @@
-from typing import Tuple
 
 import torch
 import torch.nn as nn
@@ -14,7 +13,7 @@ class InterpolateRegulator(nn.Module):
     A config for another variant won't load: the checkpoint has keys that don't exist here.
     """
 
-    def __init__(self, channels: int, sampling_ratios: Tuple, in_channels: int,
+    def __init__(self, channels: int, sampling_ratios: tuple, in_channels: int,
                  codebook_size: int = 1024, groups: int = 1):
         super().__init__()
         model = []

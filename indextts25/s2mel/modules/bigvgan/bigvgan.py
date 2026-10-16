@@ -19,9 +19,9 @@ from torch.nn import Conv1d, ConvTranspose1d
 from indextts25.utils.checkpoint import fold_weight_norm
 
 from . import activations
-from .utils import get_padding
 from .alias_free_activation.torch.act import Activation1d
 from .env import AttrDict
+from .utils import get_padding
 
 
 def load_hparams_from_json(path) -> AttrDict:

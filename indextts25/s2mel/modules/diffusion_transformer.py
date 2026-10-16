@@ -1,10 +1,11 @@
-import torch
-from torch import nn
 import math
 
+import torch
+from torch import nn
+
+from indextts25.s2mel.modules.commons import sequence_mask
 from indextts25.s2mel.modules.gpt_fast.model import ModelArgs, Transformer
 from indextts25.s2mel.modules.wavenet import WN
-from indextts25.s2mel.modules.commons import sequence_mask
 
 
 def modulate(x, shift, scale):
@@ -83,7 +84,7 @@ class DiT(torch.nn.Module):
         self,
         args
     ):
-        super(DiT, self).__init__()
+        super().__init__()
         self.time_as_token = args.DiT.time_as_token if hasattr(args.DiT, 'time_as_token') else False
         self.style_as_token = args.DiT.style_as_token if hasattr(args.DiT, 'style_as_token') else False
         self.uvit_skip_connection = args.DiT.uvit_skip_connection if hasattr(args.DiT, 'uvit_skip_connection') else False
@@ -160,7 +161,7 @@ class DiT(torch.nn.Module):
 
     def setup_caches(self, max_batch_size, max_seq_length):
         self.transformer.setup_caches(max_batch_size, max_seq_length)
-        
+
     def forward(self, x, prompt_x, x_lens, t, style, cond, mask_content=False):
         """
             x (torch.Tensor): random noise
@@ -168,13 +169,13 @@ class DiT(torch.nn.Module):
                 shape: (batch_size, 80, 795+1068)
             x_lens (torch.Tensor): mel frames output
                 shape: (batch_size, mel_timesteps)
-            t (torch.Tensor): radshape: 
-                shape: (batch_size)    
+            t (torch.Tensor): radshape:
+                shape: (batch_size)
             style (torch.Tensor): reference global style
                 shape: (batch_size, 192)
             cond (torch.Tensor): semantic info of reference audio and altered audio
                 shape: (batch_size, mel_timesteps(795+1069), 512)
-        
+
         """
         class_dropout = False
         if self.training and torch.rand(1) < self.class_dropout_prob:
@@ -194,23 +195,23 @@ class DiT(torch.nn.Module):
         prompt_x = prompt_x.transpose(1, 2) # [2,1863,80]
 
         x_in = torch.cat([x, prompt_x, cond], dim=-1) # 80+80+512=672 [2, 1863, 672]
-        
+
         if self.transformer_style_condition and not self.style_as_token: # True and True
             x_in = torch.cat([x_in, style[:, None, :].repeat(1, T, 1)], dim=-1) #[2, 1863, 864]
-            
+
         if class_dropout: #False
             x_in[..., self.in_channels:] = x_in[..., self.in_channels:] * 0 # zero every dim after the first 80
-            
+
         x_in = self.cond_x_merge_linear(x_in)  # (N, T, D) [2, 1863, 512]
-        
+
         if self.style_as_token: # False
             style = self.style_in(style)
             style = torch.zeros_like(style) if class_dropout else style
             x_in = torch.cat([style.unsqueeze(1), x_in], dim=1)
-            
+
         if self.time_as_token: # False
             x_in = torch.cat([t1.unsqueeze(1), x_in], dim=1)
-            
+
         x_mask = sequence_mask(x_lens + self.style_as_token + self.time_as_token, max_length=x_in.size(1)).to(x.device).unsqueeze(1) #torch.Size([1, 1, 1863])True
         input_pos = self.input_pos[:x_in.size(1)]  # (T,) range(0, 1863)
         # Inference always passes x_lens = T, so the attention mask is all True and is
@@ -218,7 +219,7 @@ class DiT(torch.nn.Module):
         x_res = self.transformer(x_in, t1.unsqueeze(1), input_pos) # [2, 1863, 512]
         x_res = x_res[:, 1:] if self.time_as_token else x_res
         x_res = x_res[:, 1:] if self.style_as_token else x_res
-        
+
         if self.long_skip_connection: #True
             x_res = self.skip_linear(torch.cat([x_res, x], dim=-1))
         if self.final_layer_type == 'wavenet':

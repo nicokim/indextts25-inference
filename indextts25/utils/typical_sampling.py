@@ -1,6 +1,7 @@
 import torch
 from transformers import TypicalLogitsWarper as BaseTypicalLogitsWarper
 
+
 class TypicalLogitsWarper(BaseTypicalLogitsWarper):
     def __init__(self, mass: float = 0.9, filter_value: float = -float("Inf"), min_tokens_to_keep: int = 1):
         super().__init__(mass=mass, filter_value=filter_value, min_tokens_to_keep=min_tokens_to_keep)

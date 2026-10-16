@@ -16,7 +16,6 @@
 
 """Subsampling layer definition."""
 
-from typing import Tuple, Union
 
 import torch
 
@@ -27,7 +26,7 @@ class BaseSubsampling(torch.nn.Module):
         self.right_context = 0
         self.subsampling_rate = 1
 
-    def position_encoding(self, offset: Union[int, torch.Tensor],
+    def position_encoding(self, offset: int | torch.Tensor,
                           size: int) -> torch.Tensor:
         return self.pos_enc.position_encoding(offset, size)
 
@@ -62,8 +61,8 @@ class Conv2dSubsampling2(BaseSubsampling):
             self,
             x: torch.Tensor,
             x_mask: torch.Tensor,
-            offset: Union[int, torch.Tensor] = 0
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+            offset: int | torch.Tensor = 0
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Subsample x.
 
         Args:

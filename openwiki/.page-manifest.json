@@ -2,81 +2,81 @@
   "schemaVersion": 1,
   "pages": {
     "/openwiki/api/public-api.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:e2161f31ad952e9c10045bec651cd21a91c58bc62a43ac946e55a9d38aa26716",
+      "pageVersion": "sha256:851ad79f96aba5d171d486f89e5b7f150303610de2aa9eb68eef2eef7eebcb37",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/architecture/overview.md": {
-      "pageVersion": "sha256:b20371822a6338f3979e76b27942cc55ecacc5f8151c534726abc2707960f2bb",
+      "pageVersion": "sha256:ceaa98a4bcd96311d4a92c2f11d41d36531317d3e6ad20c27a2595a0a49685c7",
       "completedBy": "claude-code",
-      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
-      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
-      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/operations/dependencies-and-compatibility.md": {
-      "pageVersion": "sha256:a6f13cef073679669b69be89a1d82140d4e9b1804ef33534b2d628892c8c98fb",
+      "pageVersion": "sha256:e1541f14353dc68d861135c61853ad4dcdcac12055039d621556428d19f8df01",
       "completedBy": "claude-code",
-      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
-      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
-      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/operations/model-loading-and-caches.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:ae26bebeb7e6ba2a6f5959fef704f23a9b9c5f48fec2deebb534f61349983e23",
+      "pageVersion": "sha256:6e7aeef4d8f59292b2086790516943d29e7f4e99ff3984be082fb63593dc4c6f",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/pipeline/acoustic-decoding.md": {
-      "pageVersion": "sha256:8dee76b1df0ebc24be1848178d81808bfac93f91a0aba3edab59241ed81ef4d1",
+      "pageVersion": "sha256:6e72cff2ad485d993c403be5495d5f7c0e3a7c27f0b9d72abdcee6bba8fd44c5",
       "completedBy": "claude-code",
-      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
-      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
-      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/pipeline/flash-engine.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:6049dc5d1211a44146900b933d278490cf23149f95a2e49cd364f163475410e1",
+      "pageVersion": "sha256:7935af4d259bfa3d3ddede3f474ecb600a5feb85590082086e68667cf80c80c0",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/pipeline/gpt-generation.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:6efcca59032af95137b492ef86381f716a41c96fb661152c29922ac5ce649244",
+      "pageVersion": "sha256:0f1643d07ccdd66592aa1936d051f7497d7160e238d990189540346a14add1c9",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/pipeline/text-frontend.md": {
-      "pageVersion": "sha256:095803bf4488489d55142dd55aa74c5f4f68dee831fc2319c8f844495eda40e2",
+      "pageVersion": "sha256:e2ca074aa413ee46351ddfa16c5da60bea00abee2c8f117d1f96124ebec2599d",
       "completedBy": "claude-code",
-      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
-      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
-      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/pipeline/voice-and-emotion-conditioning.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:064bdc65173b566dea5241eb40734dbfa00bc7c2df588654877bee1d83e2cea9",
+      "pageVersion": "sha256:ce7271f8b8a446f6afd5c9111bece65dedf40e0d3511e329011b09f5e7e26a8e",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/quickstart.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:dd07cc302160db46d35703392e205c41f57edd6dee0f4fabc2ec03050ca41b3e",
+      "pageVersion": "sha256:015caf573192abd77c4021cc7954b90ea747a2535b3d26265cac50eb6282385b",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     },
     "/openwiki/testing/testing-and-benchmarks.md": {
-      "gitHead": "769f87198723a83babfb081a345471433b05c227",
-      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
-      "pageVersion": "sha256:3f5868f8efd1b162e7b76ffd30115beb258ad852cc4d62fb9ccfd46481a2f522",
+      "pageVersion": "sha256:c5e61ae1a0c4b76e2098c29ddce84ea77fa9952c8f6e2bbd30c9d2da231f631d",
       "completedBy": "claude-code",
-      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+      "completedRunId": "abd8bcfb-fb13-41cb-a662-aaf7539584df",
+      "gitHead": "2228ce2fedee6531cf0b3d3992be5bc383b90ff5",
+      "sourceFingerprint": "sha256:18d562185a7beaf480ee7ec9633346d0c7dd764f70f429c3c19142b88484d312"
     }
   }
 }

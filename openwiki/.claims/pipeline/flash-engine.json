@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6049dc5d1211a44146900b933d278490cf23149f95a2e49cd364f163475410e1",
+  "pageVersion": "sha256:7935af4d259bfa3d3ddede3f474ecb600a5feb85590082086e68667cf80c80c0",
   "claims": [
     {
       "id": "claim_60f2dc2cc96f47b9bf2c4ea51b6738e7",
@@ -41,7 +41,7 @@
       "statement": "KVCacheManager allocates a single fp16 tensor [2, layers, blocks, block_size, heads, head_dim], hands out blocks from a free list as sequences grow, and has no prefix cache because prompts are embeddings behind placeholder ids.",
       "evidence": [
         {
-          "resource": "repo://indextts25/accel/kv_manager.py#L33-L63",
+          "resource": "repo://indextts25/accel/kv_manager.py#L32-L62",
           "version": "repo-lines-v1:sha256:c64a7a26f28b306e81971ae6e446dba20d437ca8f10455834c0e856eb3eff3cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNzU3NTljMWMzY2E1MDljMGViMmQyY2I3ZTcwZjVhYjZkMmE3OTVkNjBhMmMwODYwMmUzNjM1YmYxMDcxMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3NDg0MmRjYjIzYzBlMmY0YjlhNzI2YWFhYzVhMTg4Yjg5NmVhMzc5ZmNmN2EyYmQzY2E0MGNkOWE1ZjcwNzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjNjFhZDQ4ZTVkZDgyMDlmYzMwOGY1M2NlYzU5NmY3M2Y3OWJjZTM3NWNkZDhjYWZiZTIyZGU5Y2MzNmMxZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -155,6 +155,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T06:43:45.974Z"
+    "at": "2026-10-16T07:18:19.761Z"
   }
 }

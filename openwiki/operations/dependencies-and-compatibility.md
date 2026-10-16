@@ -20,10 +20,10 @@ sources:
     resource: repo://pyproject.toml
   - id: openwiki-source-310a7347cd31a1985b43c333
     resource: repo://tests/test_regressions.py
-generated: { by: "claude-code", at: "2026-10-16T06:02:56.648Z" }
+generated: { by: "claude-code", at: "2026-10-16T07:18:19.761Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T07:02:23.388Z
+    at: 2026-10-16T07:18:19.761Z
 ---
 
 # Dependencies, extras and version compatibility
@@ -61,7 +61,7 @@ with a logged warning, so digits reach the tokenizer raw (see
 | `zh` | `WeTextProcessing>=1.2` on Linux, `wetext>=0.1` elsewhere | WeTextProcessing normalization for Chinese and English |
 | `ja` | `fugashi>=1.2`, `unidic-lite>=1.0` | Japanese word segmentation; Japanese input fails without it (or a system MeCab) |
 
-The `test` dependency group adds `pytest`.
+The `test` dependency group adds `pytest` and `pytest-cov`, and the `dev` group adds `ruff`.
 
 flash-attn is published on PyPI only as a source distribution; prebuilt wheels live on its
 GitHub releases for specific torch/CUDA/Python combinations (CUDA 13 wheels exist only for

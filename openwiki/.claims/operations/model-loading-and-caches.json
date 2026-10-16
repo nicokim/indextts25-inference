@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ae26bebeb7e6ba2a6f5959fef704f23a9b9c5f48fec2deebb534f61349983e23",
+  "pageVersion": "sha256:6e7aeef4d8f59292b2086790516943d29e7f4e99ff3984be082fb63593dc4c6f",
   "claims": [
     {
       "id": "claim_be58bca708de4b6b9dd1d9ffe08a8db3",
@@ -111,7 +111,7 @@
       "statement": "Built NeMo normalizers are pickled to a per-language file under the XDG cache whose name includes the NeMo and pynini versions, rebuilt when the pickle cannot be loaded, written atomically via a temporary file and os.replace, and a failed write only logs a warning.",
       "evidence": [
         {
-          "resource": "repo://indextts25/utils/nemo_tn.py#L39-L68",
+          "resource": "repo://indextts25/utils/nemo_tn.py#L38-L67",
           "version": "repo-lines-v1:sha256:9cfb6865c96185fe1a357abdbf8045e7b6ab59df37781a4ebf516f9d7034501f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMWE1OTA5M2ZmZmJkN2FlNjI5OGQzMDc1YTkxYTgzNzA3NWMxOTQzN2NkMTUzYTU4YThkMmJlNmM1YTA1ZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MTZiYjc2YTk1ODFhNDVmY2I5Zjc3NTNjMzMyN2U5YmE1NTRiMTI5ZjhiNTcwNGEyODYyOWRhYzY0MjhiNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1YzFjNDYyZTJhMzlkNzQ3NTlmNWUxYjEyNmY3NjgzYTJiNzMwMTE4ZTE4ZjUxMjJiMDhjZWRlZWI2NTBlMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhYzM5ZDU1YjFjNDA5YWVlN2MzMThhZThmZWU0ZjEyOWVlODM1OWViMjczNjU3NWJlYmI4MDcxN2E1Mzk2OWQifQ"
         }
       ]
@@ -121,7 +121,7 @@
       "statement": "The Chinese WeTextProcessing grammar is compiled with interjections and erhua preserved into ~/.cache/indextts25/wetext_tagger (or the XDG cache), while the English normalizer uses WeTextProcessing's default location.",
       "evidence": [
         {
-          "resource": "repo://indextts25/utils/front.py#L126-L147",
+          "resource": "repo://indextts25/utils/front.py#L125-L146",
           "version": "repo-lines-v1:sha256:a21bb1d45b99fa04d4f737c959cdbdbbf760f51d17e2121429d01abd8a8111b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhODlhMjMyOWRjZTM0NzBkMDVkMjU1MzliNzNkYmFjMmMxZmM0YWVmNzA3NjRiMDJhMGZhZTUxYTZlZTIzZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkN2I3OGE0ZjUxNzc1MjQ2OGRiNmU5ODZhOTE3ZDQ4MTYxY2JhMTcxY2NjYWVmMzE3MGM1MTJmZmRmZmEwMjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5NDRiODVlM2FkOGE2N2VmYjNiYmFhZjk1ZWVlYjYxNWY1ZjQxZDgwODA3MDg5NjQyMWU0Y2RhYWI4MTVlZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjYjAzOGQ0MTVhNjAzZDUwNTllODhkOTUxNWE4MWIzM2I0YjBhNjhhZWM3ODA0NGYzYWU2NDMyMWFjNTFiMGEifQ"
         }
       ]
@@ -129,6 +129,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T06:43:45.974Z"
+    "at": "2026-10-16T07:18:19.761Z"
   }
 }

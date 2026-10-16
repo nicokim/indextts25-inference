@@ -1,5 +1,8 @@
 # indextts25-inference
 
+[![CI](https://github.com/nicokim/indextts25-inference/actions/workflows/ci.yml/badge.svg)](https://github.com/nicokim/indextts25-inference/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/indextts25-inference)](https://pypi.org/project/indextts25-inference/)
+
 Inference library for **IndexTTS-2.5**: zero-shot text-to-speech (voice cloning from one
 reference clip) with emotion and speed control, and streaming that yields every audio chunk
 together with the text that produced it.

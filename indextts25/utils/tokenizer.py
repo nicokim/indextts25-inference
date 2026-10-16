@@ -3,7 +3,7 @@
 fixes the ids of the special tokens: do not reorder."""
 import base64
 import os
-from functools import lru_cache
+from functools import cache
 
 import tiktoken
 
@@ -24,7 +24,7 @@ LANGUAGES = {
     "ar": "arabic",
     "sv": "swedish",
     "it": "italian",
-    "id": "indonesian", 
+    "id": "indonesian",
     "hi": "hindi",
     "fi": "finnish",
     "vi": "vietnamese",
@@ -159,10 +159,10 @@ def lang_to_token(lang):
     return LANGUAGE_DICT[lang]
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_encoding(name: str = "gpt2", num_languages: int = 99, model_dir: str = "checkpoints"):
     vocab_path = os.path.join(model_dir, f'{name}.tiktoken')
-    
+
     ranks = {
         base64.b64decode(token): int(rank)
         for token, rank in (line.split() for line in open(vocab_path) if line)
@@ -190,7 +190,7 @@ def get_encoding(name: str = "gpt2", num_languages: int = 99, model_dir: str = "
     for token in specials:
         special_tokens[token] = n_vocab
         n_vocab += 1
-    
+
     return tiktoken.Encoding(
         name=os.path.basename(vocab_path),
         explicit_n_vocab=n_vocab,

@@ -277,8 +277,9 @@ class IndexTTS2:
 
     def _prepare_text(self, text, lang, text_normalization=True, verbose=False):
         lang = lang.lower()
-        sub = lambda t, keep='': self.text_process.clean_pattern.sub(
-            lambda x: x.group() if x.group() in keep else self.text_process.char_rep_map[x.group()], t)
+        def sub(t, keep=''):
+            return self.text_process.clean_pattern.sub(
+                lambda x: x.group() if x.group() in keep else self.text_process.char_rep_map[x.group()], t)
         # char_rep_map turns ":" into ",". Applied BEFORE normalizing, "14:30" was read as
         # "catorce coma treinta" (FIX over upstream). For es/ja it runs after; for zh/en the
         # other symbols ('~', '—', line breaks, quotes) do have to go before the
