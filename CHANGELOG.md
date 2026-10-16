@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/nicokim/indextts25-inference/compare/v0.1.1...v0.2.0) (2026-10-16)
+
+
+### Features
+
+* support Python 3.14 and 3.15 ([#4](https://github.com/nicokim/indextts25-inference/issues/4)) ([bc46cb7](https://github.com/nicokim/indextts25-inference/commit/bc46cb7ef201e52943d4106cb69653f7409daeb3))
+
 ## [0.1.1](https://github.com/nicokim/indextts25-inference/compare/v0.1.0...v0.1.1) (2026-10-16)
 
 
