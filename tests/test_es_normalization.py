@@ -113,6 +113,30 @@ def test_spell(n, full, masc, fem):
         ("Este año 1 sola vez fui al médico.", "Este año una sola vez fui al médico."),
         ("Tengo 1 solo.", "Tengo uno solo."),
         ("Hice 1 kill.", "Hice una kill."),
+        ("Tengo 21 naves.", "Tengo veintiuna naves."),
+        ("Hay 200 especies.", "Hay doscientas especies."),
+        ("Mandame 1 señal.", "Mandame una señal."),
+        ("Es 1 de las mejores series.", "Es una de las mejores series."),
+        ("Tengo 21 primos.", "Tengo veintiún primos."),
+        # only 1 counts a singular, so a year or a number before a verb keeps its full form
+        ("En 2021 empecé a streamear.", "En dos mil veintiuno empecé a streamear."),
+        ("El 21 de junio de 2021 empecé.", "El veintiuno de junio de dos mil veintiuno empecé."),
+        ("En 2001 nací yo.", "En dos mil uno nací yo."),
+        ("Para 2031 quiero ser famosa.", "Para dos mil treinta y uno quiero ser famosa."),
+        ("En el 2021 arranqué.", "En el dos mil veintiuno arranqué."),
+        ("En 1991 ganamos la Copa.", "En mil novecientos noventa y uno ganamos la Copa."),
+        ("En 2020 1500 personas se contagiaron.", "En dos mil veinte mil quinientas personas se contagiaron."),
+        ("El 21 juega de 9.", "El veintiuno juega de nueve."),
+        ("Level 21 desbloqueado.", "Level veintiuno desbloqueado."),
+        ("El 1 ataja todo.", "El uno ataja todo."),
+        ("Con 1 alcanza.", "Con uno alcanza."),
+        ("El tema 1 suena bien.", "El tema uno suena bien."),
+        # thousands grouped with a space
+        ("Hay 10 000 personas.", "Hay diez mil personas."),
+        ("Tengo 1 000 seguidores.", "Tengo mil seguidores."),
+        ("Somos 3 500 personas.", "Somos tres mil quinientas personas."),
+        ("Hay 10\u202f000 personas.", "Hay diez mil personas."),  # narrow no-break space
+        ("Llamá al 11 4567 8901.", "Llamá al once cuatro cinco seis siete ocho nueve cero uno."),
     ],
 )
 def test_integers(text, expected):
@@ -177,6 +201,16 @@ def test_eight_hundred(text, expected):
         ("Me donaron €5,00.", "Me donaron cinco euros."),
         ("Pagué $ 1.500.- por eso.", "Pagué mil quinientos pesos por eso."),
         ("Cuesta $1.500/mes.", "Cuesta mil quinientos pesos por mes."),
+        ("Pagué US $500 de envío.", "Pagué quinientos dólares de envío."),
+        ("Hay que pagar $2 mil millones.", "Hay que pagar dos mil millones de pesos."),
+        ("Son $1.500 ARS.", "Son mil quinientos pesos."),
+        ("Son $25 000.", "Son veinticinco mil pesos."),
+        ("Cuesta $500-600.", "Cuesta quinientos a seiscientos pesos."),
+        ("Sale entre $500-$1.000.", "Sale entre quinientos a mil pesos."),
+        ("Cuesta US$10-20.", "Cuesta diez a veinte dólares."),
+        ("Cuesta $1-2 millones.", "Cuesta uno a dos millones de pesos."),
+        ("Salió R$ 50 en Brasil.", "Salió cincuenta reales en Brasil."),
+        ("La entrada sale $3500 + IVA.", "La entrada sale tres mil quinientos pesos más IVA."),
     ],
 )
 def test_money(text, expected):
@@ -215,6 +249,22 @@ def test_money(text, expected):
         ("Tomé 1.75 litros de agua.", "Tomé uno punto setenta y cinco litros de agua."),
         ("Desde 1.50 hasta 1.90 de altura.", "Desde uno cincuenta hasta uno noventa de altura."),
         ("La versión 2.1.3 rompió todo.", "La versión dos punto uno punto tres rompió todo."),
+        # "H.MM" is a time, unless a unit or a measure follows or a version or a grade precedes
+        ("Te espero 21.30 en la plaza.", "Te espero veintiuna y media en la plaza."),
+        ("Lunes 20.00 hay stream.", "Lunes veinte hay stream."),
+        ("Abrimos de 10.00 a 13.00.", "Abrimos de diez a trece."),
+        ("Atiendo de 9.30 a 18.30 hs.", "Atiendo de nueve y media a dieciocho y media."),
+        ("Juega Boca, domingo 19.15.", "Juega Boca, domingo diecinueve y cuarto."),
+        ("La clase es 18.30.", "La clase es dieciocho y media."),
+        ("21.30 arrancamos.", "veintiuna y media arrancamos."),
+        ("Hoy 21.31 en el canal.", "Hoy veintiuna y treinta y uno en el canal."),
+        ("Python 3.11 es rápido.", "Python tres punto once es rápido."),
+        ("Corrió en 9.58 segundos.", "Corrió en nueve punto cincuenta y ocho segundos."),
+        ("Subió 3.15 por ciento.", "Subió tres punto quince por ciento."),
+        ("Tengo un promedio de 7.50.", "Tengo un promedio de siete punto cincuenta."),
+        ("Es 1.25 veces más.", "Es uno punto veinticinco veces más."),
+        ("El parche 13.24 salió.", "El parche trece punto veinticuatro salió."),
+        ("Tardé 3.45 horas.", "Tardé tres y cuarenta y cinco horas."),
     ],
 )
 def test_heights_and_decimals(text, expected):
@@ -257,6 +307,16 @@ def test_heights_and_decimals(text, expected):
         ("Le doy un 15/10.", "Le doy un quince de diez."),
         ("Es 50/50.", "Es cincuenta y cincuenta."),
         ("Llamá al 911.", "Llamá al nueve once."),
+        # a range before a unit or a symbol keeps it
+        ("Corrí 10-15 km.", "Corrí diez a quince kilómetros."),
+        ("Bajó 2-3% el dólar.", "Bajó dos a tres por ciento el dólar."),
+        ("Duermo 6-8 h.", "Duermo seis a ocho horas."),
+        ("Hace 20-25° afuera.", "Hace veinte a veinticinco grados afuera."),
+        ("Entre 10-20 GB.", "Entre diez a veinte gigas."),
+        ("Vence 3/10.", "Vence tres de octubre."),
+        ("Hoy es 1/5.", "Hoy es primero de mayo."),
+        ("Feliz 1/1, chat.", "Feliz primero de enero, chat."),
+        ("Contenido para 18+.", "Contenido para dieciocho más."),
         # still NeMo's, untouched
         ("Llamá al 4567-8901.", "Llamá al cuatro cinco seis siete ocho nueve cero uno."),
         ("Nos vemos el 12/03/2026.", "Nos vemos el doce de marzo de dos mil veintiséis."),
@@ -323,6 +383,22 @@ def test_scores_ranges_and_signs(text, expected):
         ("Hace 30° de calor.", "Hace treinta grados de calor."),
         ("Hace 30 °C.", "Hace treinta grados."),
         ("Hace -5° afuera.", "Hace menos cinco grados afuera."),
+        ("Mañana -2° de mínima.", "Mañana menos dos grados de mínima."),
+        ("Hacé un giro de 180°.", "Hacé un giro de ciento ochenta grados."),
+        ("Un ángulo de 90°.", "Un ángulo de noventa grados."),
+        ("Mínima de 3° y máxima de 15°.", "Mínima de tres grados y máxima de quince grados."),
+        ("Estamos a 5° nomás.", "Estamos a cinco grados nomás."),
+        ("Hoy 35°.", "Hoy treinta y cinco grados."),
+        ("Quedó 30° en el ranking.", "Quedó trigésimo en el ranking."),
+        ("Compré 1/2 kg de helado.", "Compré medio kilogramo de helado."),
+        ("Comprá 1/4 kg de helado.", "Comprá un cuarto de kilogramo de helado."),
+        ("Salgo a las 6 p. m.", "Salgo a las seis de la tarde."),
+        ("Me levanto a las 7 a. m. todos los días.", "Me levanto a las siete de la mañana todos los días."),
+        ("Lo terminé en 1:23:45.", "Lo terminé en una hora veintitrés minutos y cuarenta y cinco segundos."),
+        ("Una Coca de 2L.", "Una Coca de dos litros."),
+        ("Es un 4L.", "Es un cuatro L."),
+        ("Una botella de 2,25 L.", "Una botella de dos coma veinticinco litros."),
+        ('Un monitor de 27".', "Un monitor de veintisiete pulgadas."),
     ],
 )
 def test_units(text, expected):
@@ -367,6 +443,11 @@ def test_units(text, expected):
         ("Comprate una RTX 4090.", "Comprate una RTX cuarenta noventa."),
         ("Ganaste x2.", "Ganaste por dos."),
         ("Salu2.", "Saludos."),
+        ("Hola a tod@s.", "Hola a todos."),
+        ("Kimox#1234 es mi Discord.", "Kimox mil doscientos treinta y cuatro es mi Discord."),
+        ("Juego al NBA 2K.", "Juego al NBA dos K."),
+        ("Te quiero x100pre.", "Te quiero por siempre."),
+        ("Quedé 1st.", "Quedé primero."),
     ],
 )
 def test_glued_digits(text, expected):
@@ -389,6 +470,14 @@ def test_glued_digits(text, expected):
         ("El 1° puesto.", "El primer puesto."),
         ("Vivo en el 3º piso.", "Vivo en el tercer piso."),
         ("La 2da vez.", "La segunda vez."),
+        # º/° agree with the noun; a flat letter is no noun
+        ("Es la 1° vez que vengo.", "Es la primera vez que vengo."),
+        ("La 2º temporada está buena.", "La segunda temporada está buena."),
+        ("Mi 1° partida del día.", "Mi primera partida del día."),
+        ("Es la 1° edición del torneo.", "Es la primera edición del torneo."),
+        ("Vivo en el 1° B.", "Vivo en el primero B."),
+        ("Vivo en el 4º C.", "Vivo en el cuarto C."),
+        ("Las 1° 10 personas.", "Las primeras diez personas."),
     ],
 )
 def test_ordinals(text, expected):
@@ -455,15 +544,40 @@ def test_ordinals(text, expected):
         ("Tardo aprox. 10 minutos.", "Tardo aproximadamente diez minutos."),
         ("Depto. 4B.", "Departamento cuatro B."),
         ("Lo hice c/ mi hermano.", "Lo hice con mi hermano."),
+        ("Gracias Juan M por el apoyo.", "Gracias Juan M por el apoyo."),
+        ("Me llamo Luis C.", "Me llamo Luis C."),
+        ("Subí de D a C en ranked.", "Subí de D a C en ranked."),
+        ("Del I al XII.", "Del uno al doce."),
+        ("Martín V fue papa.", "Martín quinto fue papa."),
+        ("Manuel I de Portugal.", "Manuel primero de Portugal."),
+        ("Catalina II de Rusia.", "Catalina segunda de Rusia."),
+        ("El Concilio Vaticano II.", "El Concilio Vaticano segundo."),
+        ("Durante la II Guerra Mundial.", "Durante la segunda Guerra Mundial."),
+        ("Leé el art. 14 de la Constitución.", "Leé el artículo catorce de la Constitución."),
+        ("Ep. 21 ya disponible.", "Episodio veintiuno ya disponible."),
+        ("Tel. 4567-8901.", "Teléfono cuatro cinco seis siete ocho nueve cero uno."),
+        ("Lo hizo el Ing. Ramírez.", "Lo hizo el Ingeniero Ramírez."),
+        ("Es el No. 1 del mundo.", "Es el número uno del mundo."),
     ],
 )
 def test_capitals(text, expected):
     check(text, expected)
 
 
-def test_pronunciation_annotations_pass_through():
-    # NeMo read the M of the annotation as 1000 and its S as "sur".
-    check("Dale <Kimox|K IY1 M AA0 K S> 2.", "Dale <Kimox|K IY1 M AA0 K S> dos.")
+# NeMo read the M of an annotation as 1000 and its S as "sur"; a number before one still agrees with its word.
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("Dale <Kimox|K IY1 M AA0 K S> 2.", "Dale <Kimox|K IY1 M AA0 K S> dos."),
+        ("Tengo 1 <perro|P EH1 R OW0> y 21 gatos.", "Tengo un <perro|P EH1 R OW0> y veintiún gatos."),
+        (
+            "Vi 21 <casas|K AA1 S AA0 S> y <Kimox|K IY1 M AA0 K S>.",
+            "Vi veintiuna <casas|K AA1 S AA0 S> y <Kimox|K IY1 M AA0 K S>.",
+        ),
+    ],
+)
+def test_pronunciation_annotations_pass_through(text, expected):
+    check(text, expected)
 
 
 # Number-heavy sentences with their spoken form, corrected by hand.
