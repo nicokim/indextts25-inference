@@ -12,10 +12,10 @@ sources:
     resource: repo://pyproject.toml
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
-generated: { by: "claude-code", at: "2026-10-16T06:02:56.648Z" }
+generated: { by: "claude-code", at: "2026-10-16T07:18:19.761Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T06:43:45.974Z
+    at: 2026-10-16T07:18:19.761Z
 ---
 
 # Quickstart
@@ -74,3 +74,4 @@ for chunk in tts.stream("A longer text…", voice="voice.wav", lang="EN"):
 | load a fine-tuned GPT, find caches or offline files | [Model directory, loading and caches](operations/model-loading-and-caches.md) |
 | pick torch/transformers/flash-attn versions | [Dependencies, extras and version compatibility](operations/dependencies-and-compatibility.md) |
 | run tests or reproduce the benchmark | [Testing and benchmarks](testing/testing-and-benchmarks.md) |
+| understand CI or how a release reaches PyPI | [Testing and benchmarks](testing/testing-and-benchmarks.md#continuous-integration-and-releases) |

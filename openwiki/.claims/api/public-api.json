@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e2161f31ad952e9c10045bec651cd21a91c58bc62a43ac946e55a9d38aa26716",
+  "pageVersion": "sha256:851ad79f96aba5d171d486f89e5b7f150303610de2aa9eb68eef2eef7eebcb37",
   "claims": [
     {
       "id": "claim_0b82c646f15240d4838b3326696e598f",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://indextts25/__init__.py#L1-L5",
-          "version": "repo-lines-v1:sha256:122b301d75d9bec2bb393dacaf129adc08e577d1b5ab6631f7512fee5b5d4cdb:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgzYjgxYWUyYjYzYzA3YzVmZTM0Yzc5NzFhZTljODA3NjE5YzI2NDU4NzdmZjliZWM3ZDIxMGI4N2QxNWExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY3ZDRhMTViOTcwYjg1MWUyMGQxNzUxMDIyNDY3MGMxNDY0NmNmYjZkNWExZTM4OGNhNmI5Y2M2ZGE4YmY0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "version": "repo-lines-v1:sha256:e545874777926042e7f4870ed9c77cf6f1e18dccd4a0b8a116bf30e7f8351753:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgzYjgxYWUyYjYzYzA3YzVmZTM0Yzc5NzFhZTljODA3NjE5YzI2NDU4NzdmZjliZWM3ZDIxMGI4N2QxNWExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBlMTMzODQyNmQ3Zjc1ZTg5MjI0YmQ5YWY0ZGM2MTU4ZTFiOTdkNjJhNGE0N2UzNzZhMmNlZTJhMjc2MTRlYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
     },
@@ -17,7 +17,7 @@
       "statement": "IndexTTS25 checks that the config file exists and, for attn_backend=\"flash\", that flash_attn is importable before importing and constructing the IndexTTS2 engine, mapping attn_backend to use_accel and fp16 to use_bf16.",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L82-L102",
+          "resource": "repo://indextts25/api.py#L83-L103",
           "version": "repo-lines-v1:sha256:3f8ef815da97236a9b0d9ccebe56b94444ce93fdf0c2373977f21941dbddcb33:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NGRhYjFhZWVjMWU0MDM3ZWNlOGM1NzA2YmNhMWUwZGJmYjJhNjMwZWZkZTAyNGYzZmU4ZjMwMzA1MTM1YWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1N2Q1MTE1Yzk4YzRlNTQwZWJhOTQ1MTk4NTJjMmM2NGJiYzJhM2UwYTg5ZDNiNmZkOThhNjRlN2IxNGUyZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5N2UzNzhkNTRkOTllMGUxZjU2YTdmNGM2Y2VlMDQyNjA5Njc3YjJmNzZlYTJiYmU4ZGRkODI4MmI4MTE4MTcifQ"
         }
       ]
@@ -27,11 +27,11 @@
       "statement": "warm() performs a full streaming synthesis of the text \"Hola.\" in the requested language (default ES) and discards the output, so voice conditioning, the normalization grammar and the flash CUDA graph are prepared ahead of real requests.",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L107-L107",
+          "resource": "repo://indextts25/api.py#L108-L108",
           "version": "repo-lines-v1:sha256:cd4f16b1e842bc86dfd9bb2d8c21692f7c54d186cbf053e973d62679e1b4d4f2:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Q0ZjE2YjFlODQyYmM4NmRmZDliYjJkOGMyMTY5MmY3YzU0ZDE4NmNiZjA1M2U5NzNkNjI2NzllMWI0ZDRmMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Q0ZjE2YjFlODQyYmM4NmRmZDliYjJkOGMyMTY5MmY3YzU0ZDE4NmNiZjA1M2U5NzNkNjI2NzllMWI0ZDRmMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGNmMTdhY2M1NjQwMWJiY2Q1N2U3YmQwNDQxODc1YjlkYzJmNTg5YzNhYTljYjQyOTA5ZGZmY2IxZTg3MWFjMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjJlNmYzOWNjMDA3N2UwYWJjMWEzOThkOTc4NGEwMWJiYjQyZjliMTQxODgwOTljOTJhNmQ3ZjA1NDA0ZDA3ZSJ9"
         },
         {
-          "resource": "repo://indextts25/api.py#L112-L116",
+          "resource": "repo://indextts25/api.py#L113-L117",
           "version": "repo-lines-v1:sha256:6b4f5dabd458dea68240fdb2cce9ff9a2b97db5a2d74ea06943ea55f01f9e4d0:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBiYmE2OTdhNDhjZjNmMTg1YzcyNWU3MzA2MjkyNjZhMzUyODZiZjRjYWM0NGFmYzI3ZmFjODkxMGQwZjYwNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGYwODY4ZDg2MmU1OTZlMWZhMGEwYTU4NzhiMDUwZWVhZmM2ZTM0ZDBlMTYyYmUzOGM2YWYzYjFjYmFjZThmYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmVhYzkyNjI5OGUzNGJjMTVmZmNkZjY3NWVhNTUxOTA1NmFiZmZkOTc0Y2MyM2EyYzhjZTBiMDMxYThkNzE4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJmZDYxMDA2OTI1ZTFlZmFiNjJkOTM4MjcxZTJmOTIwMTViZWM5ZWM0ZWNjYjcyMDI2MTgyODY0OWZmODQ4NSJ9"
         }
       ]
@@ -41,15 +41,15 @@
       "statement": "synthesize() raises ValueError for text without any alphanumeric character; otherwise it calls IndexTTS2.infer with text normalization enabled, writes the WAV to `out` and returns Path(out).",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L141-L142",
+          "resource": "repo://indextts25/api.py#L142-L143",
           "version": "repo-lines-v1:sha256:fd21805cd13eeef19f9063bad4e998ba003fbcd6309af05ab5b1885774acd1b9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmRhZTQwOTY5ZDQzZjhiN2NkZDIwNzU4MWRlNDViMjkyNGU5NmZkZTc4ODNlYzE0NWNiMjkxYjlhZjUxMmFjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDQyYTI0NDNiOWFiZGNlZTg4YWQzMjVhMWZlZGM4MWJlYTBmMTNmZWU3NDA3ZWYwOTY3YmI3ZTdlNmY4MmIwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDE5NDhhMzczOTEzYzhlMjA4MTc5MjJjNDNhNzc2ZjNhYzFkZTQ2NTg0NTYxZTUxMmY3ZWJmYzg2NmI5ZGVlOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjQzZDFlMTExOTJmYmVhODFkNjBmMDFjNjIwMTk5ODViM2UzOGU5YTg2YjY1YWNhY2E0ZWQ1ZjUxMGM3NjBlZSJ9"
         },
         {
-          "resource": "repo://indextts25/api.py#L143-L150",
+          "resource": "repo://indextts25/api.py#L144-L151",
           "version": "repo-lines-v1:sha256:b0ceef30a6c994519e2859dc4228b7d5ee744841d068602d991352c63b4d9628:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzBhOGVkYzE4NzY3OTQ5MTBiZTYyYWRkZGFiNjZlY2Y0YWUzZGM5YWFhNGM4OGU3ZmY3MTRkMTE1NzI4OWRmOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJkOTVjN2Q4NGM0MGY2NTA2OWUyNzFmNWFjZDhkYzM2ZjIwMTFjOTg5YTc3MWMxODA3YjlkZGI4YWIyMjU4YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGVjZGU1NmY0ZjNiMWJhMTBlNjUxMjBmNDZkOGNkOGViMmY4ZTM0N2YxNDI2MmRhY2QwNWU3ODZmNWZjMjg0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNkMmNhMWU5NzI4MTM5MzUzNGIwZWExMDY3YTYzNDI3MTkyZjI0MTI0MWZiNThiZjE2NjNhM2JmMDEyMjlmOCJ9"
         },
         {
-          "resource": "repo://indextts25/api.py#L24-L26",
+          "resource": "repo://indextts25/api.py#L25-L27",
           "version": "repo-lines-v1:sha256:4895dfc73bfbf68bd77f6748acc3fa7c8b85f922e6f00c51430868d9cbde69e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2IxNGFmMzFlMmRjZjUyMDNjNjViODdiMzA3NDZmY2M2MTI5ZGM2Y2U5YzljODVjODFiNTlmMmNlMWUxMDBmOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGNmNTY2MmUxZWYzNzNiOTIyM2QzYmQ4NThkYjYxYTYxMTUxMGQ5YTFmMWRhYzcxYjNhYTllMzFlNTBjOTU0ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmJkNTAwYmY4ZTQ2NjVmNzlmN2Q4ZjMzZTA3NWY5ODI5YTI0NTI1OGU4MTk1ZWJlZmJlYjhmOGM4ZjBhNTFhYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzBjZTNmMjRhYjQ3YzJmNWE5ZDMzN2YzNzdlZDg1NzNmYTU2NTg0MDc2NDAyZjFhZjA1NGEzZGVkNjE5NDYyZiJ9"
         }
       ]
@@ -59,11 +59,11 @@
       "statement": "stream() yields nothing for text without alphanumeric characters, drops the inter-segment silence chunks unless include_silence=True, and converts each segment's int16-scaled waveform to float32 by dividing by 32767.",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L171-L172",
+          "resource": "repo://indextts25/api.py#L172-L173",
           "version": "repo-lines-v1:sha256:df2f168f36ed8ca7b97ee40b23aecf62e0606f8e86c262ec8e559f6e366c8694:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmRhZTQwOTY5ZDQzZjhiN2NkZDIwNzU4MWRlNDViMjkyNGU5NmZkZTc4ODNlYzE0NWNiMjkxYjlhZjUxMmFjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWU3YmNkMzZlZjUzYjQ0NTIzZTY1ZTk4ZDE5NDQ5OTNlMGZmMTc0NmY1NTM2YzFhNTExNzQ2ZjNlMDFlNzU2ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjhmZjM2NzAxOGNkMjZjNWYyN2QwM2UwMWY0YjljZTFjZjE5ZDgzMzI5NDJmY2MyNjY3NmJiZmRjZDY3Y2UwYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzMwZDM1Mjc3OWU0ZWM5YTI3OWFjOWRkZmI3YWIwOTRjODhhZjEyOGEyMDJmNTBiMDZjY2YxZWI5MDJjY2ZkZCJ9"
         },
         {
-          "resource": "repo://indextts25/api.py#L184-L190",
+          "resource": "repo://indextts25/api.py#L185-L191",
           "version": "repo-lines-v1:sha256:bc6722a0fbbb3f23fa3484e811152767c37d8b22d95df9c933d9408c39b6607c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDFhNmU5ZjQ5MjUwMDQyZmI2ZjVhZTU2N2RjYzdiMTAwYmJiMzA1ZGI1OTdlNjZjN2NlYzJmMmNmYzkxOWQwNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTRjZWY3YzU5NGJlMDZjY2NmNDNmZGQwMDJiMzEyNzAzNzllOTBiYjI5NDFmMDNjM2Y4MmFhMGViZDQ0ZGVkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmUwMzg0ODVhZWI5OWM2YzdhZWQwNmFlMjQ4NTI1M2I3MGY0YjU4ZTFhMDc4ZTIzMzMzMmRiZDkxMWYyZjIzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
@@ -73,7 +73,7 @@
       "statement": "Chunk is a frozen dataclass with audio, text, sample_rate, elapsed and is_silence fields, and its duration property is the sample count divided by the sample rate.",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L29-L40",
+          "resource": "repo://indextts25/api.py#L30-L41",
           "version": "repo-lines-v1:sha256:0446f0bcedb09125a3101b3dce5b61ae8b67158d3d7c29e479424b594e3d8f80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2OWExMzk3NWMyNTZlYzgzMjBlMjAxNjA4M2M5NmRmNjM3Y2EzZDM1YmViZGUyMzE0YmVlM2E0NzExYjU2Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZGFjYWMxMDlhYmNlM2QxYjAyN2Q2MDU5MjY2NWMwMzcxM2JmMTE5ZDVmMDM0OGEzNTQxZmE3MDU0MGQxZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMjg5MjA5NTc0ODlkZTc2OGNjYWI3OTNiNjhiYjkzMTQzZTAxNmRlYWJlNDljMTFjYzUyZWExM2Q3NjBmOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjZTljNmU0YWEwM2ZkYmRjNzEyZmQ4OWRkODZjMTg5NmQ0NGI2MmM4ODYyYzNiMjM3ZjJmYzI1YmM0YWMwNmYifQ"
         }
       ]
@@ -83,15 +83,15 @@
       "statement": "stream() defaults to 60-token segments (STREAM_SEGMENT_TOKENS) while synthesize() defaults to 120.",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L129-L129",
-          "version": "repo-lines-v1:sha256:978ef4aef96d710be8cd4dd4e932d9250d27315e3c2cb92863d86be377145281:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTc4ZWY0YWVmOTZkNzEwYmU4Y2Q0ZGQ0ZTkzMmQ5MjUwZDI3MzE1ZTNjMmNiOTI4NjNkODZiZTM3NzE0NTI4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTc4ZWY0YWVmOTZkNzEwYmU4Y2Q0ZGQ0ZTkzMmQ5MjUwZDI3MzE1ZTNjMmNiOTI4NjNkODZiZTM3NzE0NTI4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmMxNzAwMzhmNTZlMjU3MjBlMWE4ZDFmMGI3MWRmYjNmYzNhM2U3OGE2NGRkNjRkN2QwMGU5YzFlNGQ2OGYyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTYyODY0N2YzOTYyNjJmMDM3NGQ0NWNiODM0OGZmMWI4OGI4YTk1YjgxMTgzZmFjNTExZDI4MjkzZjQ1ZmMxNCJ9"
+          "resource": "repo://indextts25/api.py#L130-L130",
+          "version": "repo-lines-v1:sha256:978ef4aef96d710be8cd4dd4e932d9250d27315e3c2cb92863d86be377145281:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTc4ZWY0YWVmOTZkNzEwYmU4Y2Q0ZGQ0ZTkzMmQ5MjUwZDI3MzE1ZTNjMmNiOTI4NjNkODZiZTM3NzE0NTI4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTc4ZWY0YWVmOTZkNzEwYmU4Y2Q0ZGQ0ZTkzMmQ5MjUwZDI3MzE1ZTNjMmNiOTI4NjNkODZiZTM3NzE0NTI4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmMxNzAwMzhmNTZlMjU3MjBlMWE4ZDFmMGI3MWRmYjNmYzNhM2U3OGE2NGRkNjRkN2QwMGU5YzFlNGQ2OGYyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjAxYTIwZTZjMTIyOTQxYTlhYmNmNzY4MGVjM2U5NDExZWUwMjAyYzIzNjFiMzY2MGM2Yjk4YzQyMDA3YWVhYiJ9"
         },
         {
-          "resource": "repo://indextts25/api.py#L160-L160",
+          "resource": "repo://indextts25/api.py#L161-L161",
           "version": "repo-lines-v1:sha256:dd3092426f2b60429531cc8319d0ed65674062327f5e6b9a890874d8c2ba7f65:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzMDkyNDI2ZjJiNjA0Mjk1MzFjYzgzMTlkMGVkNjU2NzQwNjIzMjdmNWU2YjlhODkwODc0ZDhjMmJhN2Y2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzMDkyNDI2ZjJiNjA0Mjk1MzFjYzgzMTlkMGVkNjU2NzQwNjIzMjdmNWU2YjlhODkwODc0ZDhjMmJhN2Y2NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmMxNzAwMzhmNTZlMjU3MjBlMWE4ZDFmMGI3MWRmYjNmYzNhM2U3OGE2NGRkNjRkN2QwMGU5YzFlNGQ2OGYyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWE5YmNmMTFmYmYxYWRmZDg4ZmYwZjNiN2M0YzdkOTU1N2Y5ODIxNzAzZmY3YThmMjA3MDllOWM1M2U3MmExZCJ9"
         },
         {
-          "resource": "repo://indextts25/api.py#L19-L21",
+          "resource": "repo://indextts25/api.py#L20-L22",
           "version": "repo-lines-v1:sha256:e1e617844844b6d28ac630ea38cf2699252105125adb1dfae142cf5a9160795e:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmI5M2YyZDY3NjRmZDUwMmUwZTY0ZDEwZWRkNDg1ZTM4ZTkwMGYyMDFmNWFkNzE2MjVlNDQ4NDJkMTllZjAwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWVkZDBjMjAzYzM2YWY5NzRhOTFjNmQ2ZWQ2NDgwNWUxZjcyOGVhZGUxMmJkYmI4NzRmMTNmN2FjNjAxNWE2ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjIzYWYwN2ExN2Q3ZGIxMzZhZjc0MTcxYTgxZmY5MjA5YTBiYmY0NmViOTNkOGJkMDIxYWUwMTMxODhmNGMyOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjcwZTcwMWRiYjNiNzhmZTRhMDMwOGJkOWQ1Mjk5MGQ1OWRlYjQxODhhMjUzZjY5MDg4OTU4NGMzZWQzZGI4MiJ9"
         }
       ]
@@ -101,15 +101,15 @@
       "statement": "Extra keyword arguments of synthesize() and stream() reach infer_generator, whose generation defaults are do_sample=True, top_p=0.8, top_k=30, temperature=0.8, length_penalty=0.0, num_beams=3, repetition_penalty=10.0, max_mel_tokens=1500, diffusion_steps=25 and inference_cfg_rate=0.7.",
       "evidence": [
         {
-          "resource": "repo://indextts25/api.py#L143-L149",
+          "resource": "repo://indextts25/api.py#L144-L150",
           "version": "repo-lines-v1:sha256:580717a3f91610216b8ac880da535d8bbf5a3f5fae3ea3734a7a79619c2c617d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzBhOGVkYzE4NzY3OTQ5MTBiZTYyYWRkZGFiNjZlY2Y0YWUzZGM5YWFhNGM4OGU3ZmY3MTRkMTE1NzI4OWRmOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkwOWE1M2E2MThkMDI4ZTFkMzAwMGMwYTdhYmNlZWNiZTVmYjM3ZjRlNTExZWZlNDY2NDNmYWQ2ZTY2ODcyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGVjZGU1NmY0ZjNiMWJhMTBlNjUxMjBmNDZkOGNkOGViMmY4ZTM0N2YxNDI2MmRhY2QwNWU3ODZmNWZjMjg0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjFhZDE4ZmE4NzdhN2NmYmUwMmIxYTZiNzdjZjVhM2EyNmYzNGVmODQyNDY1OWZmYjRiYmY5MzQ4ZGQ5OWU0NyJ9"
         },
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L431-L438",
+          "resource": "repo://indextts25/infer_v2_5.py#L432-L439",
           "version": "repo-lines-v1:sha256:e8fa2b86c61b56d120455e9aa0855e2dc9f69b9d280dca89b9caf758f58d1213:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDc3OWUzNWNjMzJkMWRiOGFjNDMxMGY2NmJhNGM3NWFkYTRiNjFlMTAzMmI0MzZmMmU4ODcyYWNkMWRhZmUwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzdjOGI3ZmMyZThjY2U4ZGRhMDg2YWFiNWUyMmRkMTVmNGE1MWVlM2U4OTZmMzdhNjQ0OWQ0YjU0ZmFjOWI4NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTEwYWNlYmRjMDFiMDI2MjBlMDk0YzRmZjU2MjhjNDdjNjkyMTExYTA4N2MwZWZhZjgyODQ3OTY2ZGEzNTQ2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGJmOWVlYjNjMTE2MWMyODIyNTgzMjc4YzYyZThlOTM2MTI0ZjdlODQyOWRmZTgxMjBjZTEzZGQ3YWY3MmJiYSJ9"
         },
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L440-L441",
+          "resource": "repo://indextts25/infer_v2_5.py#L441-L442",
           "version": "repo-lines-v1:sha256:12e6905a1ab5f8437b59a27603c317b9a456e2e612e412553ecd976d68afb9c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2NmNzg2MDYxMjRmYTAwMWM2NjExNDYwNzQ2OWIyNTBhZmU1MDBjYmQzZDQ1NzNhY2I0MjcyNzU4ODIxNGI5MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDAyYTBiZDExMTFkY2Y4YjFhM2FmYmI4Njc0MmVhYjdjNjc1NGRmNTQxY2EyZDlhMjE0ODQyNDBlOGY1OTAxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmY0OTJhYzQ2Mzg4MmE1NGU5ZTk4MmUzNmFjY2NhOWFlZjgzYTdhMTJkZjg2MTA2YjY1Nzk4MmExMzhkNGVkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFiZjQyNGM1MTljMGNjZjg2NTI4M2QxZjhlZmY0ODUxM2E4YWI5MThhMjAwMzdkMDZmZDM1NDYzOGYxNTNjNiJ9"
         }
       ]
@@ -133,7 +133,7 @@
       "statement": "infer_generator raises ValueError when lang is neither a key of the tokenizer's LANGUAGE_DICT nor \"zhen\".",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L385-L386",
+          "resource": "repo://indextts25/infer_v2_5.py#L386-L387",
           "version": "repo-lines-v1:sha256:24d2b9bf41abf98dd78a3795e06177527a1b97d01737b2bf76b855ea591d829f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWMzNzgzZmViYmUzZWRjZWRhYWFmYTJiMDlhYzZiZDNhMTg3ZGRmNDlkNTk1MGZkMGNmOGY5YzU0NDU0OGQxZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQzNjU3NGEwYWU4ZmE5YmQ4MTMzNjIxMGJiNjc4YzUzYTU5OGMxOWZhZTY0M2M0NzY1OTZmMGQ4YTdjMzBlNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTkwNjYxMDBkNTY5ZjUyMGQ3YTI2OWI5MDI0MDcwNGMyM2QwOTE0YzdkZTkwZjc2NGE2N2U1ZDljY2Q1MTJhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2M1NDFhYTE4MWU1NzEzM2FiZTIxNjEyYzMxMzAwNjk2MjliYmNjYmFkODQ5MTY0MzZmODJkYzI1OGVhNzViOCJ9"
         }
       ]
@@ -143,7 +143,7 @@
       "statement": "When emo_vector is provided, the emotion audio is ignored, emotion_strength is clamped to [0, 1] and scales the vector, and the emotion conditioning falls back to the speaker audio with alpha 1.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L391-L401",
+          "resource": "repo://indextts25/infer_v2_5.py#L392-L402",
           "version": "repo-lines-v1:sha256:a62d5646ee4c757b1ddcc9430637ccabf471023122bb80e29307c3f276dafb4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkOTdlMGZlN2M2YjNlNjI4NzJiNzA1ZGFlOTYzNDZkMWQ3MTBjMThjMDIyYWVjMWQ0MGYzZjVlY2Y0Y2NhYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjMzhhYTk0ZGMyYTNmNTUzOTFhY2FmZWU5N2E1NDM4NzY4OGRjOGZjOGVkMzMyNTVkNjhiZTIzOTIwZWE2YjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmOWJiMzZjMTVhM2ViMDFiM2Y1MjI5ZmM4MWVlZmRmOTE2MzJlYzE3YWNlYmYzMTI3YTA5NmEyODVkOTkwMzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1YTRhNGYwM2E4ODA1MDJkYTRkN2FjYjc1YmM5YjI2Mjg5NmI3ZmFkMzczMjcxYjUyYjQ2NTk4NDYyZWM2NzkifQ"
         }
       ]
@@ -153,7 +153,7 @@
       "statement": "use_random only matters with emo_vector: it selects random rows of each emotion matrix group instead of the rows most cosine-similar to the speaker style.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L407-L414",
+          "resource": "repo://indextts25/infer_v2_5.py#L408-L415",
           "version": "repo-lines-v1:sha256:ae30d7f62a7528e2c1d025ad55726ff6080de8ee12f962c4420705f97d505866:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ5N2UwZmU3YzZiM2U2Mjg3MmI3MDVkYWU5NjM0NmQxZDcxMGMxOGMwMjJhZWMxZDQwZjNmNWVjZjRjY2FiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTMyZjhkYjI1YTc2ZDNlZmEwYTMyZTE5ZjVjNjI5MmM4ZDdiMzgyZWMxZjQyNTA0OTQxMzY0YTViNzM5ZmVmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODc5NmRmNDA5MjA5MzgyMjQ3ZDA0NWY5NTdjNzE0MzlkZjNkZWQ4MGIyNzM2NjQ0YmFhOWQ2OTMwZDJjODdmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDVjMjE1NWFmNzlmOWYyYjY2YTMyM2ExYTcwNmUxMTY4ODY5MzdlNzRmOWJhMGQ1OGQxOTlkNDIyODIzOGY2ZiJ9"
         }
       ]
@@ -173,7 +173,7 @@
       "statement": "A segment that reaches max_mel_tokens without the stop code triggers a RuntimeWarning at most once per call, and a segment whose first generated code is the stop code is skipped.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L496-L509",
+          "resource": "repo://indextts25/infer_v2_5.py#L497-L510",
           "version": "repo-lines-v1:sha256:cfe46226992ee54a6b5024b6a2c2aa1e075d0c802a565f8d2edf0addb689c549:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkN2Q1MDdmYWM3M2FkODk2ZWZiODI1NzJmZWE1M2E1ODc1MzU3NGU0ZmFiOGVkZGQ1MzliZDczY2Q2MTgzNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5MGQyZGUyMTk5MzQyNTY4ZjIwZjM1MjcwNzM1OTg1NmU4MjlkZDYyNjRiMGUzZjIwMDAxZmM2YWY5ZDAzYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllOTQzNDE4OTRmMmFkNDA2OTgzOWU5NGZjMDJhYjg3Yjg4YjBjMTkzYWU1ZWNlOWY3NWYzYWE2NDcxN2QyNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ZWU1ZDRhM2I0ODg1NDQ0NGMxNWFkMjY3ZDEzMzU1NGRjZjhkOWMzMDE0YTIxM2M0N2FiNzU4MjZhZDljYTQifQ"
         }
       ]
@@ -187,7 +187,7 @@
           "version": "repo-lines-v1:sha256:7f1b4f1c2545e2931b6fc1832fa2aa2b73832091df8a0c3b75504892c63f860a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ODc0YmQ5OGUyY2Y2YzY2NWNiNGU3NzhiYmVhN2NlMmZmZDY0MzNjYzk0YzgyOGM1NmQ2MjlmM2NhZDhiY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjNDhjYTMyODVjOGY3YThiZmY5MGMzYmEwMzRjYzNhMThjODY3MTZiODM3NTk4N2E0MmIyZWViNTQ5NzU0NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhNjIzYTgxNGMzZTBjMmRjYWZmYTk2ZTM5NmU4MGIxODUxNzBjZTQzMGQwYTM5ZDgwY2VjYmY1NzBiMzM3NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZTQ2YjI5ZTZlZmUzZTQ2ODAwZjg1NzkzYjZkMmUxOTE1YjFjY2I5NTUyNTQ0NmM1YTUwMmZmZDQ3MzJmM2IifQ"
         },
         {
-          "resource": "repo://indextts25/api.py#L52-L52",
+          "resource": "repo://indextts25/api.py#L53-L53",
           "version": "repo-lines-v1:sha256:89ab2d9cace70e054d8f1ddb6ca9b4d5bf2ed0ab5e2dc1881dbd6b978fd0e3cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODlhYjJkOWNhY2U3MGUwNTRkOGYxZGRiNmNhOWI0ZDViZjJlZDBhYjVlMmRjMTg4MWRiZDZiOTc4ZmQwZTNjYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODlhYjJkOWNhY2U3MGUwNTRkOGYxZGRiNmNhOWI0ZDViZjJlZDBhYjVlMmRjMTg4MWRiZDZiOTc4ZmQwZTNjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzEzNDAyNWZjMzQ1YjJiZjAwNzZhMjVjZWFlZDI5ZTI4M2I3YzhlZTZlNTE1Njg0YjA2ZjU3OGM0MGI3MjBiYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODc2NjBiZDUxNjc0ZGFhNGJmMDRkMDQ3NjBkNTY1ZGQ0YzVkZmFhMmZhMDM1MjAwYjZjNmZiNzIwMGIyZmVjNiJ9"
         }
       ]
@@ -195,6 +195,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T06:43:45.974Z"
+    "at": "2026-10-16T07:18:19.761Z"
   }
 }

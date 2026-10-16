@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b20371822a6338f3979e76b27942cc55ecacc5f8151c534726abc2707960f2bb",
+  "pageVersion": "sha256:ceaa98a4bcd96311d4a92c2f11d41d36531317d3e6ad20c27a2595a0a49685c7",
   "claims": [
     {
       "id": "claim_ce786b63735448668e34343cde3d7ee5",
       "statement": "IndexTTS2.infer_generator runs the whole pipeline in one generator: cached speaker and emotion conditioning, optional emotion-vector mixing, text preparation and segmentation, the merged emotion vector, then per segment GPT generation, codec decoding, length regulation, flow-matching mel generation and BigVGAN vocoding.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L403-L534",
+          "resource": "repo://indextts25/infer_v2_5.py#L404-L535",
           "version": "repo-lines-v1:sha256:c50677654b3e7cd07010d6d3bb09c96e8e3549b3309bd1f80955399c28fdccf6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0YmM5ZjkyZGI5MjYzNGI5NGM4MmI2YWMwYmMyZTU2ZjJhZmZkZjkxMGExYzFlNzEwMDYzMGExZDQ2MmE0NTA5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MzkxZDU2NWJmMjM0YjcyYjBjODU3MzA1YTUxZTdmNWE5MTU2YTE5MTdmY2Y2MDhlNWVjMGY2NzY2MzZiNjFiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4ZGM3OThiZjlmODE4NjNjZmRmYmVlYWVkMzAxNWQzZTJhYWJmMDJhMmZmNWJlZTkxNGMwYmRjNzc2MDk2NWYxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxOTkwMTk5ZWJlNTYxZjBiMDA3ODExNjk1N2YyYjllMmRhNTJlYzAyMGUxOWU2YzcwYTU2MTQwOTY3ZGM2MmVhIn0"
         }
       ]
@@ -17,7 +17,7 @@
       "statement": "Each segment is encoded as the language prefix `<|lang|> ` followed by the segment text with special tokens allowed, and no stop token is appended at this point.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L416-L425",
+          "resource": "repo://indextts25/infer_v2_5.py#L417-L426",
           "version": "repo-lines-v1:sha256:7676e24cf2c28d64619e7e453c0df37bb93ac1e88dc503de9140af297220fb92:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NzU5MzEwMjM0MzZjYmY0NDQwMzE2NWQyMmJiOTM2NzYyZjQzMjUwNjdhMGY2MGM4NDFjOGRhNGZkYWI0N2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4ZWQ3NDVlYjQ1NzU2YWM5NjdjMDIyODBhNGIzOTYyZTA0NzllODMyYjQxMWQ2MzJlMzNjMDQyOGJjMTE3MzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwZTQ4MTUxMDJjZDgxMzIyYmZjMGRlNjI4Mjg5NmRiYzFjNTc4MTExYjNjYWEwMzAwNTk3NDZkOWNiNTNkNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2YTM5MzBhYTJmNGZmZmM5Mzg3NGQ2MjcyYzUxNTkzYjczNjg3MjQyNDIxZGQ1ZTg3OTVlNTI4ZjdlYTJiYWYifQ"
         }
       ]
@@ -27,7 +27,7 @@
       "statement": "The mel target length of a segment is the codec feature length times 1.72 times duration_factor; the reference prompt condition is prepended before the CFM and the prompt's mel frames are removed from its output.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L513-L522",
+          "resource": "repo://indextts25/infer_v2_5.py#L514-L523",
           "version": "repo-lines-v1:sha256:73e0ff106e37deebbe9e1913e001e0435bb3ca550d63d600bf36f830cbb2dda6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODhjNzAwOTMzOWEwMWM1ZWU1OGVkM2MxOTQ2YjUzNTFmMGFmZjkzOTg2ZDQwOTUyYmNlZjI1Y2RiMTE0M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjgwY2RhMDdhZjJkYTA1OGI0M2VlOTQ1YWQyZDk1NDkyOTM1NjNjNDMxNzU5ZDNiODhlZWI3NDhkMjc0ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1ZWU1ZDRhM2I0ODg1NDQ0NGMxNWFkMjY3ZDEzMzU1NGRjZjhkOWMzMDE0YTIxM2M0N2FiNzU4MjZhZDljYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0OGRjNzRhMGFjOTk4NTFlNTNhY2UzNzc5MDdmOWU0Nzk0MTU4YTZkMTNhNGFlMGVkMjljNTY1MDJjY2VjN2YifQ"
         }
       ]
@@ -37,11 +37,11 @@
       "statement": "Segment waveforms are clamped to the int16 range and moved to CPU; in streaming mode each one is yielded immediately and followed by interval_silence milliseconds of silence except after the last segment.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L474-L474",
+          "resource": "repo://indextts25/infer_v2_5.py#L475-L475",
           "version": "repo-lines-v1:sha256:f4bcb0e4fea774d52cf48cc858bcebf93d6b5d512eae2e7e15fe1aa1b8636e78:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRiY2IwZTRmZWE3NzRkNTJjZjQ4Y2M4NThiY2ViZjkzZDZiNWQ1MTJlYWUyZTdlMTVmZTFhYTFiODYzNmU3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRiY2IwZTRmZWE3NzRkNTJjZjQ4Y2M4NThiY2ViZjkzZDZiNWQ1MTJlYWUyZTdlMTVmZTFhYTFiODYzNmU3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGM3NzNiNTBmZTJkNmZiM2M5NDI2OWE2NDdmZTQ1ZjA3YjI2ZTcwOWM4ZDExODgzYmUxNjdjNzE5NGI2MDBjMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDUzNGNhMDdkNTNjODQ4ZjUxZGUzOTQwZWE3ZjBiNGU4MTljYzRmNzFjMDcyOGVhNjM4MmFiOWI3Mjc0MDI0MCJ9"
         },
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L529-L534",
+          "resource": "repo://indextts25/infer_v2_5.py#L530-L535",
           "version": "repo-lines-v1:sha256:203a69f41e8852c299eaec2248262cb924988989c1b3ab985dde42dd3ec150f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjEzYjg4YTViN2JjYWU1MTE1ODNkOGM5M2RhNzUyZjFjZTEzMzgxMjMyYjk0YjM4YjdhNDZkYzJjNTFmYmY1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDM5MWQ1NjViZjIzNGI3MmIwYzg1NzMwNWE1MWU3ZjVhOTE1NmExOTE3ZmNmNjA4ZTVlYzBmNjc2NjM2YjYxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTgwNzBiNDIzZDJjZjBhYjI1MWRiOWI3YjQ1YmFiNGYwM2Q5YTI4ZWFhYzc4M2JiMmVkMjRhODA4NDk3MWM1NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTk5MDE5OWViZTU2MWYwYjAwNzgxMTY5NTdmMmI5ZTJkYTUyZWMwMjBlMTllNmM3MGE1NjE0MDk2N2RjNjJlYSJ9"
         }
       ]
@@ -51,7 +51,7 @@
       "statement": "Non-streaming calls join the segment waveforms with silence and either write a 16-bit WAV through save_pcm_wav or return (sample_rate, int16 array).",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L539-L564",
+          "resource": "repo://indextts25/infer_v2_5.py#L540-L565",
           "version": "repo-lines-v1:sha256:206ca141758206af18fa53e2d1de49535cd67e145529795ddd591838214e9da3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YTUwYTc1Zjg5NzE5MGY2NjdjY2VlNjVjYWZjOWIwMzk4YzlmNGJkMDk3OTljMzU1NjIwZmMzYTZlNWFjYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4OGI2ZWU2OWU2MjE1ZTE0MjM0NmRjMWE0MDI1OTRhZjcwMzg4ZGY1MzRlYjUwMjIzNWE1MGYwNTI4MDk4YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMTJmMjE3MWFlYWRlOGMyMmQxOTk3ZGY1MTM4ZDkwZGFlMDhlYTAzNGRmYTFmZmUxYmU4ZTE2MzI0YjRhNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -79,7 +79,7 @@
           "version": "repo-lines-v1:sha256:3ad36b0bfb773451462d4f8de1f23667038b1debf2ff69fa6d51f4df464dde23:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQ2ZThhYjMyY2FhMWY0OTI4MzBiYmZkMmM0NDdhZTNhOGY5OGFiOTlkYzk1YTBhZGIzMDAwYTk1MjZlNzhiMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTdmNmMzZGYzMzE2NTE0NTY4MThlYTgyMzExYzdmMmQxZGFhNTJlNzdhMzNlZjE2NGFkNzI3OTZkZTllYjY0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2ZkNjJkNzdjM2FkYTU4ZDA0ZjQ5YjMxNWI2YWI2NGFlMzA0NzZkMDk4YWQ1ZTc4NWRjOGE4MGVjNzk5OTA3ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTk5NjMxMTUzNTJiMzVlYjc0NmI3YWVhZTUyZWZhZWUzOTc1ZjAxMmYyN2ZjYTdiNWVlM2ZlNzgwYWQ1ZGM2YSJ9"
         },
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L448-L459",
+          "resource": "repo://indextts25/infer_v2_5.py#L449-L460",
           "version": "repo-lines-v1:sha256:518c81989cc777eb8025759eea77efbfc3589c46483690c96f493016db25a5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYTY3MWVhN2U1YjhkNjBlZTU0NzFiZTAwNDJhOWFhYzZiYzJlNjNkNzQ5ZDg1ZDAyMmVjYzM2ZWExYzNiYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlODMxNTdkYWRmNGNhNTJiMGZlODdmMDdmN2NkZTljNzQ5NmU4YjRkOThiY2ZmYjA5MjEzNTQyZGI3YzVjMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3YjJhNmM1YjY1MjRmMjA4MTc0YTUyYmRhNTY1ZTg5OTI5ZmY4NjY4NGM5ZjJhMmFjZDIwZmZmZWUzODkyYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYTcyNzQwMzQ2Y2EyZDNmNWIzNjc5Y2UxYzI4OTkwMDk2MTAxNWI3NDk2NmNhMzYxNmEzYmU4YWYzZjdlY2EifQ"
         },
         {
@@ -103,8 +103,8 @@
       "statement": "NeMo text normalization goes through a process-wide TextNormalizer singleton created on first use.",
       "evidence": [
         {
-          "resource": "repo://indextts25/utils/nemo_tn.py#L188-L201",
-          "version": "repo-lines-v1:sha256:48844e3c566f489ba1b9569e5d36babd8d63bb79b5f76078ca291e70664ed86e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1NDJmZThhNTg0MzA2ODUxNWJjNGZkNmYzZDMyNGU5MWE5OTkyMGQ1YWJiN2VlODU3NGFiZjVjYWE5MDM5MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYjJhM2M5NjNhNDJmYzc0ZTU5NTM3MDljMGUyNjk2YWZlYjY2YzcwN2VhYjM1NTBlMDBhZDc1MjRkYmI5ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwMDc2ZTlhNDk5MjBmZTU5YTkyODljMTNlODBiMWQ1YmJiZjJlZDcyNmY4ZTdkZWRkOGE2YjM0Zjc1ZTNmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://indextts25/utils/nemo_tn.py#L187-L200",
+          "version": "repo-lines-v1:sha256:546038464614f69b3d3e2c5f65fe93046915faf02af0817b50ea10c9aa9f20ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNjI1MjkyNDkwMzVmYWM0OTVjY2UwMzQxZWQwNDExYzEyZGIwYjFjZjJhNzY2N2QxOWU0MTRiNzMxNzFlOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYjJhM2M5NjNhNDJmYzc0ZTU5NTM3MDljMGUyNjk2YWZlYjY2YzcwN2VhYjM1NTBlMDBhZDc1MjRkYmI5ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwMDc2ZTlhNDk5MjBmZTU5YTkyODljMTNlODBiMWQ1YmJiZjJlZDcyNmY4ZTdkZWRkOGE2YjM0Zjc1ZTNmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -121,6 +121,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T07:02:23.388Z"
+    "at": "2026-10-16T07:18:19.761Z"
   }
 }

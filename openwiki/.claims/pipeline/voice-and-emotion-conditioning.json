@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:064bdc65173b566dea5241eb40734dbfa00bc7c2df588654877bee1d83e2cea9",
+  "pageVersion": "sha256:ce7271f8b8a446f6afd5c9111bece65dedf40e0d3511e329011b09f5e7e26a8e",
   "claims": [
     {
       "id": "claim_44dff96e46a642e48b4b0e0744547942",
@@ -51,7 +51,7 @@
       "statement": "Without an emotion clip the voice clip is used as the emotion source and alpha is forced to 1.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L398-L401",
+          "resource": "repo://indextts25/infer_v2_5.py#L399-L402",
           "version": "repo-lines-v1:sha256:2c70a817561c28606464beeaebb9dbbbb5a0d2a44f93cfcc7ba94955f13c9289:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzEwZGY0ZDRmNDNlNmQ0MDc1NWZlYWNjY2YyZjIyMDRjN2NmNGViOWU1NmUxNDUwZjE3ZDAzMzBkNWZkZjg0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzOGFhOTRkYzJhM2Y1NTM5MWFjYWZlZTk3YTU0Mzg3Njg4ZGM4ZmM4ZWQzMzI1NWQ2OGJlMjM5MjBlYTZiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDZmZGEwMDBiNGY2YTk1MDUzMjIxMDU4YTRkYjJmYjg2ZTg0ZTJhMDM4NDQyYWY2ZGI5NDJmOTViZjk3ZWE3YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzVhNGE0ZjAzYTg4MDUwMmRhNGQ3YWNiNzViYzliMjYyODk2YjdmYWQzNzMyNzFiNTJiNDY1OTg0NjJlYzY3OSJ9"
         }
       ]
@@ -61,12 +61,12 @@
       "statement": "With emo_vector, one row per emotion group of the emotion matrix is selected by cosine similarity of the speaker matrix to the voice style (or randomly with use_random), weighted by the vector, and blended as emovec_mat + (1 - sum(weights)) * emovec.",
       "evidence": [
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L407-L414",
+          "resource": "repo://indextts25/infer_v2_5.py#L408-L415",
           "version": "repo-lines-v1:sha256:ae30d7f62a7528e2c1d025ad55726ff6080de8ee12f962c4420705f97d505866:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ5N2UwZmU3YzZiM2U2Mjg3MmI3MDVkYWU5NjM0NmQxZDcxMGMxOGMwMjJhZWMxZDQwZjNmNWVjZjRjY2FiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTMyZjhkYjI1YTc2ZDNlZmEwYTMyZTE5ZjVjNjI5MmM4ZDdiMzgyZWMxZjQyNTA0OTQxMzY0YTViNzM5ZmVmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODc5NmRmNDA5MjA5MzgyMjQ3ZDA0NWY5NTdjNzE0MzlkZjNkZWQ4MGIyNzM2NjQ0YmFhOWQ2OTMwZDJjODdmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDVjMjE1NWFmNzlmOWYyYjY2YTMyM2ExYTcwNmUxMTY4ODY5MzdlNzRmOWJhMGQ1OGQxOTlkNDIyODIzOGY2ZiJ9"
         },
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L460-L462",
-          "version": "repo-lines-v1:sha256:f2a72740346ca2d3f5b3679ce1c289900961015b74966ca3616a3be8af3f7eca:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ5N2UwZmU3YzZiM2U2Mjg3MmI3MDVkYWU5NjM0NmQxZDcxMGMxOGMwMjJhZWMxZDQwZjNmNWVjZjRjY2FiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGRkYTI3OTNkY2QwOTZlMTA5NDdmYmM1MDVmNTRlYzQ0MGFjMmZjMjQ3ZTU4OTM5ZjM3ODg1ZTU5NTRmNTM5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTZkNjNjYTA1YzM0Mzc4MWMxZThhNjA5MmJjMDIzYjE4MjJjNmQ2OTQ2NzkyZDc3YjZhNWJhOTFiYjFiMWQ4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGYzMjNlZGE1NmFiNGM4MTllNmJmZDIyNDBlYTZjYjZlMTFhYjgyYzU0MWEyYjRiZTJmOGNhMjEwYmJiN2EwOCJ9"
+          "resource": "repo://indextts25/infer_v2_5.py#L461-L463",
+          "version": "repo-lines-v1:sha256:f2a72740346ca2d3f5b3679ce1c289900961015b74966ca3616a3be8af3f7eca:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ5N2UwZmU3YzZiM2U2Mjg3MmI3MDVkYWU5NjM0NmQxZDcxMGMxOGMwMjJhZWMxZDQwZjNmNWVjZjRjY2FiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGRkYTI3OTNkY2QwOTZlMTA5NDdmYmM1MDVmNTRlYzQ0MGFjMmZjMjQ3ZTU4OTM5ZjM3ODg1ZTU5NTRmNTM5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTZkNjNjYTA1YzM0Mzc4MWMxZThhNjA5MmJjMDIzYjE4MjJjNmQ2OTQ2NzkyZDc3YjZhNWJhOTFiYjFiMWQ4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTZkNGQ2NzRmZDMwZWJhZTVjZDg0NTUwZDM1Mjg5MzFlODljZTk3YWU2MTExODI4MzZjYzQ2MzYwZTY5M2JiNCJ9"
         }
       ]
     },
@@ -79,8 +79,8 @@
           "version": "repo-lines-v1:sha256:ccdd12dc6ee85475f6e5adffb610f3705a375433cc63a5bcbb7f2973228cbdd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMzNjNmI2OTFjZTY3Y2I0NTk4YzZlMjZjYmE3NGJkOTMzMzE0OGQzODI2NGY0NGNhMTVmNjBjYmExMzAyMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlY2JjY2EzZTRlOWVlYmUwYTQ3YjEzZWJjOTQ4NDI5ZWZjNmQwYWRmNzRjYmNmODNlM2JmYjc2YTk4MTA2YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ZDA1NGEyZTBjZTAxNzc5MzA4ZjkyNWE1NWEwNDYyM2U4Y2U5NGNmNjAyZjZhZWFlNTZhOTM0YmZmMjg5NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjYTA5ZjkwOTE3NjZkOTQ2MmUzNjIyYWJmMmE3ODEzMjUwZTA3ZDJkOGE5OTljZjE4YWZjMGQ3YmJkMjEwZjAifQ"
         },
         {
-          "resource": "repo://indextts25/infer_v2_5.py#L448-L459",
-          "version": "repo-lines-v1:sha256:518c81989cc777eb8025759eea77efbfc3589c46483690c96f493016db25a5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYTY3MWVhN2U1YjhkNjBlZTU0NzFiZTAwNDJhOWFhYzZiYzJlNjNkNzQ5ZDg1ZDAyMmVjYzM2ZWExYzNiYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlODMxNTdkYWRmNGNhNTJiMGZlODdmMDdmN2NkZTljNzQ5NmU4YjRkOThiY2ZmYjA5MjEzNTQyZGI3YzVjMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmNWUxMGY3MDc4Y2QzZmRjYmU4NzMyYjE2MWM1YTQxZWU4NmM5YzExNzRjNTQ2Yjk0Zjg4NTdiYzM0YjA5ODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYTcyNzQwMzQ2Y2EyZDNmNWIzNjc5Y2UxYzI4OTkwMDk2MTAxNWI3NDk2NmNhMzYxNmEzYmU4YWYzZjdlY2EifQ"
+          "resource": "repo://indextts25/infer_v2_5.py#L449-L460",
+          "version": "repo-lines-v1:sha256:518c81989cc777eb8025759eea77efbfc3589c46483690c96f493016db25a5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYTY3MWVhN2U1YjhkNjBlZTU0NzFiZTAwNDJhOWFhYzZiYzJlNjNkNzQ5ZDg1ZDAyMmVjYzM2ZWExYzNiYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlODMxNTdkYWRmNGNhNTJiMGZlODdmMDdmN2NkZTljNzQ5NmU4YjRkOThiY2ZmYjA5MjEzNTQyZGI3YzVjMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3YjJhNmM1YjY1MjRmMjA4MTc0YTUyYmRhNTY1ZTg5OTI5ZmY4NjY4NGM5ZjJhMmFjZDIwZmZmZWUzODkyYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYTcyNzQwMzQ2Y2EyZDNmNWIzNjc5Y2UxYzI4OTkwMDk2MTAxNWI3NDk2NmNhMzYxNmEzYmU4YWYzZjdlY2EifQ"
         },
         {
           "resource": "repo://indextts25/infer_v2_5.py#L90-L100",
@@ -105,6 +105,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T06:43:45.974Z"
+    "at": "2026-10-16T07:18:19.761Z"
   }
 }

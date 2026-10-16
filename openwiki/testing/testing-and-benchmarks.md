@@ -4,20 +4,30 @@ title: Testing and benchmarks
 description: The regression test suite (fast CPU checks and a GPU end-to-end test enabled by environment variables), what each test guards against, how to run it, the benchmark script behind the README numbers, and the seed-reproducibility technique used to verify refactors.
 tags: [testing, pytest, benchmarks, reproducibility, regression]
 sources:
+  - id: openwiki-source-164e2da859b5277df81c7d94
+    resource: repo://.github/workflows/ci.yml
+  - id: openwiki-source-46fa34397e41ebf7491c7359
+    resource: repo://.github/workflows/release-please.yml
+  - id: openwiki-source-4d1d392666be6dfdd7a91a2e
+    resource: repo://.github/workflows/release.yml
+  - id: openwiki-source-f99a73fe01bdf87e2b7d0a4d
+    resource: repo://indextts25/__init__.py
   - id: openwiki-source-0719484fdaa00f6fd5bf6bb4
     resource: repo://indextts25/accel/accel_engine.py
   - id: openwiki-source-bf6745cef9c9e3b63f473128
     resource: repo://indextts25/infer_v2_5.py
   - id: openwiki-source-05ccef8d4cf1698187f20464
     resource: repo://pyproject.toml
+  - id: openwiki-source-482fa4ca84f42b04ba025fc1
+    resource: repo://release-please-config.json
   - id: openwiki-source-6192c6338f9c3e6860ecd660
     resource: repo://scripts/benchmark.py
   - id: openwiki-source-310a7347cd31a1985b43c333
     resource: repo://tests/test_regressions.py
-generated: { by: "claude-code", at: "2026-10-16T06:02:56.648Z" }
+generated: { by: "claude-code", at: "2026-10-16T07:18:19.761Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T06:43:45.974Z
+    at: 2026-10-16T07:18:19.761Z
 ---
 
 # Testing and benchmarks
@@ -95,6 +105,20 @@ after a change, on every supported stack. Two details keep that property:
 
 Changes that alter the numbers (the generation fixes listed in the README) were instead
 evaluated by intelligibility and speaker similarity on a fixed set of utterances.
+
+## Continuous integration and releases
+
+On every pull request and push to `main`, `.github/workflows/ci.yml` runs two jobs with uv:
+`ruff check` (the `dev` group) and the CPU test suite with coverage (the `test` group),
+uploading the report to Codecov. GitHub runners have no GPU, so the end-to-end test is
+skipped there.
+
+Releases follow conventional commits. On pushes to `main`, release-please keeps a release
+pull request up to date with the next version and the changelog; it updates the version in
+`pyproject.toml` and `__version__` in `indextts25/__init__.py`. Merging that pull request
+creates the `vX.Y.Z` tag, and the tag triggers `.github/workflows/release.yml`, which builds
+the package with `uv build` and publishes it to PyPI through trusted publishing (the `pypi`
+environment, no stored PyPI token).
 
 ## Related pages
 

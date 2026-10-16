@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3f5868f8efd1b162e7b76ffd30115beb258ad852cc4d62fb9ccfd46481a2f522",
+  "pageVersion": "sha256:c5e61ae1a0c4b76e2098c29ddce84ea77fa9952c8f6e2bbd30c9d2da231f631d",
   "claims": [
     {
       "id": "claim_ff6d93724175483a9758d7820d5349b4",
-      "statement": "pytest is configured to collect tests from the tests/ directory, and the test dependency group adds pytest.",
+      "statement": "pytest is configured to collect tests from the tests/ directory; the test dependency group adds pytest and pytest-cov and the dev group adds ruff.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L49-L50",
-          "version": "repo-lines-v1:sha256:41d36b0f6f01f07b18880441a7ae2429319ecd8595e74fe1e0d4b5018e8ac5a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJiNzQ5OWIxY2UxYzRmNGIyNTI3ZjNhMzI4NGNhYzZiNmExZTNiZjQ5ODhiNTY3OTgyYzNkYzhlOWExN2YyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGMwOTMxZDc1ODUyNzc0NGQwNjZmODg5ZGEyYzNmMzE3N2Y2YmNmNWMyYjZiMWY4MzllNDQzYmZlMTllYjMxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzAzNDc5ZDYyZmE5NDZlZjljZGNjNTI1ZDNlNDc2YzRiOTQyMTFjOTc2MTg2NmQ0ZTZlZjJjNGRkZTM1Y2JlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU1OWVlN2VlYjBlOWVhNTg5Y2FjYjRhZjk0NzE3MGJjYTQ1ODcwOGUxY2QxZTA4MGRjY2I0NTdmN2RhYjU0YiJ9"
+          "resource": "repo://pyproject.toml#L49-L51",
+          "version": "repo-lines-v1:sha256:a56192eea27d5761951cd8eb776fca2dc9ab40d3789098e7f83881e2709e3f58:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJiNzQ5OWIxY2UxYzRmNGIyNTI3ZjNhMzI4NGNhYzZiNmExZTNiZjQ5ODhiNTY3OTgyYzNkYzhlOWExN2YyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWYzMWFiZDA0Y2U0NGIwMDJjNTI2MjhmN2M4NGI0MmVkZDMwNzc1OWEyNWU4ZGM5OGZkNzAyMjRiZmQxMTU0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzAzNDc5ZDYyZmE5NDZlZjljZGNjNTI1ZDNlNDc2YzRiOTQyMTFjOTc2MTg2NmQ0ZTZlZjJjNGRkZTM1Y2JlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU1OWVlN2VlYjBlOWVhNTg5Y2FjYjRhZjk0NzE3MGJjYTQ1ODcwOGUxY2QxZTA4MGRjY2I0NTdmN2RhYjU0YiJ9"
         },
         {
-          "resource": "repo://pyproject.toml#L63-L64",
-          "version": "repo-lines-v1:sha256:0f792d73d83e29f0fb703a46db10647879b1415b0de84941d5c746117996609f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODY3NmU2NDE0NjVhNjU1MWU5ZTljZmZkN2ZhYTFlNmE0MmY5YjcyNDgwOTgxM2M5MDNkN2VkY2I1MmYzMDA2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDEwODVhZDA5MDQyNTcxMWFkYjRmMTVmMjhlMjVjMTcxMDc5MmMxZDQ1ZGE3Mzk0ZWU5MTJlMDM4MTkwNDU5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWM0NzFhZDE0MDVmZTEzOGQ2NDFjMzAzNDJlYmJjNGNiYTdjMDM5NGU1ODg5MjQ3ZGMwMzg1NjU2NjEyZTc0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://pyproject.toml#L64-L65",
+          "version": "repo-lines-v1:sha256:0f792d73d83e29f0fb703a46db10647879b1415b0de84941d5c746117996609f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODY3NmU2NDE0NjVhNjU1MWU5ZTljZmZkN2ZhYTFlNmE0MmY5YjcyNDgwOTgxM2M5MDNkN2VkY2I1MmYzMDA2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDEwODVhZDA5MDQyNTcxMWFkYjRmMTVmMjhlMjVjMTcxMDc5MmMxZDQ1ZGE3Mzk0ZWU5MTJlMDM4MTkwNDU5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWM0NzFhZDE0MDVmZTEzOGQ2NDFjMzAzNDJlYmJjNGNiYTdjMDM5NGU1ODg5MjQ3ZGMwMzg1NjU2NjEyZTc0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmI4NTBkMDkxYWU4MjgxODRhZDRiMDJhOWI2N2Q3YzU0YjQ4YThkYjdlMTU5YWE3MDVkOTdiYzIzMDYwYWQ1NCJ9"
         }
       ]
     },
@@ -75,10 +75,48 @@
           "version": "repo-lines-v1:sha256:4a19f4e2dedcaf0923fec2bd39e8d30b156fba197e47de83f4342dfc5ef57c5b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJkNmFhNjYyODU0ZmJlNWJjMmI3ODg4YTQ2N2IwODQ1NWE1MWUxZmM5ZWNiNDYxZDAxMTkwNTY1OTA5ODczZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDUyNjg3ZGUwNDBiZTdhZjdhYjEwOTRjMGJlNzI5YTdkZGQyMDE0OGRiOTRiMDg3Y2I4MGNlY2Q2ZWZmZWZiMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzljZjQ4ZmQzM2U1OTZiZGQ2YzUyMTg4MzY1OTNkMjlkM2Y4ODA5MTg4MzkzMWVjY2JjNTk3MzRkZjc2MzRkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGI2NmNjYmViOTJiNGU4ZjI5MjI4NjhmNzJkZmM5MGQzNzJkZTAyMGIzMTRiZDNmOWU4YzIxMmQwMjUyNzZjYiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_3a292d2797e44659bb38bf447250711a",
+      "statement": "CI runs on pull requests and pushes to main with two uv jobs: ruff check from the dev group, and the test suite with coverage from the test group, uploaded to Codecov.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml#L1-L33",
+          "version": "repo-lines-v1:sha256:dbd2b90d94bcc4c1402c5736d026fc782d69828465f2d4892ff5ac093a19f644:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2ZTFiMzJmYTA5MDc5YWUyZjAwMDFmZmYwZWNhMjdiNDk4NTk1N2Q0ZWI0ODU3OTI5YjNjZjA1OGZhYWU1NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiM2U3NGRlYzBlMGIyYThmZDJlNDJlNGUzNDVlNTA3YzJhMzYwOTRlYzdhYzQyYTdjYTMzZDBkYzJhYzIwZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_743813d43c8a4941953bd2f529bfa7e8",
+      "statement": "release-please runs on pushes to main and manages releases for the root package with tags without a component prefix (vX.Y.Z), bumping pyproject.toml and the annotated __version__ in indextts25/__init__.py.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/release-please.yml#L1-L17",
+          "version": "repo-lines-v1:sha256:c4b67e4c7849d2c54e6dc4e9004ba16971dea17d43829d0c675210c539ec98ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NjliNjMzMjE4MzFkOTkxMWRkNWFkOTlmMTM5NjYyMTIyYTA0YmU2YmU4Zjk5ZWY5MThiMmE1N2NjNDlhOTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExOGJmNDhkZjFhM2MwMDNhNmQxZGViYmYxM2NlZjQ5OWIxOTE3ZjcyYzMxNDI2NGY1YmJkMWRlZmFhNGE2YzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://indextts25/__init__.py#L5-L5",
+          "version": "repo-lines-v1:sha256:20e1338426d7f75e89224bd9af4dc6158e1b97d62a4a47e376a2cee2a27614eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBlMTMzODQyNmQ3Zjc1ZTg5MjI0YmQ5YWY0ZGM2MTU4ZTFiOTdkNjJhNGE0N2UzNzZhMmNlZTJhMjc2MTRlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBlMTMzODQyNmQ3Zjc1ZTg5MjI0YmQ5YWY0ZGM2MTU4ZTFiOTdkNjJhNGE0N2UzNzZhMmNlZTJhMjc2MTRlYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmMyZjljZmY1MzUwNTRiZWRhZGZhOGMxNGZmMDMwMDEzNWRhN2Q4MDE5NjczNGRjZDliZjBjNzEzYjQ2YWFmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://release-please-config.json#L1-L12",
+          "version": "repo-lines-v1:sha256:d1a7b5514056e4e924f0c6dec83f691c20def855cc59e2421b326be8aec45b42:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9959bebb04444685b7af3e2f934f574b",
+      "statement": "Pushing a v* tag runs the release workflow, which builds with uv and publishes to PyPI via trusted publishing from the pypi environment using an OIDC id-token instead of a stored token.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/release.yml#L1-L20",
+          "version": "repo-lines-v1:sha256:fc74f206d98bf0c4fcdec04f94446ca6222d21719851456c889c2fa6524091ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyZWVmOTAzMGQwYzcwMjkwMTBjNDYzNTY4OWY1ODMyOGQxMDllNmE4NWVkMWE5MjQ1YjIwZjM5NTViN2RiMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNmIzNzk4MDhmZTkxMjk2ZWFjMjMxYmE2ZDFkZDAwY2IxNjM3NTkxNTlmZGQ4OGY2OTZlMjQ1MWM2MTUxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T06:43:45.974Z"
+    "at": "2026-10-16T07:18:19.761Z"
   }
 }
