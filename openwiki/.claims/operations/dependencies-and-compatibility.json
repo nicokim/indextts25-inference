@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e1541f14353dc68d861135c61853ad4dcdcac12055039d621556428d19f8df01",
+  "pageVersion": "sha256:d60456f810ab9755517f1cc44687bf4a8e4649c60c8af69cda6f5d194ebab0fc",
   "claims": [
     {
       "id": "claim_637da39668b1435386494f44046729ed",
       "statement": "The runtime dependencies are torch>=2.8, transformers>=4.52, huggingface_hub, tiktoken, librosa, omegaconf, pyyaml, safetensors, einops and numpy, plus nemo-text-processing only on Linux x86_64 with Python below 3.14.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L24-L39",
-          "version": "repo-lines-v1:sha256:3a9e108cb866369385e98aac1e214ce2cc9b8da3b72fbfd1e2ea82e5c5037eef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOTVmNWU5ZWRlMDE4MTYwNDNjMDc5N2FjZThkYTJhYzRlOTlhOGE2YTYxMGZhOTg1NzBlZjM0YjkzNTYxMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlMTJiY2QyYTczMDlkMGEyZWFjNmQ5OWVhNTRmZTE4ZGI1NzY5M2RiNmNhNTk5MDdmYjc3Y2EyNDAyMzM4YjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3Yjk5NzU1ODMyYmEyMmY0NTdiMDBhZTBlZWIyNjYwMDg1NzcyOTVhOGY4ZGZlNTcyMTAzNjA0MjljM2Q3NTAifQ"
+          "resource": "repo://pyproject.toml#L26-L41",
+          "version": "repo-lines-v1:sha256:3a9e108cb866369385e98aac1e214ce2cc9b8da3b72fbfd1e2ea82e5c5037eef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOTVmNWU5ZWRlMDE4MTYwNDNjMDc5N2FjZThkYTJhYzRlOTlhOGE2YTYxMGZhOTg1NzBlZjM0YjkzNTYxMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1YzNiOWQyY2VhZjA5ZGYxYTA5MjM0NTZmMmEzNzkwNTU4OGU1YzI0ZmIxODIyYTBkMzJmNGE0Y2VkNGNhYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3Yjk5NzU1ODMyYmEyMmY0NTdiMDBhZTBlZWIyNjYwMDg1NzcyOTVhOGY4ZGZlNTcyMTAzNjA0MjljM2Q3NTAifQ"
         }
       ]
     },
@@ -17,8 +17,8 @@
       "statement": "The flash extra adds flash-attn>=2.8.3 and triton; the zh extra adds WeTextProcessing on Linux and wetext elsewhere; the ja extra adds fugashi and unidic-lite.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L41-L47",
-          "version": "repo-lines-v1:sha256:9d8a3ea306914ef939341ea8b81d03b9a817eefa9f70208430e85d418d20610d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTkyMThkYzRjZTk3MWNiZTNkMzhkNzc0MzBlNjM5OTE4ODg0ZGQ3N2Q3MTg0YzdiOTNkZmRjMmU5OTg2OTFiNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZiZDE1MDUzMGNkODgwN2MyM2JhZjJlNTdjNTQzN2EyOWQzMzZhNzRlMTVkYzU4ODY3Njg2MGI4N2I1MDkxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI4OTdhMTdjYTJjNmIwNTVkMzAxZjNjZTlhMWFiYTA2N2MzNzU0NTBiZDBlN2M1YjkzOWUwOWRlMWJhYWYxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDllYzg1YjEzZTMzZDc5ZGNmOWM1MmVlZDdiZDM3YzVhYWNjZWQ1MmNmZjk5YWZkNmU0YmY2NzYwOTljZjE3NiJ9"
+          "resource": "repo://pyproject.toml#L43-L49",
+          "version": "repo-lines-v1:sha256:9d8a3ea306914ef939341ea8b81d03b9a817eefa9f70208430e85d418d20610d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTkyMThkYzRjZTk3MWNiZTNkMzhkNzc0MzBlNjM5OTE4ODg0ZGQ3N2Q3MTg0YzdiOTNkZmRjMmU5OTg2OTFiNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZiZDE1MDUzMGNkODgwN2MyM2JhZjJlNTdjNTQzN2EyOWQzMzZhNzRlMTVkYzU4ODY3Njg2MGI4N2I1MDkxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI4OTdhMTdjYTJjNmIwNTVkMzAxZjNjZTlhMWFiYTA2N2MzNzU0NTBiZDBlN2M1YjkzOWUwOWRlMWJhYWYxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODQ4MDAxMWZjNGZkMzNmZTM5NzAzN2YwOTRiZDc3ZWExMjViMTBlODgzMTdjOTU3NWM5YzA0OTI5NjAyOGZiMyJ9"
         }
       ]
     },
@@ -157,18 +157,42 @@
       "statement": "The dev dependency group provides ruff and the test group provides pytest with pytest-cov; ruff checks the whole package with the E, F, W, I and UP rule sets.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L49-L51",
+          "resource": "repo://pyproject.toml#L51-L53",
           "version": "repo-lines-v1:sha256:a56192eea27d5761951cd8eb776fca2dc9ab40d3789098e7f83881e2709e3f58:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJiNzQ5OWIxY2UxYzRmNGIyNTI3ZjNhMzI4NGNhYzZiNmExZTNiZjQ5ODhiNTY3OTgyYzNkYzhlOWExN2YyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWYzMWFiZDA0Y2U0NGIwMDJjNTI2MjhmN2M4NGI0MmVkZDMwNzc1OWEyNWU4ZGM5OGZkNzAyMjRiZmQxMTU0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzAzNDc5ZDYyZmE5NDZlZjljZGNjNTI1ZDNlNDc2YzRiOTQyMTFjOTc2MTg2NmQ0ZTZlZjJjNGRkZTM1Y2JlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU1OWVlN2VlYjBlOWVhNTg5Y2FjYjRhZjk0NzE3MGJjYTQ1ODcwOGUxY2QxZTA4MGRjY2I0NTdmN2RhYjU0YiJ9"
         },
         {
-          "resource": "repo://pyproject.toml#L67-L73",
+          "resource": "repo://pyproject.toml#L69-L75",
           "version": "repo-lines-v1:sha256:1f178eb0805cdd20bdc23fd173c5ff1a881cc78964b0c0b8d7948fd59bba6a5a:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzc0NWZhYjg2YjEyMWRjODViNGY3ODY3MzM5YTEzZmVlODA0YzhhMDJmNDcxMDY1NzJmMmJmMDY2NGQ1OTUxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmMxMTkwMTk1ODgxODBlMmJlMWNmMTYxMTQ0MzNmNWFlZmQzODY5NzVhYzRhZmExZTFlYzI5NmEyNzQzZWRmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2Q0ZDk5OWMwNDVmOWQ2MGM3NDRlNTBlZGE1NGU0ZmJmMjAzOTIzOTRjODk0NGI0ZWQ1NDA4OWI4NTcxOGIwZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_555521750c4847dcbfa4a9bcbd44132d",
+      "statement": "The project declares Python 3.10 through 3.15 and ships as a single pure-Python package (hatchling builds only the indextts25 directory), so one wheel covers every supported Python version.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L17-L25",
+          "version": "repo-lines-v1:sha256:0f952e14b0619ba766beb5b85b94927e080f6962536cd0c3278c55335b1d9a42:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTMzNzVkNDA1MDQ4MmMzNzFiMjNjYzFhMGUzMjBmODgwM2RmZThiZjk2ZmY2NDY1MTk3ODNhMjIxYjk5YTYwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTA4NGZlNWUyM2E3OTgwNGY3MWMzMWUyNGYxZDA3OGI0ZTVhMjAyNjY1ZDU4YmU0ZTgyN2Q4MjJhNTI3Yzg1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTljZGIyOTZmZTlhY2UwOGYwMjEwMGNhZWUzOTZkZjljNTExOGQ2Y2U5MWFhMmI3ZGNmODhiMDhmYjFjOTAzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzNiZDBlNGU2YmZiNWU1ODgzYmEwYjI2ZjhhMzY5MTAyYWYyNDEyNDdlODFlZDIzODZjOTE2MzcwNTM4ODMwMSJ9"
+        },
+        {
+          "resource": "repo://pyproject.toml#L59-L64",
+          "version": "repo-lines-v1:sha256:77fdff6132c1a4abeefd6ff5129d7da574c177f8d297dfd2e48f218042e56173:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDQ1Njk5NDZhYzliYmU3Y2IyY2RlYzNmOGJlY2YzNDM3NTBjNThiOWIzMjFlYzIxOTViZmJhYWIyYWE4YzRiYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjljMjM5ZmQ4NDliOTA0NDcwY2VjOTQ4OGMwOGRmYWM5MmY3NzMzNzQyZTVlOTdiZDFkZGQ0MTE0MDNmMzVkMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjA1MzE2NDZiOGEzYjFlNTY5ZTA2YzJhMWRjY2RlYzlhOTI4N2I5MjlkYTdkZGJlZjM5NmYwZmQ2YWFkNTE5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTcwMjE1YTM3ODk4YTYzYTI1OWZhZTA1NDY5NjIzMDk4MDU1YmE2NjM5MTkzNDg2YzNmNzY4NzRhMTIyZDIxYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_dd15e9c626f94352bfbc7f2ec25ed2a3",
+      "statement": "The README tells Python 3.15 users to install torch from the PyTorch index first because PyPI has no torch wheels for 3.15, and notes that NeMo normalization is unavailable on Python 3.14 and 3.15.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L46-L53",
+          "version": "repo-lines-v1:sha256:eb88e91d9fc0ca2a89f8ed3e9117b906d148075e0d4731fb81ac31eeb48d4d3c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGZmMjAzYTc3YmE3MTE4OGYyODQxN2VjYjA2NWU4NTM3NzVkNzFhNGFmMmYxODY4M2QyOGYyZmFmZjdiNjY4ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2NiZGQ5OWUzYmMxYThmODE2ZTg0ZDk0OTFhZGIxNmIxMTBmODRlZjEyOGE2ZWRmYzVhODE4NzBjMmZjZTc0OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWRlOGU3ZmExMjAwNGZjYzMyNjk2YjZkMTk1ZGU3ZjkyMzNlNDMzNTk0NThjNTE3OThmMDY4YTJiODg3NGNiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjUxOTBiYjE0NjhhMzE1MzhhMTlhODkxZDg0NTJlMzdhY2JiZDNmMDUxMWU0Mzg1ZWExMDA2ODE4YjUxZjVmOSJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T07:18:19.761Z"
+    "at": "2026-10-16T14:28:52.827Z"
   }
 }

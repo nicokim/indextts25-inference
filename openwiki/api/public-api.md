@@ -5,7 +5,7 @@ description: How to construct IndexTTS25, warm it up, synthesize to a WAV file o
 tags: [api, synthesis, streaming, configuration, threading]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T07:18:19.761Z
+    at: 2026-10-16T14:28:52.827Z
 sources:
   - id: openwiki-source-f99a73fe01bdf87e2b7d0a4d
     resource: repo://indextts25/__init__.py

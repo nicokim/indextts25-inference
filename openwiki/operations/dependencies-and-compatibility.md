@@ -18,18 +18,22 @@ sources:
     resource: repo://indextts25/utils/tokenizer.py
   - id: openwiki-source-05ccef8d4cf1698187f20464
     resource: repo://pyproject.toml
+  - id: openwiki-source-23775c3de52f3ab95a13cb8b
+    resource: repo://README.md
   - id: openwiki-source-310a7347cd31a1985b43c333
     resource: repo://tests/test_regressions.py
-generated: { by: "claude-code", at: "2026-10-16T07:18:19.761Z" }
+generated: { by: "claude-code", at: "2026-10-16T14:28:52.827Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T07:18:19.761Z
+    at: 2026-10-16T14:28:52.827Z
 ---
 
 # Dependencies, extras and version compatibility
 
-The package is built with hatchling and ships only the `indextts25` directory. Python 3.10
-or newer is required; Linux is the supported platform.
+The package is built with hatchling and ships only the `indextts25` directory, as a single
+pure-Python wheel (`py3-none-any`): there is nothing to compile, so one wheel serves every
+Python version. Python 3.10 or newer is required and 3.10–3.15 are declared; Linux is the
+supported platform.
 
 ## Runtime dependencies
 
@@ -121,7 +125,10 @@ transcription:
 | 3.12 | 2.14.1+cu130 | 5.20.0 | — | sdpa |
 
 With a fixed seed, the torch 2.8 stack produced bit-identical Spanish and Japanese audio to
-torch 2.9.1. Python 3.10 and 3.13 install and pass the CPU tests. The bounds in
+torch 2.9.1. Python 3.10, 3.13, 3.14 and 3.15 install and pass the CPU tests, and a CPU
+synthesis was checked on 3.15. Two limits apply to the newest versions: PyPI has no torch
+wheels for 3.15 yet, so torch comes from the PyTorch index there, and NeMo's pinned pynini
+has no wheels for 3.14 or 3.15, so text normalization is unavailable on them. The bounds in
 `pyproject.toml` are the minimum stack.
 
 ## Related pages

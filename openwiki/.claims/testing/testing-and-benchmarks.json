@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c5e61ae1a0c4b76e2098c29ddce84ea77fa9952c8f6e2bbd30c9d2da231f631d",
+  "pageVersion": "sha256:179e49e5fc5acf81158f749994ef6d4f9d60a22f7d507093f79e972d3626999c",
   "claims": [
     {
       "id": "claim_ff6d93724175483a9758d7820d5349b4",
       "statement": "pytest is configured to collect tests from the tests/ directory; the test dependency group adds pytest and pytest-cov and the dev group adds ruff.",
       "evidence": [
         {
-          "resource": "repo://pyproject.toml#L49-L51",
+          "resource": "repo://pyproject.toml#L51-L53",
           "version": "repo-lines-v1:sha256:a56192eea27d5761951cd8eb776fca2dc9ab40d3789098e7f83881e2709e3f58:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJiNzQ5OWIxY2UxYzRmNGIyNTI3ZjNhMzI4NGNhYzZiNmExZTNiZjQ5ODhiNTY3OTgyYzNkYzhlOWExN2YyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWYzMWFiZDA0Y2U0NGIwMDJjNTI2MjhmN2M4NGI0MmVkZDMwNzc1OWEyNWU4ZGM5OGZkNzAyMjRiZmQxMTU0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzAzNDc5ZDYyZmE5NDZlZjljZGNjNTI1ZDNlNDc2YzRiOTQyMTFjOTc2MTg2NmQ0ZTZlZjJjNGRkZTM1Y2JlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU1OWVlN2VlYjBlOWVhNTg5Y2FjYjRhZjk0NzE3MGJjYTQ1ODcwOGUxY2QxZTA4MGRjY2I0NTdmN2RhYjU0YiJ9"
         },
         {
-          "resource": "repo://pyproject.toml#L64-L65",
+          "resource": "repo://pyproject.toml#L66-L67",
           "version": "repo-lines-v1:sha256:0f792d73d83e29f0fb703a46db10647879b1415b0de84941d5c746117996609f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODY3NmU2NDE0NjVhNjU1MWU5ZTljZmZkN2ZhYTFlNmE0MmY5YjcyNDgwOTgxM2M5MDNkN2VkY2I1MmYzMDA2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDEwODVhZDA5MDQyNTcxMWFkYjRmMTVmMjhlMjVjMTcxMDc5MmMxZDQ1ZGE3Mzk0ZWU5MTJlMDM4MTkwNDU5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWM0NzFhZDE0MDVmZTEzOGQ2NDFjMzAzNDJlYmJjNGNiYTdjMDM5NGU1ODg5MjQ3ZGMwMzg1NjU2NjEyZTc0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmI4NTBkMDkxYWU4MjgxODRhZDRiMDJhOWI2N2Q3YzU0YjQ4YThkYjdlMTU5YWE3MDVkOTdiYzIzMDYwYWQ1NCJ9"
         }
       ]
@@ -96,7 +96,7 @@
         },
         {
           "resource": "repo://indextts25/__init__.py#L5-L5",
-          "version": "repo-lines-v1:sha256:20e1338426d7f75e89224bd9af4dc6158e1b97d62a4a47e376a2cee2a27614eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBlMTMzODQyNmQ3Zjc1ZTg5MjI0YmQ5YWY0ZGM2MTU4ZTFiOTdkNjJhNGE0N2UzNzZhMmNlZTJhMjc2MTRlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBlMTMzODQyNmQ3Zjc1ZTg5MjI0YmQ5YWY0ZGM2MTU4ZTFiOTdkNjJhNGE0N2UzNzZhMmNlZTJhMjc2MTRlYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmMyZjljZmY1MzUwNTRiZWRhZGZhOGMxNGZmMDMwMDEzNWRhN2Q4MDE5NjczNGRjZDliZjBjNzEzYjQ2YWFmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "version": "repo-lines-v1:sha256:ca78f5058ee162d7962750a1d4fcb489c2a801df96d52a4920b603f7c4369163:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2E3OGY1MDU4ZWUxNjJkNzk2Mjc1MGExZDRmY2I0ODljMmE4MDFkZjk2ZDUyYTQ5MjBiNjAzZjdjNDM2OTE2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2E3OGY1MDU4ZWUxNjJkNzk2Mjc1MGExZDRmY2I0ODljMmE4MDFkZjk2ZDUyYTQ5MjBiNjAzZjdjNDM2OTE2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmMyZjljZmY1MzUwNTRiZWRhZGZhOGMxNGZmMDMwMDEzNWRhN2Q4MDE5NjczNGRjZDliZjBjNzEzYjQ2YWFmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         },
         {
           "resource": "repo://release-please-config.json#L1-L12",
@@ -117,6 +117,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T07:18:19.761Z"
+    "at": "2026-10-16T14:28:52.827Z"
   }
 }

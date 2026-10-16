@@ -27,7 +27,7 @@ sources:
 generated: { by: "claude-code", at: "2026-10-16T07:18:19.761Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T07:18:19.761Z
+    at: 2026-10-16T14:28:52.827Z
 ---
 
 # Testing and benchmarks
