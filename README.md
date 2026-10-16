@@ -78,12 +78,14 @@ cincuenta", `1500$` → "mil quinientos pesos"); `US$`, `U$S` and `USD` are doll
 "la primera vez" for `la 1° vez`) and keep their full form as labels ("capítulo uno") and before
 a verb ("en dos mil veintiuno empecé"), unless the label or name is followed by what they count
 ("ToxicMati un bit"). Heights read "uno setenta", scores "tres a uno", ranges "diez a quince
-kilómetros", ordinals "1era" → "primera". `H.MM` is a time (`te espero 21.30` → "veintiuna y
-media") unless a unit or a measure follows (`9.58 segundos`, `3.15 %`) or a version or a grade
-precedes (`Python 3.11`, `promedio de 7.50`); then it is read with "punto". Roman numerals are
-read only in clear contexts ("siglo veintiuno", "del uno al doce") and after a regnal name from
-a fixed list ("Juan Pablo segundo", "Isabel segunda", "Luis catorce"); other capitals such as
-"CV", "MI", "GTA V", "Juan M" or the initial in "Juan D. Perón" stay letters.
+kilómetros", ordinals "1era" → "primera". `H.MM` is a time (`te espero 21.30`, `21.30 hs` →
+"veintiuna y media") unless a unit or a measure follows (`9.58 segundos`, `3.15 %`, `2.50 kms`)
+or a version or a grade precedes (`Python 3.11`, `promedio de 7.50`); then it is a decimal, with
+"coma" before a unit ("tres coma quince por ciento", `7.5 hs` → "siete coma cinco horas") and
+"punto" otherwise. Roman numerals are read only in clear contexts ("siglo veintiuno", "del uno
+al doce") and after a regnal name from a fixed list ("Juan Pablo segundo", "Isabel segunda",
+"Luis catorce"); other capitals such as "CV", "MI", "GTA V", "Juan M" or the initial in "Juan
+D. Perón" stay letters.
 
 ### Streaming with synchronized text
 
