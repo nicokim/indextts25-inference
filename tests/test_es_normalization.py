@@ -82,6 +82,11 @@ def test_spell(n, full, masc, fem):
         ("Son 1000000 de pesos.", "Son un millón de pesos."),
         ("Tiene 1234567 vistas.", "Tiene un millón doscientas treinta y cuatro mil quinientas sesenta y siete vistas."),
         ("Hay 1 000 000 de personas.", "Hay un millón de personas."),
+        (
+            "Mi id es 12345678901234567890.",
+            "Mi id es uno dos tres cuatro cinco seis siete ocho nueve cero uno dos tres cuatro cinco seis siete ocho "
+            "nueve cero.",
+        ),
         # after a label or a name, a number still counts the noun that follows it
         ("Qué rata, y ToxicMati 1 bit nada más?", "Qué rata, y ToxicMati un bit nada más?"),
         (

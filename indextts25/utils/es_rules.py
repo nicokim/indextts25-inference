@@ -177,10 +177,12 @@ _NEMO_AFTER = re.compile(rf"\s+de\s+(?i:{_MONTHS})\b|{_UNIT}")
 _NEXT = re.compile(rf"\s+([{_L}]+)")
 _COORD = re.compile(rf"\s+[oueya]\s+\d[\d.]*\s+([{_L}]+)")  # "1 o 2 veces", "de 1 a 3 horas"
 _PREV = re.compile(rf"([{_L}]+)\s+$")
+_UNIT_AT = re.compile(_UNIT)
+_BACK = 60  # how far back the rules look for the previous word; keeps them linear in long texts
 
 
 def _prev_word(text: str, pos: int) -> str:
-    m = _PREV.search(text, 0, pos)
+    m = _PREV.search(text, max(0, pos - _BACK), pos)
     return m.group(1).lower() if m else ""
 
 
@@ -221,9 +223,9 @@ def _say(n: int, text: str, start: int, end: int) -> str:
     word = nxt.group(1) if nxt else ""
     lw = word.lower()
     noun, adj = _counted(text, end)
-    prev = _PREV.search(text, 0, start)
+    prev = _PREV.search(text, max(0, start - _BACK), start)
     pw = prev.group(1) if prev else ""
-    head = text[: prev.start()].rstrip() if prev else ""
+    head = text[max(0, prev.start() - _BACK) : prev.start()].rstrip() if prev else ""
     # "Capítulo 1", "el Area 51 guardan": a label, not a count (a capital word is a name unless
     # it starts the sentence and is not all caps like "FIFA 21", or the whole text is shouted)
     name = (
@@ -231,9 +233,9 @@ def _say(n: int, text: str, start: int, end: int) -> str:
         and not (len(word) > 1 and word.isupper())
         and ((head and head[-1] not in ".!?¡¿…:;'\"«(") or (len(pw) > 1 and pw.isupper()))
     )
-    if (pw.lower() in _LABELS or name or _LABEL_ABBR.search(text, 0, start)) and not _counts_after_label(
-        n, noun, text, end
-    ):
+    if (
+        pw.lower() in _LABELS or name or _LABEL_ABBR.search(text, max(0, start - _BACK), start)
+    ) and not _counts_after_label(n, noun, text, end):
         return _spell(n)
     if lw == "mil":  # "21 mil" -> "veintiún mil"; "200 mil personas" agrees with the noun after it
         after = _counted(text, nxt.end())[0]
@@ -289,6 +291,8 @@ def _scaled(whole: str, dec: str | None, mult: str) -> int:
 
 def _money(m: re.Match) -> str:
     raw = re.sub(r"[.,]", "", m["n"])
+    if len(raw) > 18:
+        return m.group(0)
     n, cents, mult = int(raw), m["c"], m["mult"]
     if mult:  # "$1,5 millones": the decimals belong to the multiplier
         n, cents = _scaled(raw, cents, mult), None
@@ -342,7 +346,7 @@ _ABBR_UNITS = {
 
 
 def _abbr_unit(m: re.Match) -> str:
-    one = re.search(r"(?<![\d.,])1$", m.string[: m.start()].rstrip())
+    one = re.search(r"(?<![\d.,])1$", m.string[max(0, m.start() - _BACK) : m.start()].rstrip())
     return f" {_ABBR_UNITS[m.group(1)]}{'' if one else 's'}"
 
 
@@ -389,7 +393,7 @@ _TIME_UNIT = re.compile(rf"\s?(?:hs|hrs?|h|horas|am|pm|AM|PM)(?![{_L}])|\s?[ap]\
 def _dot_time(text: str, start: int, end: int, h: str, mm: str, cues: frozenset = _TIME_CUES) -> str | None:
     """'21.30 hs', 'nos vemos 9.30', 'a las 3.30': a time, written 'H:MM' for NeMo."""
     if len(mm) == 2 and int(h) <= 23 and int(mm) <= 59:
-        cue = _prev_word(text, start) in cues and not re.match(_UNIT, text[end:])  # not "desde 3.50 kg"
+        cue = _prev_word(text, start) in cues and not _UNIT_AT.match(text, end)  # not "desde 3.50 kg"
         if cue or _TIME_UNIT.match(text, end):
             return f"{h}:{mm}"
     return None
@@ -405,7 +409,7 @@ def _period_decimal(m: re.Match) -> str:
     a, b, text = m[1], m[2], m.string
     if time := _dot_time(text, m.start(), m.end(), a, b):
         return time
-    if re.match(_UNIT, text[m.end() :]):
+    if _UNIT_AT.match(text, m.end()):
         return f"{a},{b}"  # before a unit, a Spanish comma: NeMo reads "quince coma cinco kilómetros"
     return _decimal(a, b, text, m.end())
 
@@ -570,12 +574,15 @@ def _sequel(m: re.Match) -> str:
     return f"{prev} {_spell(v)}"
 
 
+_DON = re.compile(r"\.\s+(?!Do[nñ])[A-ZÁÉÍÓÚÑ][a-záéíóúñ]")
+
+
 def _shield(m: re.Match) -> str:
     """Append the word joiner, except to the 'D.' of 'D. Juan Pérez' or 'a D. Juan', which NeMo
     reads 'Don' (not 'vitamina D. Juan dijo', nor the initial of 'Juan D. Perón')."""
     tok = m.group(1)
-    if tok == "D" and re.match(r"\.\s+(?!Do[nñ])[A-ZÁÉÍÓÚÑ][a-záéíóúñ]", m.string[m.end() :]):
-        prev = _PREV.search(m.string, 0, m.start())
+    if tok == "D" and _DON.match(m.string, m.end()):
+        prev = _PREV.search(m.string, max(0, m.start() - _BACK), m.start())
         if not prev or prev.group(1) in _CLOSED:
             return tok
     return tok + _WJ
@@ -596,6 +603,7 @@ _AMOUNT = (
 _PRE: list[tuple[re.Pattern, str | Callable[[re.Match], str]]] = [
     (re.compile(p), r)
     for p, r in [
+        (r"\d{19,}", lambda m: _digits(m.group(0))),  # an id, not a number (and int() has a limit)
         (r"\bRR\.?\s?HH\b\.?", _abbr("recursos humanos")),
         (r"\bEE\.?\s?UU\b\.?", _abbr("Estados Unidos")),
         (r"\betc\.", _abbr("etcétera")),
@@ -605,7 +613,7 @@ _PRE: list[tuple[re.Pattern, str | Callable[[re.Match], str]]] = [
         (r"\b[Vv]ol\.\s?(?=[IVXLCDM]+\b|\d)", "volumen "),
         (r"\bc/u\b", "cada uno"),
         (r"\bc/\s?(?=[a-záéíóúñ])", "con "),
-        (r"\S*_\S*", _underscores),
+        (r"(?<!\S)\S*_\S*", _underscores),  # (?<!\S): each token is tried once
         (r"(?<![\w@])@(?=\w)", "arroba "),  # NeMo spells a handle letter by letter, and its comma as "coma"
         (r"(?<![\w#&])#(?=[A-Za-zÁÉÍÓÚÑáéíóúñ])", ""),  # hashtags
         (r"\b[Nn](?:ro\.?|\.?\s?[º°]|\.)\s?(?=\d)|\bnúm\.\s?(?=\d)|#\s?(?=\d)", "número "),
@@ -677,7 +685,7 @@ _PRE: list[tuple[re.Pattern, str | Callable[[re.Match], str]]] = [
             r"|ms|min|[ghlms])(?![\w²³/])",
             _measure,
         ),
-        (rf"\S*(?:\d|\w\.(?:{_EXTENSIONS})\b|\w@\w)\S*", _token),
+        (rf"(?<!\S)\S*(?:\d|\w\.(?:{_EXTENSIONS})\b|\w@\w)\S*", _token),
         (r"(?<![\w.,:/$€£#+-])(?:\d{1,3}(?:\.\d{3})+|\d+)(?![\w%º°ª€$£]|\.?[ºª°]|[.,:/-]\d|\s?[€$£])", _integer),
         # Roman numerals in clear contexts
         (
