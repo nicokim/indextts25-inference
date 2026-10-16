@@ -44,8 +44,8 @@ _CACHE_MAX = 8  # ponytail: FIFO; switch to LRU if voices rotate a lot
 
 PRONUNCIATION_ANNOTATION_PATTERN = re.compile(r'<([^|>\n]+)\|([^>\n]+)>')
 """
-匹配发音标注格式：<文字|发音>
-例如：<going|G OW1 . IH0 NG>，<行|XING2>
+Matches the pronunciation annotation format: <word|pronunciation>
+e.g. <going|G OW1 . IH0 NG>, <行|XING2>
 """
 
 
@@ -61,12 +61,12 @@ def is_kana(s: str) -> bool:
 
 def apply_pronunciation_annotations(text: str) -> str:
     """
-    处理发音标注格式 <文字|发音>，转换为特殊token包裹的发音
-    - 文字含中文 -> <|SPECIAL_TOKEN_2|>发音<|SPECIAL_TOKEN_2|>
-    - 文字为英文 -> <|SPECIAL_TOKEN_1|>发音<|SPECIAL_TOKEN_1|>
-    发音内容统一转大写
+    Replace <word|pronunciation> annotations with the pronunciation wrapped in special tokens:
+    - word has Chinese -> <|SPECIAL_TOKEN_2|>pronunciation<|SPECIAL_TOKEN_2|>
+    - word is English  -> <|SPECIAL_TOKEN_1|>pronunciation<|SPECIAL_TOKEN_1|>
+    The pronunciation is always uppercased.
 
-    例如：
+    Examples:
         <going|G OW1 . IH0 NG> -> <|SPECIAL_TOKEN_1|>G OW1 . IH0 NG<|SPECIAL_TOKEN_1|>
         <行|XING2>              -> <|SPECIAL_TOKEN_2|>XING2<|SPECIAL_TOKEN_2|>
     """

@@ -199,7 +199,7 @@ class DiT(torch.nn.Module):
             x_in = torch.cat([x_in, style[:, None, :].repeat(1, T, 1)], dim=-1) #[2, 1863, 864]
             
         if class_dropout: #False
-            x_in[..., self.in_channels:] = x_in[..., self.in_channels:] * 0 # 80维后全置为0
+            x_in[..., self.in_channels:] = x_in[..., self.in_channels:] * 0 # zero every dim after the first 80
             
         x_in = self.cond_x_merge_linear(x_in)  # (N, T, D) [2, 1863, 512]
         
@@ -212,7 +212,7 @@ class DiT(torch.nn.Module):
             x_in = torch.cat([t1.unsqueeze(1), x_in], dim=1)
             
         x_mask = sequence_mask(x_lens + self.style_as_token + self.time_as_token, max_length=x_in.size(1)).to(x.device).unsqueeze(1) #torch.Size([1, 1, 1863])True
-        input_pos = self.input_pos[:x_in.size(1)]  # (T,) range（0，1863）
+        input_pos = self.input_pos[:x_in.size(1)]  # (T,) range(0, 1863)
         # Inference always passes x_lens = T, so the attention mask is all True and is
         # omitted (a [B, 1, T, T] mask used to be built every Euler step for all 13 layers).
         x_res = self.transformer(x_in, t1.unsqueeze(1), input_pos) # [2, 1863, 512]

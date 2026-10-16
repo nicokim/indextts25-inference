@@ -116,7 +116,7 @@ LANGUAGES = {
     "common": "common",
 }
 
-# 增加 LANGUAGE_DICT 用于映射
+# Add LANGUAGE_DICT for the language code -> index mapping
 LANGUAGE_DICT = {lang: index for index, lang in enumerate(LANGUAGES.keys())}
 
 AUDIO_EVENT = {

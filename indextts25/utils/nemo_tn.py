@@ -13,20 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""TTS 前端文本归一化（Text Normalization）。
+"""TTS front-end text normalization (TN).
 
-基于 ``nemo_text_processing`` 把数字/符号/日期/货币等 non-standard words 展开成
-可朗读文本（例如 ``"25%"`` -> ``"twenty five percent"``）。
+Uses ``nemo_text_processing`` to expand numbers/symbols/dates/currency and other
+non-standard words into speakable text (e.g. ``"25%"`` -> ``"twenty five percent"``).
 
-设计要点：
-- **输入是上游服务语言码**（ar/zh/es/en/ja 这类 ISO 639-1 风格短码）。本模块内部
-  维护 ``_SERVICE_TO_NEMO`` 把它转成 NeMo 需要的语言码。也兼容上游直接传 ISO 639-3
-  （arb/arz/... 等）的情况——会先折回服务码再查。
-- **NeMo 不是所有语言都有 TN grammar**（如日语 ja 没有）。不支持的语言直接返回
-  原文透传。
-- **懒加载 + 缓存**：``Normalizer`` 构建 grammar 较慢（秒级），按语言缓存实例。
-- **失败降级**：``nemo_text_processing`` 未安装、grammar 构建失败、或 normalize
-  调用抛异常时，记 warning 并返回原文，绝不中断合成。
+Design notes:
+- **Input is an upstream service language code** (ISO 639-1 style short code, e.g.
+  ar/zh/es/en/ja); ``_SERVICE_TO_NEMO`` maps it to NeMo's language code. ISO 639-3
+  codes sent directly by upstream (arb/arz/...) are first folded back to the service code.
+- **Not every language is normalized** (e.g. ja: NeMo >=1.2 has a grammar, but it is
+  deliberately not enabled; see ``_SERVICE_TO_NEMO``). Such text passes through unchanged.
+- **Lazy load + cache**: ``Normalizer`` grammars are slow to build (seconds); cached per language.
+- **Degrade on failure**: if ``nemo_text_processing`` is missing, the grammar build fails,
+  or normalize raises, a warning is logged and the raw text is returned; never aborts.
 """
 
 import logging
@@ -69,14 +69,14 @@ def _build_normalizer(nemo_lang: str, input_case: str):
 
 
 # ---------------------------------------------------------------------------
-# 语言码映射：上游服务码 / ISO 639-3 -> NeMo TN 语言码
+# Language code mapping: upstream service code / ISO 639-3 -> NeMo TN language code
 #
-# 仅列出 NeMo 目前有 TN grammar 的语言。未列出的（如 ja 日语）会跳过归一化。
-# NeMo 语言码见 nemo_text_processing.text_normalization.normalize.Normalizer(lang=...)。
-# 需要扩充时，确认对应语言在你安装的 nemo 版本里确有 TN grammar 后再加。
+# Only languages with a TN grammar we enable are listed; others (e.g. ja) skip TN.
+# NeMo language codes: see nemo_text_processing.text_normalization.normalize.Normalizer(lang=...).
+# Before adding a language, verify the installed nemo version actually has its TN grammar.
 # ---------------------------------------------------------------------------
 
-# 服务码（ISO 639-1 风格）-> NeMo 语言码
+# Service code (ISO 639-1 style) -> NeMo language code
 _SERVICE_TO_NEMO: Dict[str, str] = {
     "ar": "ar",
     "zh": "zh",
@@ -86,7 +86,7 @@ _SERVICE_TO_NEMO: Dict[str, str] = {
     # changes the output and it was not validated by ear. Japanese passes unnormalized.
 }
 
-# ISO 639-3 -> 服务码
+# ISO 639-3 -> service code
 _ISO3_TO_SERVICE: Dict[str, str] = {
     "arb": "ar",  # standard arabic
     "arz": "ar",  # egyptian arabic
@@ -101,13 +101,13 @@ _ISO3_TO_SERVICE: Dict[str, str] = {
 
 
 def _to_nemo_lang(lang: Optional[str]) -> Optional[str]:
-    """把上游语言码映射成 NeMo TN 语言码；不支持归一化则返回 None。"""
+    """Map an upstream language code to its NeMo TN code; None if TN is unsupported."""
     if not lang:
         return None
     key = lang.lower()
     if key in _SERVICE_TO_NEMO:
         return _SERVICE_TO_NEMO[key]
-    # 上游可能直接传了 ISO 639-3（如 arb / spa），先折回服务码再查
+    # Upstream may pass ISO 639-3 directly (e.g. arb / spa): fold back to the service code
     svc = _ISO3_TO_SERVICE.get(key)
     if svc and svc in _SERVICE_TO_NEMO:
         return _SERVICE_TO_NEMO[svc]
@@ -115,22 +115,22 @@ def _to_nemo_lang(lang: Optional[str]) -> Optional[str]:
 
 
 class TextNormalizer:
-    """按语言懒加载并缓存 NeMo ``Normalizer`` 的封装。
+    """Wrapper that lazily builds and caches one NeMo ``Normalizer`` per language.
 
-    单例式使用（见模块底部 ``get_text_normalizer()``），使 grammar 只构建一次并跨调用复用。
+    Used as a singleton (``get_text_normalizer()`` below): grammars are built once and reused.
 
     Args:
-        input_case: NeMo 的大小写处理模式。``"cased"`` 保留大小写（默认，适合含专有
-            名词/多语种混排的文本）；``"lower_cased"`` 先转小写再归一化。
+        input_case: NeMo casing mode: ``"cased"`` keeps case (default; good for proper
+            nouns / mixed-language text), ``"lower_cased"`` lowercases before normalizing.
     """
 
     def __init__(self, input_case: str = "cased"):
         self.input_case = input_case
-        # nemo_lang -> Normalizer 实例；值为 None 表示该语言不可用（已尝试过并失败）
+        # nemo_lang -> Normalizer; None = language unavailable (already tried and failed)
         self._cache: Dict[str, Optional[object]] = {}
 
     def _get_normalizer(self, nemo_lang: str):
-        """返回缓存的 Normalizer；首次构建，失败则缓存 None 以避免反复重试。"""
+        """Return the cached Normalizer; build it once, caching None on failure to avoid retries."""
         if nemo_lang in self._cache:
             return self._cache[nemo_lang]
 
@@ -152,23 +152,23 @@ class TextNormalizer:
         return normalizer
 
     def normalize(self, text: Optional[str], lang: Optional[str]) -> Optional[str]:
-        """对 ``text`` 做文本归一化。
+        """Normalize ``text``.
 
-        语言不支持 / NeMo 不可用 / 归一化抛异常时，原样返回 ``text``（降级透传）。
+        Unsupported language / NeMo unavailable / normalize raises: returns ``text`` as is.
 
         Args:
-            text: 待归一化文本。
-            lang: 上游语言码（服务码或 ISO 639-3）。
+            text: text to normalize.
+            lang: upstream language code (service code or ISO 639-3).
 
         Returns:
-            归一化后的文本；无法处理时返回原文。
+            The normalized text, or the original text if it cannot be processed.
         """
         if not text:
             return text
 
         nemo_lang = _to_nemo_lang(lang)
         if nemo_lang is None:
-            # 语言无关模式或 NeMo 无该语言 TN（如 ja）：跳过
+            # Language-agnostic mode or no NeMo TN for this language (e.g. ja): skip
             return text
 
         normalizer = self._get_normalizer(nemo_lang)
@@ -189,7 +189,7 @@ _DEFAULT_NORMALIZER: Optional[TextNormalizer] = None
 
 
 def get_text_normalizer(input_case: str = "cased") -> TextNormalizer:
-    """返回进程级共享的 ``TextNormalizer`` 单例。"""
+    """Return the process-wide shared ``TextNormalizer`` singleton."""
     global _DEFAULT_NORMALIZER
     if _DEFAULT_NORMALIZER is None:
         _DEFAULT_NORMALIZER = TextNormalizer(input_case=input_case)
@@ -197,5 +197,5 @@ def get_text_normalizer(input_case: str = "cased") -> TextNormalizer:
 
 
 def normalize_text(text: Optional[str], lang: Optional[str]) -> Optional[str]:
-    """便捷入口：用共享单例对 ``text`` 按 ``lang`` 做归一化。"""
+    """Convenience entry point: normalize ``text`` for ``lang`` with the shared singleton."""
     return get_text_normalizer().normalize(text, lang)
