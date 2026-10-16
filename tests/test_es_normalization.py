@@ -117,7 +117,25 @@ def test_spell(n, full, masc, fem):
         ("Hay 200 especies.", "Hay doscientas especies."),
         ("Mandame 1 señal.", "Mandame una señal."),
         ("Es 1 de las mejores series.", "Es una de las mejores series."),
+        ("Es 1 de mis amigas.", "Es una de mis amigas."),
+        ("Es 1 de mis amigos.", "Es uno de mis amigos."),
         ("Tengo 21 primos.", "Tengo veintiún primos."),
+        # plurals that end like a voseo verb ("tenés"), and nouns with one form for both
+        ("Me tomé 21 cafés.", "Me tomé veintiún cafés."),
+        ("Vinieron 21 bebés.", "Vinieron veintiún bebés."),
+        ("Hay 31 sofás en el depósito.", "Hay treinta y un sofás en el depósito."),
+        ("Pedí 41 menús.", "Pedí cuarenta y un menús."),
+        ("Atrapé 21 Pokémon.", "Atrapé veintiún Pokémon."),
+        ("Vinieron 200 mamás.", "Vinieron doscientas mamás."),
+        ("Con 21 tenés.", "Con veintiuno tenés."),
+        # counts of hours, minutes and seconds ending in 1 stay plural
+        ("Faltan 31 minutos.", "Faltan treinta y un minutos."),
+        ("Llevo 51 horas despierto.", "Llevo cincuenta y una horas despierto."),
+        ("Tardé 41 segundos en morir.", "Tardé cuarenta y un segundos en morir."),
+        ("Tengo 201 horas.", "Tengo doscientas una horas."),
+        # "la 500" is a route or a line; only "la 1" is an hour
+        ("Vivo en la 500.", "Vivo en la quinientos."),
+        ("La 300 está cortada.", "La trescientos está cortada."),
         # only 1 counts a singular, so a year or a number before a verb keeps its full form
         ("En 2021 empecé a streamear.", "En dos mil veintiuno empecé a streamear."),
         ("El 21 de junio de 2021 empecé.", "El veintiuno de junio de dos mil veintiuno empecé."),
@@ -126,6 +144,7 @@ def test_spell(n, full, masc, fem):
         ("En el 2021 arranqué.", "En el dos mil veintiuno arranqué."),
         ("En 1991 ganamos la Copa.", "En mil novecientos noventa y uno ganamos la Copa."),
         ("En 2020 1500 personas se contagiaron.", "En dos mil veinte mil quinientas personas se contagiaron."),
+        ("En 2021 muchas personas se fueron.", "En dos mil veintiuno muchas personas se fueron."),
         ("El 21 juega de 9.", "El veintiuno juega de nueve."),
         ("Level 21 desbloqueado.", "Level veintiuno desbloqueado."),
         ("El 1 ataja todo.", "El uno ataja todo."),
@@ -137,6 +156,14 @@ def test_spell(n, full, masc, fem):
         ("Somos 3 500 personas.", "Somos tres mil quinientas personas."),
         ("Hay 10\u202f000 personas.", "Hay diez mil personas."),  # narrow no-break space
         ("Llamá al 11 4567 8901.", "Llamá al once cuatro cinco seis siete ocho nueve cero uno."),
+        # a time and a number are two
+        ("A las 21:30 500 personas miraban.", "A las veintiuna y media quinientas personas miraban."),
+        ("Desde las 20:15 300 viewers.", "Desde las veinte y cuarto trescientos viewers."),
+        ("A las 21:31 100k personas miraban.", "A las veintiuna y treinta y uno cien mil personas miraban."),
+        ("A las 21:30 K-pop.", "A las veintiuna y media K-pop."),
+        # English thousands with a comma before what they count
+        ("Tengo 1,000 seguidores.", "Tengo mil seguidores."),
+        ("Somos 2,500 personas.", "Somos dos mil quinientas personas."),
     ],
 )
 def test_integers(text, expected):
@@ -211,6 +238,11 @@ def test_eight_hundred(text, expected):
         ("Cuesta $1-2 millones.", "Cuesta uno a dos millones de pesos."),
         ("Salió R$ 50 en Brasil.", "Salió cincuenta reales en Brasil."),
         ("La entrada sale $3500 + IVA.", "La entrada sale tres mil quinientos pesos más IVA."),
+        # currency codes in any case
+        ("Cuesta 1500 ars.", "Cuesta mil quinientos pesos."),
+        ("Cuesta us$ 20 la suscripción.", "Cuesta veinte dólares la suscripción."),
+        ("Cuesta 20 Usd.", "Cuesta veinte dólares."),
+        ("Sale entre 2.500-3.000 pesos.", "Sale entre dos mil quinientos a tres mil pesos."),
     ],
 )
 def test_money(text, expected):
@@ -265,6 +297,12 @@ def test_money(text, expected):
         ("Es 1.25 veces más.", "Es uno punto veinticinco veces más."),
         ("El parche 13.24 salió.", "El parche trece punto veinticuatro salió."),
         ("Tardé 3.45 horas.", "Tardé tres y cuarenta y cinco horas."),
+        ("Minecraft 1.20 salió.", "Minecraft uno punto veinte salió."),
+        # a final zero before a unit: NeMo read "dos coma cinco cero"
+        ("Pesa 2,50 kg.", "Pesa dos coma cincuenta kilogramos."),
+        ("Pesa 2.50 kg.", "Pesa dos coma cincuenta kilogramos."),
+        ("Subió 1,10%.", "Subió uno coma diez por ciento."),
+        ("Pesa 2,05 kg.", "Pesa dos coma cero cinco kilogramos."),
     ],
 )
 def test_heights_and_decimals(text, expected):
@@ -317,6 +355,16 @@ def test_heights_and_decimals(text, expected):
         ("Hoy es 1/5.", "Hoy es primero de mayo."),
         ("Feliz 1/1, chat.", "Feliz primero de enero, chat."),
         ("Contenido para 18+.", "Contenido para dieciocho más."),
+        # formations and counts with hyphens; NeMo read a date
+        ("Jugamos con un 4-4-2.", "Jugamos con un cuatro cuatro dos."),
+        ("Formación 4-2-3-1.", "Formación cuatro dos tres uno."),
+        ("La cuenta: 1-2-3, ya.", "La cuenta: uno dos tres, ya."),
+        ("Stream de 21:00-23:00.", "Stream de veintiuna a veintitrés."),
+        # a fraction after "el" is no date when "de" follows
+        ("Se llevaron el 2/3 de los votos.", "Se llevaron el dos tercios de los votos."),
+        ("Es el 3/4 del total.", "Es el tres cuartos del total."),
+        ("Nos vemos el 2/3.", "Nos vemos el dos de marzo."),
+        ("Esperá 1/2 hora.", "Esperá media hora."),
         # still NeMo's, untouched
         ("Llamá al 4567-8901.", "Llamá al cuatro cinco seis siete ocho nueve cero uno."),
         ("Nos vemos el 12/03/2026.", "Nos vemos el doce de marzo de dos mil veintiséis."),
@@ -399,6 +447,19 @@ def test_scores_ranges_and_signs(text, expected):
         ("Es un 4L.", "Es un cuatro L."),
         ("Una botella de 2,25 L.", "Una botella de dos coma veinticinco litros."),
         ('Un monitor de 27".', "Un monitor de veintisiete pulgadas."),
+        # "30s" is seconds unless a decade is meant ("los 90s"); "2h 30m" is a duration
+        ("Vuelvo en 30s.", "Vuelvo en treinta segundos."),
+        ("Esperá 20s y reiniciá.", "Esperá veinte segundos y reiniciá."),
+        ("En mis 20s era flaca.", "En mis veinte era flaca."),
+        ("El stream duró 2h 30m.", "El stream duró dos horas treinta minutos."),
+        ("Lo hice en 1m 30s.", "Lo hice en un minuto treinta segundos."),
+        ("Corrí 5m.", "Corrí cinco metros."),
+        ("Duró 1:01:01.", "Duró una hora un minuto y un segundo."),
+        ("Duró 1:31:01.", "Duró una hora treinta y un minutos y un segundo."),
+        # degrees below 30 after "hoy", "hay" or before "afuera"; a table keeps the ordinal
+        ("Hoy 25° en Rosario.", "Hoy veinticinco grados en Rosario."),
+        ("Hay 25° afuera.", "Hay veinticinco grados afuera."),
+        ("Estuvo 40° en la tabla.", "Estuvo cuadragésimo en la tabla."),
     ],
 )
 def test_units(text, expected):
@@ -448,6 +509,11 @@ def test_units(text, expected):
         ("Juego al NBA 2K.", "Juego al NBA dos K."),
         ("Te quiero x100pre.", "Te quiero por siempre."),
         ("Quedé 1st.", "Quedé primero."),
+        # model numbers are no thousands
+        ("Tengo un i7 13700K.", "Tengo un i siete trece mil setecientos K."),
+        ("Tengo un Ryzen 7 5800X3D.", "Tengo un Ryzen siete cinco mil ochocientos X tres D."),
+        ("Seguime en @kohai.vtuber, porfa.", "Seguime en arroba kohai punto vtuber, porfa."),
+        ("Abrí index.html.", "Abrí index punto html."),
     ],
 )
 def test_glued_digits(text, expected):
@@ -478,6 +544,11 @@ def test_glued_digits(text, expected):
         ("Vivo en el 1° B.", "Vivo en el primero B."),
         ("Vivo en el 4º C.", "Vivo en el cuarto C."),
         ("Las 1° 10 personas.", "Las primeras diez personas."),
+        # º and ª typed as "o" and "a"
+        ("Es la 1a vez que vengo.", "Es la primera vez que vengo."),
+        ("Vivo en el 2o piso.", "Vivo en el segundo piso."),
+        ("Quedé 2o en el torneo.", "Quedé segundo en el torneo."),
+        ("Las 1as veces cuestan.", "Las primeras veces cuestan."),
     ],
 )
 def test_ordinals(text, expected):
@@ -519,6 +590,13 @@ def test_ordinals(text, expected):
         ("Viven en el siglo XV.", "Viven en el siglo quince."),
         ("Entre los siglos XV y XVI.", "Entre los siglos quince y dieciséis."),
         ("Leé el capítulo IV.", "Leé el capítulo cuatro."),
+        ("Leé el capitulo IV.", "Leé el capitulo cuatro."),
+        ("Cap. IV de la novela.", "Capítulo cuatro de la novela."),
+        ("Me pasé el cap IV.", "Me pasé el cap cuatro."),
+        ("Entre los siglos XV al XVI.", "Entre los siglos quince al dieciséis."),
+        ("Hay 2 fases mi rey.", "Hay dos fases mi rey."),  # "mi" is no Roman numeral
+        ("Henry VIII tuvo seis esposas.", "Henry octavo tuvo seis esposas."),
+        ("Elizabeth II murió.", "Elizabeth segunda murió."),
         ("Juan Pablo II era polaco.", "Juan Pablo segundo era polaco."),
         ("Luis XIV fue rey.", "Luis catorce fue rey."),
         ("Felipe VI y Carlos V.", "Felipe sexto y Carlos quinto."),
