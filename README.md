@@ -74,12 +74,16 @@ Spanish text goes through NeMo plus a layer of rules for what NeMo reads wrong
 (`indextts25/utils/es_rules.py`), following Argentine usage. `$` is pesos, the Latin American
 convention, before or after the amount (`$1.250,50` → "mil doscientos cincuenta pesos con
 cincuenta", `1500$` → "mil quinientos pesos"); `US$`, `U$S` and `USD` are dollars, also in
-`USD $500` and `$500 USD`. Numbers agree with their noun ("ciento una personas", "a la una") and
-keep their full form as labels ("capítulo uno"), unless the label or name is followed by what
-they count ("ToxicMati un bit"). Heights read "uno setenta", scores "tres a uno", ordinals
-"1era" → "primera", and `21.30 hs` is a time. Roman numerals are read only in clear contexts
-("siglo veintiuno", "Juan Pablo segundo", "Isabel segunda", "Luis catorce"); other capitals
-such as "CV", "MI", "GTA V" or the initial in "Juan D. Perón" stay letters.
+`USD $500` and `$500 USD`. Numbers agree with their noun ("ciento una personas", "a la una",
+"la primera vez" for `la 1° vez`) and keep their full form as labels ("capítulo uno") and before
+a verb ("en dos mil veintiuno empecé"), unless the label or name is followed by what they count
+("ToxicMati un bit"). Heights read "uno setenta", scores "tres a uno", ranges "diez a quince
+kilómetros", ordinals "1era" → "primera". `H.MM` is a time (`te espero 21.30` → "veintiuna y
+media") unless a unit or a measure follows (`9.58 segundos`, `3.15 %`) or a version or a grade
+precedes (`Python 3.11`, `promedio de 7.50`); then it is read with "punto". Roman numerals are
+read only in clear contexts ("siglo veintiuno", "del uno al doce") and after a regnal name from
+a fixed list ("Juan Pablo segundo", "Isabel segunda", "Luis catorce"); other capitals such as
+"CV", "MI", "GTA V", "Juan M" or the initial in "Juan D. Perón" stay letters.
 
 ### Streaming with synchronized text
 
