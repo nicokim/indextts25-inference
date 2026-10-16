@@ -16,7 +16,6 @@
 """Positonal Encoding Module."""
 
 import math
-from typing import Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -56,8 +55,8 @@ class PositionalEncoding(torch.nn.Module):
 
     def forward(self,
                 x: torch.Tensor,
-                offset: Union[int, torch.Tensor] = 0) \
-            -> Tuple[torch.Tensor, torch.Tensor]:
+                offset: int | torch.Tensor = 0) \
+            -> tuple[torch.Tensor, torch.Tensor]:
         """Add positional encoding.
 
         Args:
@@ -74,7 +73,7 @@ class PositionalEncoding(torch.nn.Module):
         x = x * self.xscale + pos_emb
         return self.dropout(x), self.dropout(pos_emb)
 
-    def position_encoding(self, offset: Union[int, torch.Tensor], size: int,
+    def position_encoding(self, offset: int | torch.Tensor, size: int,
                           apply_dropout: bool = True) -> torch.Tensor:
         """ For getting encoding in a streaming fashion
 
@@ -126,8 +125,8 @@ class RelPositionalEncoding(PositionalEncoding):
 
     def forward(self,
                 x: torch.Tensor,
-                offset: Union[int, torch.Tensor] = 0) \
-            -> Tuple[torch.Tensor, torch.Tensor]:
+                offset: int | torch.Tensor = 0) \
+            -> tuple[torch.Tensor, torch.Tensor]:
         """Compute positional encoding.
         Args:
             x (torch.Tensor): Input tensor (batch, time, `*`).
@@ -151,13 +150,13 @@ class NoPositionalEncoding(torch.nn.Module):
 
     def forward(self,
                 x: torch.Tensor,
-                offset: Union[int, torch.Tensor] = 0) \
-            -> Tuple[torch.Tensor, torch.Tensor]:
+                offset: int | torch.Tensor = 0) \
+            -> tuple[torch.Tensor, torch.Tensor]:
         """ Just return zero vector for interface compatibility
         """
         pos_emb = torch.zeros(1, x.size(1), self.d_model).to(x.device)
         return self.dropout(x), pos_emb
 
     def position_encoding(
-            self, offset: Union[int, torch.Tensor], size: int) -> torch.Tensor:
+            self, offset: int | torch.Tensor, size: int) -> torch.Tensor:
         return torch.zeros(1, size, self.d_model)

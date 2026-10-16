@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-import os
 import logging
+import os
 import re
 from functools import lru_cache
 
@@ -226,7 +225,7 @@ class TextNormalizer:
                 logger.warning("WeTextProcessing (en) failed, using the raw text", exc_info=True)
             pattern = re.compile("|".join(re.escape(p) for p in self.char_rep_map.keys()))
             result = pattern.sub(lambda x: self.char_rep_map[x.group()], result)
-            
+
         # Restore the G2P pronunciation annotations
         result = self._restore_pronunciation_annotations(result, _pron_placeholders)
         return result
@@ -371,7 +370,7 @@ class TextNormalizer:
         """
         if glossary_path and os.path.exists(glossary_path):
             import yaml
-            with open(glossary_path, 'r', encoding='utf-8') as f:
+            with open(glossary_path, encoding='utf-8') as f:
                 external_glossary = yaml.safe_load(f)
                 if external_glossary and isinstance(external_glossary, dict):
                     self.term_glossary = external_glossary

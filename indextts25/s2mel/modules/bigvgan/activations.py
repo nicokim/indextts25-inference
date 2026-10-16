@@ -2,7 +2,7 @@
 #   LICENSE is in incl_licenses directory.
 
 import torch
-from torch import nn, sin, pow
+from torch import nn, pow, sin
 from torch.nn import Parameter
 
 
@@ -31,7 +31,7 @@ class Snake(nn.Module):
             alpha is initialized to 1 by default, higher values = higher-frequency.
             alpha will be trained along with the rest of your model.
         '''
-        super(Snake, self).__init__()
+        super().__init__()
         self.in_features = in_features
 
         # initialize alpha
@@ -87,7 +87,7 @@ class SnakeBeta(nn.Module):
             beta is initialized to 1 by default, higher values = higher-magnitude.
             alpha will be trained along with the rest of your model.
         '''
-        super(SnakeBeta, self).__init__()
+        super().__init__()
         self.in_features = in_features
 
         # initialize alpha

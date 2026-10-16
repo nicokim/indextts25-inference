@@ -1,5 +1,4 @@
 from collections import deque
-from typing import List
 
 import torch
 
@@ -12,7 +11,7 @@ class Seq:
         self.num_prompt_tokens = num_prompt_tokens
         self.last_token = last_token
         self.block_size = block_size
-        self.block_table: List[int] = []
+        self.block_table: list[int] = []
 
     def __len__(self):
         return self.num_tokens

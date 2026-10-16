@@ -32,7 +32,6 @@ Design notes:
 import logging
 import os
 import pickle
-from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ def _build_normalizer(nemo_lang: str, input_case: str):
 # ---------------------------------------------------------------------------
 
 # Service code (ISO 639-1 style) -> NeMo language code
-_SERVICE_TO_NEMO: Dict[str, str] = {
+_SERVICE_TO_NEMO: dict[str, str] = {
     "ar": "ar",
     "zh": "zh",
     "es": "es",
@@ -87,7 +86,7 @@ _SERVICE_TO_NEMO: Dict[str, str] = {
 }
 
 # ISO 639-3 -> service code
-_ISO3_TO_SERVICE: Dict[str, str] = {
+_ISO3_TO_SERVICE: dict[str, str] = {
     "arb": "ar",  # standard arabic
     "arz": "ar",  # egyptian arabic
     "ary": "ar",  # moroccan arabic
@@ -100,7 +99,7 @@ _ISO3_TO_SERVICE: Dict[str, str] = {
 }
 
 
-def _to_nemo_lang(lang: Optional[str]) -> Optional[str]:
+def _to_nemo_lang(lang: str | None) -> str | None:
     """Map an upstream language code to its NeMo TN code; None if TN is unsupported."""
     if not lang:
         return None
@@ -127,7 +126,7 @@ class TextNormalizer:
     def __init__(self, input_case: str = "cased"):
         self.input_case = input_case
         # nemo_lang -> Normalizer; None = language unavailable (already tried and failed)
-        self._cache: Dict[str, Optional[object]] = {}
+        self._cache: dict[str, object | None] = {}
 
     def _get_normalizer(self, nemo_lang: str):
         """Return the cached Normalizer; build it once, caching None on failure to avoid retries."""
@@ -151,7 +150,7 @@ class TextNormalizer:
         self._cache[nemo_lang] = normalizer
         return normalizer
 
-    def normalize(self, text: Optional[str], lang: Optional[str]) -> Optional[str]:
+    def normalize(self, text: str | None, lang: str | None) -> str | None:
         """Normalize ``text``.
 
         Unsupported language / NeMo unavailable / normalize raises: returns ``text`` as is.
@@ -185,7 +184,7 @@ class TextNormalizer:
             return text
 
 
-_DEFAULT_NORMALIZER: Optional[TextNormalizer] = None
+_DEFAULT_NORMALIZER: TextNormalizer | None = None
 
 
 def get_text_normalizer(input_case: str = "cased") -> TextNormalizer:
@@ -196,6 +195,6 @@ def get_text_normalizer(input_case: str = "cased") -> TextNormalizer:
     return _DEFAULT_NORMALIZER
 
 
-def normalize_text(text: Optional[str], lang: Optional[str]) -> Optional[str]:
+def normalize_text(text: str | None, lang: str | None) -> str | None:
     """Convenience entry point: normalize ``text`` for ``lang`` with the shared singleton."""
     return get_text_normalizer().normalize(text, lang)

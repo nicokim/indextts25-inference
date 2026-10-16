@@ -105,7 +105,8 @@ def kaldi_fbank(wav: torch.Tensor, num_mel_bins: int = 80, sample_frequency: flo
     frames = torch.nn.functional.pad(frames.unsqueeze(0), (0, padded - size), mode="constant", value=0).squeeze(0)
     spectrum = torch.fft.rfft(frames).abs().pow(2.0)
     # kaldi.get_mel_banks(num_mel_bins, padded, sample_frequency, 20.0, 0.0) without VTLN
-    mel = lambda f: 1127.0 * math.log(1.0 + f / 700.0)
+    def mel(f):
+        return 1127.0 * math.log(1.0 + f / 700.0)
     lo, hi = mel(20.0), mel(0.5 * sample_frequency)
     delta = (hi - lo) / (num_mel_bins + 1)
     b = torch.arange(num_mel_bins, device="cpu").unsqueeze(1)

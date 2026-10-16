@@ -47,7 +47,8 @@ zh = ["WeTextProcessing>=1.2; sys_platform == 'linux'", "wetext>=0.1; sys_platfo
 ja = ["fugashi>=1.2", "unidic-lite>=1.0"]
 
 [dependency-groups]
-test = ["pytest>=8"]
+dev = ["ruff>=0.11"]
+test = ["pytest>=8", "pytest-cov>=6"]
 
 [project.urls]
 Homepage = "https://github.com/nicokim/indextts25-inference"
@@ -62,3 +63,11 @@ packages = ["indextts25"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501", "E402"]
