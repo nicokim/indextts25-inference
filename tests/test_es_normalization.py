@@ -258,6 +258,18 @@ def test_eight_hundred(text, expected):
         # a code right after a number is that number's
         ("Pagué 1500 ARS 2 veces.", "Pagué mil quinientos pesos dos veces."),
         ("Cuestan 20-30 USD 2 entradas.", "Cuestan veinte a treinta dólares dos entradas."),
+        ("En 2019 US$ 1 valía $40.", "En dos mil diecinueve un dólar valía cuarenta pesos."),
+        # a range with cents: each end is an amount
+        (
+            "Sale US$9,99-14,99 en Steam.",
+            "Sale nueve dólares con noventa y nueve a catorce dólares con noventa y nueve en Steam.",
+        ),
+        (
+            "Cuesta $1.999,99-2.499,99.",
+            "Cuesta mil novecientos noventa y nueve pesos con noventa y nueve a dos mil cuatrocientos noventa y "
+            "nueve pesos con noventa y nueve.",
+        ),
+        ("Cuesta $1,5-2 millones.", "Cuesta un millón quinientos mil pesos a dos millones de pesos."),
         # "k" in a range
         ("Sale 2.5k-3k la entrada.", "Sale dos mil quinientos a tres mil la entrada."),
         ("Sale 2-3k la entrada.", "Sale dos a tres mil la entrada."),
@@ -349,6 +361,8 @@ def test_heights_and_decimals(text, expected):
         ("Messi vs Cristiano.", "Messi contra Cristiano."),
         ("Un departamento de 2x2.", "Un departamento de dos por dos."),
         ("Rompe las bolas 24/7.", "Rompe las bolas veinticuatro siete."),
+        ("Debuté el 24/7/22 en Twitch.", "Debuté el veinticuatro de julio de veintidós en Twitch."),
+        ("Atención 24/7/365.", "Atención veinticuatro siete trescientos sesenta y cinco."),
         ("Le doy un 8/10.", "Le doy un ocho de diez."),
         ("Feedeo 0/10.", "Feedeo cero de diez."),
         ("Soy el #1.", "Soy el número uno."),
@@ -402,6 +416,9 @@ def test_heights_and_decimals(text, expected):
         # and neither is a rating; a rating can have a decimal
         ("Le gané por 1/10 de segundo.", "Le gané por un décimo de segundo."),
         ("El 1/5 de los jugadores hace trampa.", "El un quinto de los jugadores hace trampa."),
+        ("Vamos por 1/5 del mapa.", "Vamos por un quinto del mapa."),
+        ("Ya hice 2/5 del juego.", "Ya hice dos quintos del juego."),
+        ("Le pongo 8/10 del 1 al 10.", "Le pongo ocho de diez del uno al diez."),
         ("Le doy 1/10 a ese juego.", "Le doy uno de diez a ese juego."),
         ("Le doy 9/10 de una.", "Le doy nueve de diez de una."),
         ("Un 9/10 de nota.", "Un nueve de diez de nota."),
@@ -414,9 +431,13 @@ def test_heights_and_decimals(text, expected):
         ("Quedé 7/1/12 con Lulu.", "Quedé siete uno doce con Lulu."),
         ("Fui 0/10/2, perdón equipo.", "Fui cero diez dos, perdón equipo."),
         ("Nos vemos 7/1/25.", "Nos vemos siete de enero de veinticinco."),
+        ("La última vez fue 3/4/25.", "La última vez fue tres de abril de veinticinco."),
+        ("Fue 1/1/24 el último.", "Fue primero de enero de veinticuatro el último."),
+        ("Mi KDA fue 7/1/12.", "Mi KDA fue siete uno doce."),
         # levels, seasons, time zones
         ("Estoy en el mundo 1-2.", "Estoy en el mundo uno dos."),
         ("Me trabé en el nivel 3-3.", "Me trabé en el nivel tres tres."),
+        ("Los enemigos de nivel 1-5 son fáciles.", "Los enemigos de nivel uno a cinco son fáciles."),
         ("Es la temporada 2024/25.", "Es la temporada dos mil veinticuatro veinticinco."),
         ("Horario: 20 a 23 hs (GMT-3).", "Horario: veinte a veintitrés horas (GMT menos tres)."),
         # NeMo reads a date only with the full month name
@@ -425,6 +446,22 @@ def test_heights_and_decimals(text, expected):
         ("Vuelvo el 1 de ene.", "Vuelvo el primero de enero."),
         ("Arranca el 15 de sept.", "Arranca el quince de septiembre."),
         ("Sale el 7 de mar.", "Sale el siete de marzo."),
+        ("Sábado 22 nov, 21 hs.", "Sábado veintidós de noviembre, veintiuna horas."),
+        ("Nos vemos el 5 ene.", "Nos vemos el cinco de enero."),
+        ("El 1 dic arranca el maratón.", "El primero de diciembre arranca el maratón."),
+        ("Ganó 1 set.", "Ganó un set."),
+        ("El 1 de Mayo es feriado.", "El primero de mayo es feriado."),
+        ("Feliz 21 de Septiembre, chat!", "Feliz veintiuno de septiembre, chat!"),
+        # a capital "Mar" is a place
+        (
+            "Saludos a los 3 de Mar del Plata que están en el chat.",
+            "Saludos a los tres de Mar del Plata que están en el chat.",
+        ),
+        ("Somos 2 de Mar de Ajó, hola Kohai.", "Somos dos de Mar de Ajó, hola Kohai."),
+        ("Hay 1 de Mar del Plata.", "Hay uno de Mar del Plata."),
+        # a weekday before a day and a month
+        ("Stream el sábado 8/11 a las 21 hs.", "Stream el sábado ocho de noviembre a las veintiuna horas."),
+        ("Nos vemos el lunes 3/11.", "Nos vemos el lunes tres de noviembre."),
         # still NeMo's, untouched
         ("Llamá al 4567-8901.", "Llamá al cuatro cinco seis siete ocho nueve cero uno."),
         ("Nos vemos el 12/03/2026.", "Nos vemos el doce de marzo de dos mil veintiséis."),
@@ -521,11 +558,23 @@ def test_scores_ranges_and_signs(text, expected):
         ("Vuelvo en 5m.", "Vuelvo en cinco minutos."),
         ("Llevo 45m esperando.", "Llevo cuarenta y cinco minutos esperando."),
         ("Le faltan 500 m.", "Le faltan quinientos metros."),
+        ("Quedate en 2m de distancia.", "Quedate en dos metros de distancia."),
+        ("Llevo 5m de cable para el setup.", "Llevo cinco metros de cable para el setup."),
+        ("Llevo 45m de stream.", "Llevo cuarenta y cinco minutos de stream."),
+        ("Hace re 30s que espero.", "Hace re treinta segundos que espero."),
         ("Ese outfit es re 90s.", "Ese outfit es re noventa."),
         ("Tiene una onda muy 80s.", "Tiene una onda muy ochenta."),
         ("Pongan temas 80s y 90s.", "Pongan temas ochenta y noventa."),
         ("Dame más 20s.", "Dame más veinte segundos."),
         ("A la 1 hs arrancamos.", "A la una arrancamos."),
+        ("Arrancamos 21 Hs.", "Arrancamos veintiuna horas."),
+        ("Stream hoy 21HS.", "Stream hoy veintiuna horas."),
+        ("Tengo 50 HR en el Monster Hunter.", "Tengo cincuenta HR en el Monster Hunter."),
+        ("Dormí 7.5 hs nomás.", "Dormí siete coma cinco horas nomás."),
+        ("Caminé 2.5 kms.", "Caminé dos coma cinco kilómetros."),
+        ("Caminé 2.50 kms.", "Caminé dos coma cincuenta kilómetros."),
+        ("Tomá 1.25 mg.", "Tomá uno coma veinticinco miligramos."),
+        ("Esperé 2.15 segs.", "Esperé dos coma quince segundos."),
         ('Tengo un 27" para jugar.', "Tengo un veintisiete pulgadas para jugar."),
         ("Duró 1:01:01.", "Duró una hora un minuto y un segundo."),
         ("Duró 1:31:01.", "Duró una hora treinta y un minutos y un segundo."),
@@ -591,9 +640,13 @@ def test_units(text, expected):
         ("Mi página es kohai.ai.", "Mi página es kohai punto ai."),
         ("Unite a t.me/kohai.", "Unite a t punto me barra kohai."),
         ("Me ven en kohai.live.", "Me ven en kohai punto live."),
+        ("Todos mis links están en kohai.carrd.co.", "Todos mis links están en kohai punto carrd punto co."),
+        ("Mi web es kohai.com.ar.", "Mi web es kohai punto com punto ar."),
         # emoticons are no "tres"
         ("Te quiero chat <3", "Te quiero chat"),
         ("Ay qué lindo :3", "Ay qué lindo"),
+        ("Hola a todos <3 besos.", "Hola a todos besos."),
+        ("Le quedan <3 vidas.", "Le quedan menos de tres vidas."),
     ],
 )
 def test_glued_digits(text, expected):
