@@ -18,7 +18,7 @@ changed what the model actually hears) and drops everything inference does not u
 pip install indextts25-inference
 ```
 
-Python 3.10–3.13 and a CUDA GPU with about 6 GB of free VRAM. The weights are downloaded
+Python 3.10–3.15 and a CUDA GPU with about 6 GB of free VRAM. The weights are downloaded
 separately; the `qwen0.6bemo4-merge/` text-emotion model in that repo is not used by this
 library and can be skipped:
 
@@ -44,9 +44,13 @@ One-time costs on a fresh machine:
 | `ja` | Japanese word segmentation (`fugashi` + `unidic-lite`), required for `lang="JA"` |
 
 `nemo-text-processing` pins a `pynini` that only ships wheels for Linux x86_64 up to
-CPython 3.13, so it is not installed elsewhere. Without it, text goes to the model
-unnormalized and digits are read poorly: write numbers out, or install `pynini` from
-conda-forge and then `nemo-text-processing`.
+CPython 3.13, so it is not installed elsewhere, Python 3.14 and 3.15 included. Without it,
+text goes to the model unnormalized and digits are read poorly: write numbers out, or
+install `pynini` from conda-forge and then `nemo-text-processing`. For Spanish, Python 3.12
+or 3.13 is the comfortable choice.
+
+On Python 3.15 PyPI has no torch wheels yet: install torch from the PyTorch index first
+(`pip install torch --index-url https://download.pytorch.org/whl/cu130`), then this package.
 
 ## Usage
 
@@ -199,8 +203,8 @@ and Japanese audio to torch 2.9.1.
 | 3.12 | 2.10.0+cu130 | 4.57.6 and 5.20.0 | 2.8.3 (cu13) | flash |
 | 3.12 | 2.14.1+cu130 | 5.20.0 | — | sdpa |
 
-Python 3.10 and 3.13 install and pass the CPU tests (torch 2.14.1). CUDA 13 builds of torch
-need an NVIDIA driver ≥ 580.
+Python 3.10, 3.13, 3.14 and 3.15 install and pass the CPU tests (torch 2.14.1); on 3.15 a
+CPU synthesis was also checked. CUDA 13 builds of torch need an NVIDIA driver ≥ 580.
 
 ## Differences from upstream
 
