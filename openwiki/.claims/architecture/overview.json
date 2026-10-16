@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:0c3f928a2e3dd28a38a064bba7929f8a4d01f97c46a29bf17559b564d2be4965",
+  "claims": [
+    {
+      "id": "claim_ce786b63735448668e34343cde3d7ee5",
+      "statement": "IndexTTS2.infer_generator runs the whole pipeline in one generator: cached speaker and emotion conditioning, optional emotion-vector mixing, text preparation and segmentation, the merged emotion vector, then per segment GPT generation, codec decoding, length regulation, flow-matching mel generation and BigVGAN vocoding.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L403-L534",
+          "version": "repo-lines-v1:sha256:c50677654b3e7cd07010d6d3bb09c96e8e3549b3309bd1f80955399c28fdccf6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0YmM5ZjkyZGI5MjYzNGI5NGM4MmI2YWMwYmMyZTU2ZjJhZmZkZjkxMGExYzFlNzEwMDYzMGExZDQ2MmE0NTA5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MzkxZDU2NWJmMjM0YjcyYjBjODU3MzA1YTUxZTdmNWE5MTU2YTE5MTdmY2Y2MDhlNWVjMGY2NzY2MzZiNjFiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4ZGM3OThiZjlmODE4NjNjZmRmYmVlYWVkMzAxNWQzZTJhYWJmMDJhMmZmNWJlZTkxNGMwYmRjNzc2MDk2NWYxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxOTkwMTk5ZWJlNTYxZjBiMDA3ODExNjk1N2YyYjllMmRhNTJlYzAyMGUxOWU2YzcwYTU2MTQwOTY3ZGM2MmVhIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_36d85b72cd664cf09e5a0d6a074f9397",
+      "statement": "Each segment is encoded as the language prefix `<|lang|> ` followed by the segment text with special tokens allowed, and no stop token is appended at this point.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L416-L425",
+          "version": "repo-lines-v1:sha256:7676e24cf2c28d64619e7e453c0df37bb93ac1e88dc503de9140af297220fb92:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NzU5MzEwMjM0MzZjYmY0NDQwMzE2NWQyMmJiOTM2NzYyZjQzMjUwNjdhMGY2MGM4NDFjOGRhNGZkYWI0N2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4ZWQ3NDVlYjQ1NzU2YWM5NjdjMDIyODBhNGIzOTYyZTA0NzllODMyYjQxMWQ2MzJlMzNjMDQyOGJjMTE3MzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwZTQ4MTUxMDJjZDgxMzIyYmZjMGRlNjI4Mjg5NmRiYzFjNTc4MTExYjNjYWEwMzAwNTk3NDZkOWNiNTNkNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2YTM5MzBhYTJmNGZmZmM5Mzg3NGQ2MjcyYzUxNTkzYjczNjg3MjQyNDIxZGQ1ZTg3OTVlNTI4ZjdlYTJiYWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5092bc74bc204bfaa8bf12378f329ee0",
+      "statement": "The mel target length of a segment is the codec feature length times 1.72 times duration_factor; the reference prompt condition is prepended before the CFM and the prompt's mel frames are removed from its output.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L513-L522",
+          "version": "repo-lines-v1:sha256:73e0ff106e37deebbe9e1913e001e0435bb3ca550d63d600bf36f830cbb2dda6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODhjNzAwOTMzOWEwMWM1ZWU1OGVkM2MxOTQ2YjUzNTFmMGFmZjkzOTg2ZDQwOTUyYmNlZjI1Y2RiMTE0M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjgwY2RhMDdhZjJkYTA1OGI0M2VlOTQ1YWQyZDk1NDkyOTM1NjNjNDMxNzU5ZDNiODhlZWI3NDhkMjc0ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1ZWU1ZDRhM2I0ODg1NDQ0NGMxNWFkMjY3ZDEzMzU1NGRjZjhkOWMzMDE0YTIxM2M0N2FiNzU4MjZhZDljYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0OGRjNzRhMGFjOTk4NTFlNTNhY2UzNzc5MDdmOWU0Nzk0MTU4YTZkMTNhNGFlMGVkMjljNTY1MDJjY2VjN2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_95479846e4674b1bbc79339fb2346caa",
+      "statement": "Segment waveforms are clamped to the int16 range and moved to CPU; in streaming mode each one is yielded immediately and followed by interval_silence milliseconds of silence except after the last segment.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L474-L474",
+          "version": "repo-lines-v1:sha256:f4bcb0e4fea774d52cf48cc858bcebf93d6b5d512eae2e7e15fe1aa1b8636e78:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRiY2IwZTRmZWE3NzRkNTJjZjQ4Y2M4NThiY2ViZjkzZDZiNWQ1MTJlYWUyZTdlMTVmZTFhYTFiODYzNmU3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRiY2IwZTRmZWE3NzRkNTJjZjQ4Y2M4NThiY2ViZjkzZDZiNWQ1MTJlYWUyZTdlMTVmZTFhYTFiODYzNmU3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGM3NzNiNTBmZTJkNmZiM2M5NDI2OWE2NDdmZTQ1ZjA3YjI2ZTcwOWM4ZDExODgzYmUxNjdjNzE5NGI2MDBjMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDUzNGNhMDdkNTNjODQ4ZjUxZGUzOTQwZWE3ZjBiNGU4MTljYzRmNzFjMDcyOGVhNjM4MmFiOWI3Mjc0MDI0MCJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L529-L534",
+          "version": "repo-lines-v1:sha256:203a69f41e8852c299eaec2248262cb924988989c1b3ab985dde42dd3ec150f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjEzYjg4YTViN2JjYWU1MTE1ODNkOGM5M2RhNzUyZjFjZTEzMzgxMjMyYjk0YjM4YjdhNDZkYzJjNTFmYmY1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDM5MWQ1NjViZjIzNGI3MmIwYzg1NzMwNWE1MWU3ZjVhOTE1NmExOTE3ZmNmNjA4ZTVlYzBmNjc2NjM2YjYxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTgwNzBiNDIzZDJjZjBhYjI1MWRiOWI3YjQ1YmFiNGYwM2Q5YTI4ZWFhYzc4M2JiMmVkMjRhODA4NDk3MWM1NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTk5MDE5OWViZTU2MWYwYjAwNzgxMTY5NTdmMmI5ZTJkYTUyZWMwMjBlMTllNmM3MGE1NjE0MDk2N2RjNjJlYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f87f83256394264939c9cdcb6d81499",
+      "statement": "Non-streaming calls join the segment waveforms with silence and either write a 16-bit WAV through save_pcm_wav or return (sample_rate, int16 array).",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L539-L564",
+          "version": "repo-lines-v1:sha256:206ca141758206af18fa53e2d1de49535cd67e145529795ddd591838214e9da3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YTUwYTc1Zjg5NzE5MGY2NjdjY2VlNjVjYWZjOWIwMzk4YzlmNGJkMDk3OTljMzU1NjIwZmMzYTZlNWFjYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4OGI2ZWU2OWU2MjE1ZTE0MjM0NmRjMWE0MDI1OTRhZjcwMzg4ZGY1MzRlYjUwMjIzNWE1MGYwNTI4MDk4YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMTJmMjE3MWFlYWRlOGMyMmQxOTk3ZGY1MTM4ZDkwZGFlMDhlYTAzNGRmYTFmZmUxYmU4ZTE2MzI0YjRhNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_30016f43a0ac487481715f1a9c0976ce",
+      "statement": "All models are loaded inside torch.random.fork_rng, so constructing them does not change the caller's random state.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L134-L136",
+          "version": "repo-lines-v1:sha256:f19c742b4f2644b8921dbcac1fffef2c5d6903792d754e489f62f65ef89a63e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjBlNGM3YjVjNTFjZjUzNzc1MGE0OTA2MjIwNmY2NmU4NzkyZTM3ZDhlZDI3ZGQyZGE0ZDY0NTJlNTM3ZDMzMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MzNzg1MjJlZjM5MWQ0YzJlNjUwNDVlYTRmOGY2NzI5MmRlMzYwNDBkNjcxNGZlMDA0MTE3NDA5ZDBiOTk1NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2U5ZTk2ZjM3MmQ0MzdkZmY0OGQ4NWYzZjk3ODk5MDdjODIwZjVhZDRlYjQ3YjE4ODk3NGVmMzQwY2Y4ZjFiOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmYxM2M4ZmE2NjU4ZWRjYTcxNWU1OWMwODViM2RkMDcwNjcyNzVhNGFkMjFiMzY1NTIzOTFkZDkzMmNmZGQ5MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_07786342d71f4028863eb532795d6273",
+      "statement": "The engine keeps three in-memory caches (speaker conditioning, emotion conditioning, merged emotion vectors keyed by voice, emotion and alpha), each trimmed FIFO to eight entries.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L139-L141",
+          "version": "repo-lines-v1:sha256:fbbd2721e525908a56e4ee0f7fb0a2b579acbb8e45d775f1fd2cc1574c189fdc:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNiYWViZDZmMTFmNjY2NmE2YmJjYmFlYTQxYWQ5ZTk1Y2VlN2JjMTU0MTNhMTdjZTM2Y2NiNDYyOTFiZGVmZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDBmZjkzYTY5NmY0YzU1MWZhMThiODI1NzdhYWJkMmFiMmUwMTg0NTZkY2VhMWZjZjI3OGIwYTA4ODBjNmE4NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzZlNjhkNDhlYWFmNzkyYmVhNGQwOGFiNDY2NzZlYWFjMTY3MzE3MjhhMDYxNTViNzZjNTY3NDI3ODA3OWRkMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGM3YTc1NTkwNDY1N2Q4OGRiMTNjNGQzYWQ1YjAwYTU5NTM3ZGZhY2JjNjk3ZmE5ODk4ZTE4OWQzNzdjYmY5NiJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L42-L43",
+          "version": "repo-lines-v1:sha256:3ad36b0bfb773451462d4f8de1f23667038b1debf2ff69fa6d51f4df464dde23:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQ2ZThhYjMyY2FhMWY0OTI4MzBiYmZkMmM0NDdhZTNhOGY5OGFiOTlkYzk1YTBhZGIzMDAwYTk1MjZlNzhiMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTdmNmMzZGYzMzE2NTE0NTY4MThlYTgyMzExYzdmMmQxZGFhNTJlNzdhMzNlZjE2NGFkNzI3OTZkZTllYjY0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2ZkNjJkNzdjM2FkYTU4ZDA0ZjQ5YjMxNWI2YWI2NGFlMzA0NzZkMDk4YWQ1ZTc4NWRjOGE4MGVjNzk5OTA3ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTk5NjMxMTUzNTJiMzVlYjc0NmI3YWVhZTUyZWZhZWUzOTc1ZjAxMmYyN2ZjYTdiNWVlM2ZlNzgwYWQ1ZGM2YSJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L448-L459",
+          "version": "repo-lines-v1:sha256:518c81989cc777eb8025759eea77efbfc3589c46483690c96f493016db25a5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYTY3MWVhN2U1YjhkNjBlZTU0NzFiZTAwNDJhOWFhYzZiYzJlNjNkNzQ5ZDg1ZDAyMmVjYzM2ZWExYzNiYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlODMxNTdkYWRmNGNhNTJiMGZlODdmMDdmN2NkZTljNzQ5NmU4YjRkOThiY2ZmYjA5MjEzNTQyZGI3YzVjMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3YjJhNmM1YjY1MjRmMjA4MTc0YTUyYmRhNTY1ZTg5OTI5ZmY4NjY4NGM5ZjJhMmFjZDIwZmZmZWUzODkyYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYTcyNzQwMzQ2Y2EyZDNmNWIzNjc5Y2UxYzI4OTkwMDk2MTAxNWI3NDk2NmNhMzYxNmEzYmU4YWYzZjdlY2EifQ"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L96-L100",
+          "version": "repo-lines-v1:sha256:33e3132b26d2198fe84ee1bc3c4e550c8ca0c3a13d88782f941ed27a808d6dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmRkYjYxNDAyNjAzYzA0YTI0MTRiMTk1ODI3OWM4ODBlMDEzMTQ3NDFhOTYyYmM0OGJhZmM2YmM3NTA1ZDhkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTkzYTEzMDYyZjEwZWU0ZjEyMThkOTNlMzdhNmY4MWQzNDZmZjExZWM3ZTU1ZGQ1NDJlMmQyZDJlZjA3MTFmMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjE0MWIzYzY0Nzc3MzQ4YjdlYzVmODUwOTc3MzE4Y2Q0YzUzNWU1OTg5NTk4MjFjNGFmZjEyODczY2E4NTg4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDRjMmNkYjY0ZDY2N2VhZWY1OWI0YmNmYmNmYzk4MjJjMTRlY2RlZWEyZTViZWEwMTVkMjBkYmFjZmFhM2E3YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9ba49f6b6bcb4e69b5117d0445c4d10c",
+      "statement": "Models are constructed directly on the target device inside torch.device contexts during _load_models, including the GPT, w2v-bert, the codec, the s2mel model and CAMPPlus.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L147-L193",
+          "version": "repo-lines-v1:sha256:edb079c4d1d949d0c55f96a91f89122034d76dd4cfc2f7391f630ed04a4743dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyY2Y3YmVlZTIxODk1MThjZTEzNGE2ZGNkNWM4NGNlYWQ4N2IzMTg4NThmZmUwNjI4NTliY2M5NjgzNGU5YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOGJmMTE2MGExNTBhNjg5YTJmNDMzNDM1ZWNmOTNhMWE3NTE4NmE4YjRjZGIyY2UxMTk3OWExYWY2MjA1NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2NDVlODcwYWQwZmUyNDBhM2NhMzViY2JkMmNlMGUzMDJlMTc5ZjU2ODk5MGM1YjRlYWMxM2ZkNGRhMWY3NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjODM3MzQxNjRmNGZkZjI4NzY1YmZmOGRhNzg0ZWY5YTJiZGMyZGU5OTNkNzg2YTZiNWUxNGVlMjI2ZjhhMGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_74811e8154a34e8586a5146c42baa97c",
+      "statement": "NeMo text normalization goes through a process-wide TextNormalizer singleton created on first use.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/nemo_tn.py#L188-L201",
+          "version": "repo-lines-v1:sha256:f618d94730fcf6f89344a55010b4d84267f83d55ebc6f9018c9d80928e9995ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1NDJmZThhNTg0MzA2ODUxNWJjNGZkNmYzZDMyNGU5MWE5OTkyMGQ1YWJiN2VlODU3NGFiZjVjYWE5MDM5MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYjJhM2M5NjNhNDJmYzc0ZTU5NTM3MDljMGUyNjk2YWZlYjY2YzcwN2VhYjM1NTBlMDBhZDc1MjRkYmI5ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwMDc2ZTlhNDk5MjBmZTU5YTkyODljMTNlODBiMWQ1YmJiZjJlZDcyNmY4ZTdkZWRkOGE2YjM0Zjc1ZTNmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1eccf7d211a0445dae1c76d031993007",
+      "statement": "The flash engine captures its decode step as a single batch-1 CUDA graph with fixed-size input buffers.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L48-L75",
+          "version": "repo-lines-v1:sha256:fae99f1475326524308e78d3197bf0d6bf52d399b60603f5c1e3d6f3371e8be7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1MjY4N2RlMDQwYmU3YWY3YWIxMDk0YzBiZTcyOWE3ZGRkMjAxNDhkYjk0YjA4N2NiODBjZWNkNmVmZmVmYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjNzc0ZDVjMTQyMTU2MWRjNDQyMTE2OTgwYzM3ZGViOWI4YmZlMWUwNzgxZDZhYzMzZjI2ZjFkZTA3YmYzODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzYmRkZGIyYjA3NDQxODgyMDJhYzg2NGUwYzNkNjgwNzFkOGY1MWVhYWFjZDJmZjI5NzdhNWI1NmNhMTkzZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyODMwYzBiZWFhMTNlZWM5OGRhNGRiOGZjYjlmMzZhNTM5NjYzYWY3YjVjMmQ2YThmMTYzYTVhNWI4Yzk1YmEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}

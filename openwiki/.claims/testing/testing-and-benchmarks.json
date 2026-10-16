@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:3f5868f8efd1b162e7b76ffd30115beb258ad852cc4d62fb9ccfd46481a2f522",
+  "claims": [
+    {
+      "id": "claim_ff6d93724175483a9758d7820d5349b4",
+      "statement": "pytest is configured to collect tests from the tests/ directory, and the test dependency group adds pytest.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L49-L50",
+          "version": "repo-lines-v1:sha256:41d36b0f6f01f07b18880441a7ae2429319ecd8595e74fe1e0d4b5018e8ac5a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJiNzQ5OWIxY2UxYzRmNGIyNTI3ZjNhMzI4NGNhYzZiNmExZTNiZjQ5ODhiNTY3OTgyYzNkYzhlOWExN2YyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGMwOTMxZDc1ODUyNzc0NGQwNjZmODg5ZGEyYzNmMzE3N2Y2YmNmNWMyYjZiMWY4MzllNDQzYmZlMTllYjMxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzAzNDc5ZDYyZmE5NDZlZjljZGNjNTI1ZDNlNDc2YzRiOTQyMTFjOTc2MTg2NmQ0ZTZlZjJjNGRkZTM1Y2JlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU1OWVlN2VlYjBlOWVhNTg5Y2FjYjRhZjk0NzE3MGJjYTQ1ODcwOGUxY2QxZTA4MGRjY2I0NTdmN2RhYjU0YiJ9"
+        },
+        {
+          "resource": "repo://pyproject.toml#L63-L64",
+          "version": "repo-lines-v1:sha256:0f792d73d83e29f0fb703a46db10647879b1415b0de84941d5c746117996609f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODY3NmU2NDE0NjVhNjU1MWU5ZTljZmZkN2ZhYTFlNmE0MmY5YjcyNDgwOTgxM2M5MDNkN2VkY2I1MmYzMDA2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDEwODVhZDA5MDQyNTcxMWFkYjRmMTVmMjhlMjVjMTcxMDc5MmMxZDQ1ZGE3Mzk0ZWU5MTJlMDM4MTkwNDU5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWM0NzFhZDE0MDVmZTEzOGQ2NDFjMzAzNDJlYmJjNGNiYTdjMDM5NGU1ODg5MjQ3ZGMwMzg1NjU2NjEyZTc0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c3aee77d88104e29a2231e7268b02c52",
+      "statement": "The CPU regression tests cover the Japanese processor property, autograd-free w2v-bert features, the no-WeTextProcessing fallback, segmentation, pronunciation annotations, cache-length detection, weight-norm folding and the vendored torchaudio functions, using small stand-ins instead of real models.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_regressions.py#L23-L95",
+          "version": "repo-lines-v1:sha256:6828c788baac74a87fcebc9a6ca9ae228846772c524d4028808e1e269e905023:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExNjE5ZTNhYjM3MGNkZWQ4NThhZTI4Mjk2M2NkYTdmMzNkMjE2YmM5ODZkOWEzN2M0MWE4Y2VjNDkzNWEzMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkZTM1NjIzODJlMjY1MDc0MTg4NTY3NzI0NmY3MWU4ZDZhNTYyZjg0OWU0NGRhNzFjNTdkNjlkNmExZWM0MzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzMDQwZDMyOGRmMzNjMGMyODM4ZTNkYzQxY2I3ZDE4NGI4MWIzNzc0NDY3OTY0MDRlNWE1MjYxMDdmMWNiZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4ZWJlZmZlNWNmMTU1NjA4NmIyMWU0YzQ0MWQyM2FhOTMzNjA5MDdmMjhiZTE1ZTEyMmE4ZTU2N2IzNjVlNGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b79de91e6094a2393b48a96adb26ab6",
+      "statement": "The end-to-end test only runs when INDEXTTS25_MODEL_DIR and INDEXTTS25_VOICE are set and CUDA is available, is parametrized over the sdpa and flash backends, and skips flash when flash_attn is not installed.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_regressions.py#L98-L105",
+          "version": "repo-lines-v1:sha256:bea1193a9a684c4e9f0bfec90678c22be2129b24f9d103da2f0d249a129108fe:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDhjM2UyZjBlMmVkMzg4MDMwMTc4YmE0ZGJiMmNjNjYyZTI2ODFmZTcyNTc2NGJiYzQ4ZDk5ZjQ3NWZjZDUyYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2I4MTBiYmVkYjRiMmNkM2MwM2E2OTIzMDE3YTBmYWI2ZDg3OTQ2N2ZkZDUwZDYxNTE2ZDc2MjkyYWI0OTM2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGUwNzMyMGEwNmYxYmY4NmE4YWQ1NTg3MTI2NjUzZmZhZGRiYWE1NWM2NDM3MjA3Y2U3Yzc2OTBhMWY2ODU1YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzA0MGExZDA2OTA1ODkzY2QzNmM0YzA2OTAyODI4ZWU0NDAxNTY1ZWEzYmVmZjJlZWExY2UxNzllYzMyNDcxNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_94573b7d4dfb4973884dfe1d0d03945a",
+      "statement": "The end-to-end test checks WAV output size, that stream chunks carry text and audio, that punctuation-only input yields no chunks or a ValueError, that the voice cache holds no autograd state, that a 300-token segment synthesizes, and Japanese when fugashi is available.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_regressions.py#L109-L128",
+          "version": "repo-lines-v1:sha256:89b58592221a236c515fcef312042f4076ff080ea9c7a1f35142700505961598:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5ZjAzZGU2YjM4ZTg4OGIxZWVkYzg0ZGFlMDFmM2YxYzczOWZlYmVhYTk1MGRjZTkwNTY1ZGM4NDU5MzMxMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlOWY4MjBkODI4MDM4Zjk4NzkzMWQ3YzM4NzFjMWYyNWZkYjkxMGVmYzQyMmRlM2E2MThkYzI1OWE4M2VmNTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwNDBhMWQwNjkwNTg5M2NkMzZjNGMwNjkwMjgyOGVlNDQwMTU2NWVhM2JlZmYyZWVhMWNlMTc5ZWMzMjQ3MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_85564582be5c472c800d8c46acf72f27",
+      "statement": "scripts/benchmark.py measures import-plus-construction time, warm() time, median time to the first stream() chunk for a short and a paragraph text, median paragraph synthesis time with characters per second and real-time factor, and peak allocated VRAM, reseeding torch on each repetition.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/benchmark.py#L1-L72",
+          "version": "repo-lines-v1:sha256:24273ea05af00029937c2e7af96e4b25a14c5c63adf5bd554af253e2d0280bed:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwMzg2NmU4ZDZkOWRmYzQ3N2QyNjE0YTBmNDVjYTI2YTI2YzA4YzE0MTc4MjRjZDg2MjA1ZTFhZDAzODVhOTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhNmE3ZmZlZWQxYWY4M2NlZDgzNzA1NDk0OWUwYjJmZGYwZTU2OGZlM2Q0YzJlMjBjMjI5ZWMwYTk3MDdjYzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bdf0c41856ed4bf1ac30768f9dee544b",
+      "statement": "Model construction is wrapped in torch.random.fork_rng, so creating an IndexTTS25 does not shift the random state a caller seeded for reproducible synthesis.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L134-L136",
+          "version": "repo-lines-v1:sha256:f19c742b4f2644b8921dbcac1fffef2c5d6903792d754e489f62f65ef89a63e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjBlNGM3YjVjNTFjZjUzNzc1MGE0OTA2MjIwNmY2NmU4NzkyZTM3ZDhlZDI3ZGQyZGE0ZDY0NTJlNTM3ZDMzMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MzNzg1MjJlZjM5MWQ0YzJlNjUwNDVlYTRmOGY2NzI5MmRlMzYwNDBkNjcxNGZlMDA0MTE3NDA5ZDBiOTk1NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2U5ZTk2ZjM3MmQ0MzdkZmY0OGQ4NWYzZjk3ODk5MDdjODIwZjVhZDRlYjQ3YjE4ODk3NGVmMzQwY2Y4ZjFiOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmYxM2M4ZmE2NjU4ZWRjYTcxNWU1OWMwODViM2RkMDcwNjcyNzVhNGFkMjFiMzY1NTIzOTFkZDkzMmNmZGQ5MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4667444ce53a495f872594d3be409c4d",
+      "statement": "The flash engine's CUDA graph keeps a fixed 2048-token block-table width because flash-attn's work split depends on that width and changing it alters results in the last bit.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L44-L48",
+          "version": "repo-lines-v1:sha256:4a19f4e2dedcaf0923fec2bd39e8d30b156fba197e47de83f4342dfc5ef57c5b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJkNmFhNjYyODU0ZmJlNWJjMmI3ODg4YTQ2N2IwODQ1NWE1MWUxZmM5ZWNiNDYxZDAxMTkwNTY1OTA5ODczZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDUyNjg3ZGUwNDBiZTdhZjdhYjEwOTRjMGJlNzI5YTdkZGQyMDE0OGRiOTRiMDg3Y2I4MGNlY2Q2ZWZmZWZiMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzljZjQ4ZmQzM2U1OTZiZGQ2YzUyMTg4MzY1OTNkMjlkM2Y4ODA5MTg4MzkzMWVjY2JjNTk3MzRkZjc2MzRkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGI2NmNjYmViOTJiNGU4ZjI5MjI4NjhmNzJkZmM5MGQzNzJkZTAyMGIzMTRiZDNmOWU4YzIxMmQwMjUyNzZjYiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}

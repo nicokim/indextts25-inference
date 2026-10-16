@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e84db05c509d375561b996ca6952a9eb4c44f7784b64491cf5458e96209f2438",
+  "claims": [
+    {
+      "id": "claim_364b452a3d2a4180859392846ef87e4d",
+      "statement": "For zh, zhen and en the punctuation map is applied before normalization while keeping ':' and '：', and for es and ja it is applied only after normalization, so times like 14:30 reach the normalizer intact.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L280-L295",
+          "version": "repo-lines-v1:sha256:add709fefe88a334880c16ad39685f56489f045d023f1005f29b09df6e43d420:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0M2ViY2VkZDJjMTFiNmU4YTk4NzNmMDViMTI5YjhmOGY0OWIzM2IzYjc2MTM4ZjA0MjE2NmNlYWIzYmE2ZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMTg1N2E2OTUzOGFjZTRiYTg0YTgyMjVhODBmNjRlM2U2NDk3NmNjYjYxOGI4MzZkNjZhMzJhZWJlYmZkMTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjYTA5ZjkwOTE3NjZkOTQ2MmUzNjIyYWJmMmE3ODEzMjUwZTA3ZDJkOGE5OTljZjE4YWZjMGQ3YmJkMjEwZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4MzQ0ZGUzZjlhZjE2ODg5NmYzNzNkN2UzOWEwNDYxODUzMmFiMzU1ZGQ1MDUzNzEyOGY2MDM2YWY0NjcxMTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d88c034cc5340168d6b4c821425bb65",
+      "statement": "zh, zhen and en use WeTextProcessing when it loads; otherwise es, ja, en and zh go through NeMo, and zhen gets no normalization.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L288-L292",
+          "version": "repo-lines-v1:sha256:502fb6039ce2df460e81e3598795ea1712ea6453741b1c4e0b0938108804da49:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWVmMDAxNzRmNGNhMTgxZjRmMTVlYmQ0OWFjODVmNzc4YmI0NzhmOThlMmMyYmI2ODVjNmQ1MmVhMmJmMzU3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzllODBlNTMzZjcwZmU1MGIwZGVhZmE3NDM0ODU0YWE5MWVlM2Y2MmZmZTcxZGMyMzBmY2I1Y2RmMmM5ODkwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjBjM2FhMzMyYzIzNzNjOGU4YzJiZTZkYmNiYWNiZTVjNzhmMDRjMmU3Y2VkMWMzY2ExODU5MmI5NzNhODViOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBhZTQzM2E0NTU2ZDBhZTVmNThmOTVkMzMxMjRkMmRkYjMzMzAwOWYxYjQwZDY2OTM5MzZiYWNjNzg0ZDQwNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_519dc8c9fc234c6098c9847e0c194bd9",
+      "statement": "After normalization text is lower-cased for ja, zh, zhen and en, upper-cased for es, pronunciation annotations are expanded, Japanese is word-segmented, and every <|...|> token name is upper-cased.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L297-L304",
+          "version": "repo-lines-v1:sha256:3427342f82a4dc44c5a0a142ea3b0ebef7f64210f688d40f537e6b87252e58af:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGUyNTkxMzg2ODdhMzdmNjUwNjllNGUzODhiM2RjMTA0OTBmNzE0YTEwOTM1NDYzYzE4ZDdmYTRlZjJmMzJkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU4YTI1NGYwYmE3MWNhMjQ1OTBjODFjNTI0NTRjMDY0ODdiNTA3MDg3YWNlOTY1MTIwYTgxNzUxZTE3NmVkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY4NjQyNmRjMTBkZGZhMWQyMWYwYWRlMjY4NjI4ZGU5MmQwNDQ1ZTdhZDBkODNkNTU4NzYxMTFjNmY5OWQzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmQ4YzY4OTQ5YzJiYmY5N2ZhYzhiMTBlYzg0YjE0YzJmYTgyNGE5ZjdlNjMxODkyNTBmMDIzMWJmYzRiZTY2OCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ef044d9ba1c4e489dda36720a1ecf2d",
+      "statement": "A <word|reading> annotation becomes the upper-cased reading wrapped in SPECIAL_TOKEN_2 when the word contains Chinese characters and SPECIAL_TOKEN_1 otherwise, while kana readings are inserted directly.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L62-L82",
+          "version": "repo-lines-v1:sha256:52cc611f4365e2a3aefcbf453adedab0e8ffa487c2dc1f81efd6ab78a99530c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiYzY5MTkyYmQyNzlhZGY3ZTYyZDdjYTcyMDlhNThjMDMxNGU1MTIwYzE3NzJlN2NmMzdlZmMyOGI5OWM3NzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhNTJjMWE0YTVhZWRhMGYxMjczNmUzMWJkYTk3MGU5Y2JlMDcyNmUwMTIyYjE2ZGU5YzVjNDc2MjhjZWU1ZjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwYjIxYmY4OTVmYWUyZDczOTIwZDkzMTc4Y2ZkNTg0MWNkZjhmOTUyNDUxNmM4YTU2NTg0MzZhNGFjNDhmM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4OTcwYjBiNGU4ZDkxMmQ5ZTMzMjJjMmNmMDhmMDljNjYxNmViNDg0YjdiYjZlZjlmZDI0NGFiNDJlZGQ1YjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4b4546d3ac354a52a234948a9c79c4e4",
+      "statement": "NeMo normalization is enabled for ar, zh, es and en service codes (and their ISO 639-3 equivalents) but deliberately not for Japanese, and unsupported languages pass through unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/nemo_tn.py#L80-L114",
+          "version": "repo-lines-v1:sha256:1c0af3edd2994b34b522499b1808e265742ae58d5ee629c157edeaf7292bd62d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzMzdhNmI5NmU5MzZmMWM1ZmE2OTBkOGMyMmM1YmM4NDk1OTYzODA0MmY1NGRiZDRjOTg1NmRiNDM0NTkxNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTYwMGE3M2QyZTAyZjM1MmI5MGZlZjFkOGQ2MzgxMWJhNGE4ZWUwYzFiZWFhN2FlNDY1OGYzNmFhMmUxOTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3NmE5MDczYTAwNDU3Zjk4YjA4ZWU1NjliYWQwNzhkODg1Njg5YWQ5ZTRjMDRkNmU1NjBjNzQ3Y2MzZTlhYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3MTBhZmY3YTg1NTAxOGY5NGQ4NjlhMDBiYTVhZWRhMTMyNjI4M2IwNTY4YmZiYjkwNzg5ZTM1OGI4Y2EwOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_38c574a18a5249459112092e16205048",
+      "statement": "WeTextProcessing normalizers are imported lazily on first use; an ImportError or OSError is remembered and normalize() then returns the text unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/front.py#L115-L124",
+          "version": "repo-lines-v1:sha256:ebe2dd99b058f1c399af1f121de66e6332517aa03d32671ba892ef6cb8826c27:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZWQ2NmE5YmJjMTIzYjdjY2MwNGI4ZDdlMWMzZDY0NmM0NDczNmE5OTBkMmZhMmMyYzFlODQ1YzJmMzUyMzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1ZGRkOTNkNGY3MWZhNGI3NmMxNTA0YjFhNThjNzUyZjMzM2M1MjA4Mzk1YjgyZjUwMWI0ZjhhN2NkNWM1YTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4OGEwODFlNzVlNjU4MWQ0NmZmZGE3NzQ0NTViZmE0YjEyMDlkN2NiNTBmOThjZGVlY2JmMDQ0YThjY2U4ODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzYWE3MWY5NmQ1ZjY5YjNkOWRiMjYxM2I2YTc0MzZjMTFkZDgwODc3MTU5ODRkMWFlMzk5ZTVjOTkyN2RlNzkifQ"
+        },
+        {
+          "resource": "repo://indextts25/utils/front.py#L184-L187",
+          "version": "repo-lines-v1:sha256:95214f148472b9ecdd4ad6611bc8cb0fa0c859a522afa52112f65abc99de0640:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODM1Y2E0NGQyYmZkYzc0OWIyNGYxZjEyMGViOTczNWRiODQ3ODAzYzVhNGI2OWJlZjFlNjk4ZmY2NjJhYzBlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWI4OWY0YTU4N2U2ZThmZWM1MThhNjBiMjdkNjYzNTFlMzg0M2FmYTBlOThmMDk3ODg2ZDVlNDllZTE2ZDhjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDNlNmI3NjM4M2M2M2U3NmExYjE0NzI3ZTEzNjI0OWY3N2Q3MjQ4ZDJiNjE1ZTcwODdiNzZmYTg4ZjFmMGQxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzNmOWQwMzNlNDY4NTdiOTYzYmViMWViOTdhN2QyOTM0MzcyM2RjOTFkMzE3MzYwN2M2MjE3ZTYzMWI3ZTIxOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5efd7d0c41bd48f5bfc5fb6f2320517a",
+      "statement": "Before WeTextProcessing normalization, pronunciation annotations, English contractions, glossary terms, hyphenated technical terms, pinyin with tone digits and Chinese names are protected or rewritten, and with lang='en' text is never routed to the Chinese normalizer.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/front.py#L181-L232",
+          "version": "repo-lines-v1:sha256:84adb241f7e09ffe09042479e05b0b32f93f330ac758da83931a3159d6304ab2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExNmMzNmViZWUxZGU2NGIzZDFiNzdiZDYwMTA2NDUwNmVkOGI1NTAwZWY5ZWM3ZDA3YzZmZmM2YjdjZTlkMDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MmY5Njk1Yzc0NjdjNzQ3NzNjOWNlN2ZjNDI5YzVkMGQwZTQ4N2YzYzUxZDE1ZDY2NjhhM2QyNDA3MmJiOTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyNzA0MTYxNDMyOTU5MGY4NTgxNDBhMjliODQzMGQ2YmJmZjAzMmFkNTgxMzQ1NDc4YjZmZjY4OWU4NzcwZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMzE5MjllYzVhNzFjMzRhZWY1YTk5MzYxOTM1MTIyZmNiMmNiYzk0YmVkYzRhZTA0N2FlNjMwNDMwNzFmYmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3f2de57e75464b59bba9c5dc3af1e605",
+      "statement": "The tokenizer appends Whisper-style special tokens in a fixed order after the mergeable ranks loaded from the model directory's .tiktoken file, so their ids depend on that order.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/tokenizer.py#L162-L200",
+          "version": "repo-lines-v1:sha256:f7803f95cfffcd7cb7edc15805fc982e98e350e6c671a1308ea6942d376b8af5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMjFhMzYzNWFhNDFmMTUyNmVjYzkwMGE1OGM5NzRhYTQwOGM3OThmOThjNDdkYjE3ZmJlYjNhMzgwNjRlMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxMDU2NzE1MjJiYWE2ZGU0OTEyZDcxNGQwMDJlMDdlMjQwOTdjNTRjMDAxNTYxMDY3NWYzZDE0YzM5MjNiNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c9ce38a33ae84d76b7b8a52e538954d7",
+      "statement": "split_text_by_tokens returns the text as one segment when it fits the budget min(max_tokens, text-position capacity - 2) minus the language-prefix tokens; otherwise it keeps SPECIAL_TOKEN spans whole, splits after punctuation, then between words, then between characters only for single over-long words, and greedily packs pieces into segments.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L306-L306",
+          "version": "repo-lines-v1:sha256:12b143936d67cb0bbe3fad53993e870086f805828466517c4530ef8121a65da8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTJiMTQzOTM2ZDY3Y2IwYmJlM2ZhZDUzOTkzZTg3MDA4NmY4MDU4Mjg0NjY1MTdjNDUzMGVmODEyMWE2NWRhOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTJiMTQzOTM2ZDY3Y2IwYmJlM2ZhZDUzOTkzZTg3MDA4NmY4MDU4Mjg0NjY1MTdjNDUzMGVmODEyMWE2NWRhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWZkODQzZTBlM2QwOWY2MjdjYmFkYzA5NDY2NGI5MGFkY2Q2YTQ0NjJkNTUyYjkzZjkwMDM4MzhmODllZDRjMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDc5NzExMWI3YWIwZDM5Yzk1ZTYxMGI5NGMzZDhjMDBmYTJhYzY0MjhhNTg5N2ZiYjI2YzgxOWRhODVjYWFmZCJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L322-L364",
+          "version": "repo-lines-v1:sha256:f4e8400158f6dc7bfac698c8af39640e77316eb153d01dfaaad5e00d9d811e7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhYmM4NmJiYzc1MTljZTYwYjM1MTlmYzU2Zjc3ODRlZDYyNTEwM2YzNTYyNTZiMTc5NTllMzBiYTkxZWMzNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4Y2YxMDkwMzdhYTcwZDE1MjA1OWVkOTIwNmE0MDYwYjNhMDNhZWZjNjQ1MDU0NmIzOWQzYWUzNjliYTlhOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4ZTZhM2NjMWJmZGNjMWExMDQ5MGQ4MWJmYzk2NjM3MmE0MjI2MDVkM2ZiMmMwNTZjZjUzNmY5YTk4OGVmZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzNjU4M2M3YmEwMWNiN2RlMTdkNzk3MDBmMzExM2RjZDEwMGJiMjk0NDFiNGJiMmY5OTU2Yzk3ZmUxOTFlMTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b76d424955a84f5586d868c31867fc22",
+      "statement": "Regression tests check that segmentation reproduces the input exactly, never cuts inside a word, and keeps pronunciation annotations whole.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_regressions.py#L46-L65",
+          "version": "repo-lines-v1:sha256:6ff5fa136193d081b244a4efaca1be8c884a54b1742ddbd8ffb6ce31c9c1be6f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjMjE2NmUwNmYzODUyNDI3YWI2Y2EwMDdhZTNjNTFmYzQ3ZmE1YWZhNjM3ZTAyNWZiNTgyOTY0NmMzZWU1OTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyZjBkM2M5OWYxZWY1NjE5MTFmOTcwOTUwODEwNTM0YzQzNDg2YzU4ZWM5NDhjZmNlNTliOThlZWY5NGJiMGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0Nzk1OTE5YjQwYWMxODA5MWFlOWU0MDdlNmUyODNkMDQ3ZDcwZjQwNGQ4ZTBlZjVhMDVmNTgwZDAzNzdiMzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxMjhmMjQzZWY1M2NiZjVmNWE5MDYwNTFjN2Y5ZWNhY2Q4OTQxMDA0MGEzMDVkZWMwNTk3OTk1Y2UyYWViNWMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}

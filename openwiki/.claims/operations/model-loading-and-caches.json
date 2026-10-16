@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ae26bebeb7e6ba2a6f5959fef704f23a9b9c5f48fec2deebb534f61349983e23",
+  "claims": [
+    {
+      "id": "claim_be58bca708de4b6b9dd1d9ffe08a8db3",
+      "statement": "Model loading runs inside torch.random.fork_rng, so module initialization does not change the caller's RNG state.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L134-L136",
+          "version": "repo-lines-v1:sha256:f19c742b4f2644b8921dbcac1fffef2c5d6903792d754e489f62f65ef89a63e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjBlNGM3YjVjNTFjZjUzNzc1MGE0OTA2MjIwNmY2NmU4NzkyZTM3ZDhlZDI3ZGQyZGE0ZDY0NTJlNTM3ZDMzMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MzNzg1MjJlZjM5MWQ0YzJlNjUwNDVlYTRmOGY2NzI5MmRlMzYwNDBkNjcxNGZlMDA0MTE3NDA5ZDBiOTk1NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2U5ZTk2ZjM3MmQ0MzdkZmY0OGQ4NWYzZjk3ODk5MDdjODIwZjVhZDRlYjQ3YjE4ODk3NGVmMzQwY2Y4ZjFiOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmYxM2M4ZmE2NjU4ZWRjYTcxNWU1OWMwODViM2RkMDcwNjcyNzVhNGFkMjFiMzY1NTIzOTFkZDkzMmNmZGQ5MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e0fcd765410e4317816bcefb4769a3b4",
+      "statement": "The GPT is built on the target device, loaded from the checkpoint named by the config's gpt_checkpoint key, optionally cast to bf16, and then post_init_gpt2_config builds the generation wrapper and the optional flash engine.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L147-L153",
+          "version": "repo-lines-v1:sha256:5510e1149743df71b679b39075fe5bcfac4e50bffbb0b7672f02231fc5441108:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzJjZjdiZWVlMjE4OTUxOGNlMTM0YTZkY2Q1Yzg0Y2VhZDg3YjMxODg1OGZmZTA2Mjg1OWJjYzk2ODM0ZTlhZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYyODM2MDE5MjdjYjc4MzY0ZjMyMTQwMzFhNjc0ODliM2E4MDA5YTUxZmJjYzQzYmUwNWUyY2EzMjYyZjFkOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFiN2VlOTdmNjE4Y2EzODlkZmYxYjhlMWNmY2JhMGQwNjNjNjU2ZmFkZTk1ZTdjZmExM2QwN2FjODk4MTFkZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc4OWMxZTliNjI0YmZlNGQzZTQ4NTJlZjZlOTUzZjllN2FhM2EwNmZlOTdlYjMyYTc0YjRiYWI5Y2E5YWRhMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c4e02087cdb943739acaee691af13d6a",
+      "statement": "load_checkpoint memory-maps the checkpoint, ignores keys the model does not have, and raises RuntimeError when the model has keys missing from the checkpoint.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/checkpoint.py#L18-L25",
+          "version": "repo-lines-v1:sha256:c610d5667ad6a8b45ae28f5d9bf14ab80f3f40dd8b2aa70c9fbb3c36764c0056:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDA4YjJiMGQ0OTE3ODg1NWVlMGYxNzhjOGZkYTU4NmFkZTlhM2ZmM2ExNDcxMTk0M2NkYmM4ZDExY2Q3ZjdkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODFlMDQ3ZjQyMDM3YzcxMTQ4NWU4ZGE0NjQ3ODViMGE0MWU4NjExYzY2YTcwZGUzMWU1MjUyNWVmODUxYmQyYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjc5MmM2NzljNzkwMWI2OWQzMzc0ZTVhNGY4ZjliYzk2NGJlMzYzY2I2MTBhY2Q4YTQwOTRhZTliZmU1ZmU3NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzZiYmM5NTU5NTBhMDVlMGYzYjVhMmVlMzIxNTI5YjUwMGExZjU5NTBlYWUzNTQzNmZiZTRkYjYxNThmYTEyNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c26dd8264d43482a90fa025ba76ea75b",
+      "statement": "ensure_models_available looks for the w2v-bert, CAMPPlus and BigVGAN weight files in model_dir/hf_cache and otherwise downloads only the needed files from the Hugging Face Hub using allow_patterns.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/model_download.py#L10-L30",
+          "version": "repo-lines-v1:sha256:07db461ba5096ee6922974d7e341622c739338eb6fb8af1e27ed40fed254212d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MjZmOTE4MjdiOWE2ODMxMjIwYWU2NzAzYTk5MDYwZmRjZTBkNTVkNGE3MzBlNzc3ZWI2MzdhZGZmNTVhN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhNzgxZTExYWI3ODIxMWNmOTNkNTBhNDliNTdlYmNjNWRmMjBmNDFhOTJjZTQ5YWJmYWIwZDVhYTM5ZDY4ZDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjM2QxYWYzNDhhZTgyYjQzMjBhMmQ5NzcyZGNiYjI4OThiMzgzNjA4ZmMxOWE2OWYzNjNmZTQ5ZDlhMDA0NmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc7ceff856a84e89a52cd2bc73adc7a1",
+      "statement": "Each s2mel submodule is loaded strictly from the checkpoint's net dictionary after weight-norm folding, and the DiT estimator's caches are set up afterwards.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L177-L186",
+          "version": "repo-lines-v1:sha256:e3db73276d196b909d09e93c2432587e15fa8a45e35bceb151da693e9fcbe146:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyY2Y3YmVlZTIxODk1MThjZTEzNGE2ZGNkNWM4NGNlYWQ4N2IzMTg4NThmZmUwNjI4NTliY2M5NjgzNGU5YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1YTk3MGEzNGE2YjU3ODA4YmNhYTk3OTI2OTE4ZjAyZTdiNjU0ZTBkYWZmMmUyZTQ2YzgwYjYwYjk0YTBmNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhMjI5NGI1NzVkNDZkMDE3NzEwNjVkYzZjM2JiZDA0MTlhMTgyM2UxODQyOTdiODgxNTU1OTc0ZWE4MDVhNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlOTIwYWI4MzhkYWNkNGNiNTgxNWRlNjZiYmU5ZWFlNmI3Mzg4YTE0N2UxYWQ1NDZkMDAxMGFjOTQwMGRjM2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_48a9d92d06234774b6402da2f36623a1",
+      "statement": "The codec loads a memory-mapped checkpoint with weight norm folded and raises if any of its keys is missing.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/codec/models.py#L90-L97",
+          "version": "repo-lines-v1:sha256:663284f619843fb0080c006aef51c975a274f2674d5906b7a3f68b8130e3e7d3:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjVhY2RlOTE0MmRmNjZiNGZmNjU2YmJiYmM2Nzc4MmMzY2I1YjE5OGYwODM4MmIyY2FiZGNjYjFhMWRjMWY0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDhmNTQ2MDRmNmMxZTc1Mjc1ZGE3Y2E1NzI2M2VjZmNlNGQzOTUwZTIzOThjOGRmMDgyMzdhYWQzNGE5MDhhZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjM4YTI5NmM1YTI3NDFlZjcwM2Q4Zjg2OTQ1ODZkYjZjNDVkYWFhYWQxYmQ4ODFmZTU4MzFhYjBhZWViNzEyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b10edbd98c3d4036912b9538c68f7350",
+      "statement": "BigVGAN.from_dir constructs the vocoder on the target device from config.json and loads the memory-mapped generator weights with weight norm folded.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/s2mel/modules/bigvgan/bigvgan.py#L94-L101",
+          "version": "repo-lines-v1:sha256:3041ea122980b781a8e7896314075af140b5729d0afad10db5d8617e1808d988:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODIwYjQ1M2Y1ZTBjOTJkNWY2YzI1MWE1ZWExOTYwZDcyZjNiZDA3OTU2YWU4NTdkYTIwZTMxYTg4YzU1OTY5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmQzZjVmNjAwZTg2YWE0YzY1ZTg0Mzk4YTcwN2EyZjU2ZThkNjE4ODQzYmE1NDIzNGQ1MjUwNDM2YTI5MDgyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDllZjE2ZWIzMjRhNGNhZDI1NTI2NWM0NGUzNjhjN2MwOGI4OGQ5ZGJhMGU2Nzk1MzhmZDEwNGZiMmIzZGI4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWNkNjU2YzIxNzNhZWJlYmRhYzU2MmJmMTVjYjdlOTkyYTM2Mzk1NGE0NTQwMDdiZDgyYTUwOTRmNWFkYTEyOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_961fdca398ba4d44b7a71f856fb3b29d",
+      "statement": "fold_weight_norm replaces every weight_g/weight_v pair in a state dict with a single weight computed by torch._weight_norm on the target device.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/checkpoint.py#L29-L43",
+          "version": "repo-lines-v1:sha256:7e0a09e5f5158b980ea37a85a0122f0b7524f072ccecfe78391d5face925437b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhNGVlZTZjYTQ1YTI3NTRmNmRjZmNmNTUxOTg0Y2U5ZWZhYTlmMzAxMmZmM2QxZDUxYjRlZjkwMDVlODVkZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyMjM4MGE5ZTMwNjRhNDJmZGJhNmJlMzlmNDc4ZmQ2NjkzMDkzOWYyYjZiNTA2OTYwZmRiNzAzMDNhNTFhYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2YmJjOTU1OTUwYTA1ZTBmM2I1YTJlZTMyMTUyOWI1MDBhMWY1OTUwZWFlMzU0MzZmYmU0ZGI2MTU4ZmExMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f3991ea2248b47f3b6821188c246a2dd",
+      "statement": "An optional glossary.yaml in model_dir is loaded into the WeTextProcessing wrapper, and the emotion and speaker matrices are split into groups by the config's emo_num.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L195-L207",
+          "version": "repo-lines-v1:sha256:3b278b80e71c50005f43df3086f10ad7ce825e1a63f5389dbe42d5c58ec3427f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkMTlhMjNkZGQwNTYyZGI4MGQyNjcwMTdhYzE1ZDk1NWZmMDhhYmExZjVkZjllZWE1ODQ2ODE2ZjQxOWM1ZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5ZWYzNThlYjQ0MjljMjgyMzUwMjlkNTg4ZWUzZGYwZjg1ZGU3NzA5OGZjZjg5NjA3NzU0NTc2MmQxZjViNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3NDY2MmU1M2JhMWI4MWFhNzgyNmE1ZmY1YTQyZjVlMTVkZDFiMmIyZGE4MzRlMDkyNzVjYWIyMGQxMDRkYWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMmYwMzRmODQ3NjEzMjY1ZDUzZjE1ZDM3NjMyNzU1OWQ1NDY5Yjk4NDQxMzc1NWMxNWMwNmMwZTE4NTMxZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a9d0428c2484ebf9281eb9c1c7b7a25",
+      "statement": "Conditioning caches are keyed by the reference file's absolute path and st_mtime_ns and evict the oldest entry beyond eight.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L42-L43",
+          "version": "repo-lines-v1:sha256:3ad36b0bfb773451462d4f8de1f23667038b1debf2ff69fa6d51f4df464dde23:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQ2ZThhYjMyY2FhMWY0OTI4MzBiYmZkMmM0NDdhZTNhOGY5OGFiOTlkYzk1YTBhZGIzMDAwYTk1MjZlNzhiMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTdmNmMzZGYzMzE2NTE0NTY4MThlYTgyMzExYzdmMmQxZGFhNTJlNzdhMzNlZjE2NGFkNzI3OTZkZTllYjY0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2ZkNjJkNzdjM2FkYTU4ZDA0ZjQ5YjMxNWI2YWI2NGFlMzA0NzZkMDk4YWQ1ZTc4NWRjOGE4MGVjNzk5OTA3ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTk5NjMxMTUzNTJiMzVlYjc0NmI3YWVhZTUyZWZhZWUzOTc1ZjAxMmYyN2ZjYTdiNWVlM2ZlNzgwYWQ1ZGM2YSJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L90-L100",
+          "version": "repo-lines-v1:sha256:dd7a2ed5f4d8d59e1963e49f7bedc456328913a72ea6d3d23a1152f0798a7aa9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ZGE5NWZkNzhiZmMxZDdiM2EwOGFjZjQyMTU4ODI2NDNjMGFjZWYwZTY2MjNkMjQxNjI2OGY0NjEzZDJjY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5M2ExMzA2MmYxMGVlNGYxMjE4ZDkzZTM3YTZmODFkMzQ2ZmYxMWVjN2U1NWRkNTQyZTJkMmQyZWYwNzExZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhMmQ0M2EzOTk4MTFiZDRjOTQ2YTFjNTk5MDg3NWU0ZDYxYWRlNjJmNDc5MTAwYmEzNTJiM2Q3ODAyNjUyMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0YzJjZGI2NGQ2NjdlYWVmNTliNGJjZmJjZmM5ODIyYzE0ZWNkZWVhMmU1YmVhMDE1ZDIwZGJhY2ZhYTNhN2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e384e7b3d05d41938e994720e63e2236",
+      "statement": "Built NeMo normalizers are pickled to a per-language file under the XDG cache whose name includes the NeMo and pynini versions, rebuilt when the pickle cannot be loaded, written atomically via a temporary file and os.replace, and a failed write only logs a warning.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/nemo_tn.py#L39-L68",
+          "version": "repo-lines-v1:sha256:9cfb6865c96185fe1a357abdbf8045e7b6ab59df37781a4ebf516f9d7034501f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMWE1OTA5M2ZmZmJkN2FlNjI5OGQzMDc1YTkxYTgzNzA3NWMxOTQzN2NkMTUzYTU4YThkMmJlNmM1YTA1ZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4MTZiYjc2YTk1ODFhNDVmY2I5Zjc3NTNjMzMyN2U5YmE1NTRiMTI5ZjhiNTcwNGEyODYyOWRhYzY0MjhiNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1YzFjNDYyZTJhMzlkNzQ3NTlmNWUxYjEyNmY3NjgzYTJiNzMwMTE4ZTE4ZjUxMjJiMDhjZWRlZWI2NTBlMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhYzM5ZDU1YjFjNDA5YWVlN2MzMThhZThmZWU0ZjEyOWVlODM1OWViMjczNjU3NWJlYmI4MDcxN2E1Mzk2OWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c9bcc3adb2aa4c27b76e1ec87754bef5",
+      "statement": "The Chinese WeTextProcessing grammar is compiled with interjections and erhua preserved into ~/.cache/indextts25/wetext_tagger (or the XDG cache), while the English normalizer uses WeTextProcessing's default location.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/front.py#L126-L147",
+          "version": "repo-lines-v1:sha256:a21bb1d45b99fa04d4f737c959cdbdbbf760f51d17e2121429d01abd8a8111b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhODlhMjMyOWRjZTM0NzBkMDVkMjU1MzliNzNkYmFjMmMxZmM0YWVmNzA3NjRiMDJhMGZhZTUxYTZlZTIzZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkN2I3OGE0ZjUxNzc1MjQ2OGRiNmU5ODZhOTE3ZDQ4MTYxY2JhMTcxY2NjYWVmMzE3MGM1MTJmZmRmZmEwMjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5NDRiODVlM2FkOGE2N2VmYjNiYmFhZjk1ZWVlYjYxNWY1ZjQxZDgwODA3MDg5NjQyMWU0Y2RhYWI4MTVlZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjYjAzOGQ0MTVhNjAzZDUwNTllODhkOTUxNWE4MWIzM2I0YjBhNjhhZWM3ODA0NGYzYWU2NDMyMWFjNTFiMGEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}

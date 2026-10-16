@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6049dc5d1211a44146900b933d278490cf23149f95a2e49cd364f163475410e1",
+  "claims": [
+    {
+      "id": "claim_60f2dc2cc96f47b9bf2c4ea51b6738e7",
+      "statement": "The flash engine is only built when use_accel is set and the GPT is on a CUDA device; otherwise inference_speech uses transformers generate().",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L306-L306",
+          "version": "repo-lines-v1:sha256:5707cbf6a6660ce1389c2f22edcb228ffd0631c020d3bd639a4d341ae062a78e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTcwN2NiZjZhNjY2MGNlMTM4OWMyZjIyZWRjYjIyOGZmZDA2MzFjMDIwZDNiZDYzOWE0ZDM0MWFlMDYyYTc4ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTcwN2NiZjZhNjY2MGNlMTM4OWMyZjIyZWRjYjIyOGZmZDA2MzFjMDIwZDNiZDYzOWE0ZDM0MWFlMDYyYTc4ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmEyYjQ1YjA5Y2Q1ZjU3MjA1MDkyZmQ2M2NjODYwZTU3YmNiNTk3ZTlhMWJhYjRjZDhiODJhNmEwODg1ODdiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGE0ZmExZDU4MDI5OTBiYWVlZmViYzZiM2FhYzI4N2VmZDEwODUyY2VmMjE5NDEwNzUyYTk4YWM5Nzk3ZGE5NyJ9"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L445-L466",
+          "version": "repo-lines-v1:sha256:5d66850aba7052fea8ba4bac9f8f49982ee1c04140328df17a63d8452f3a350a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhOTM1NmFmMDZlY2QwNWE3YmUzZTIyYmJiZGFhNzhlMDk4ZGZlNWMwMzk5M2QzODNlOGRmNjI1YzIxODZmZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjN2YzZWZhODY4ZTEwZmRhYWE2ZjllYjZlZTQ0ZmZhNGI4YTJlZGI2MjY1Zjg1NWYzN2I5ZjJkZjQ2OGM0N2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4M2YwNWJjMTYxZDIxZTQ1ZGZlNjZmNTRjODhlODdjY2E2OTQ1N2YyNzY5ZjgxMWZmMmNmYWI5MTQ4OGRiYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMTRiMzVhZWM1OTk3YzRlMDVhNjRmNGUwZDBkYjg1MzRkOWQwYWIxYmQ0YjJjMjZjNWEyMTMzYzAyMzk4YjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d26e6ba3c8c74f6e92c415c838d44f48",
+      "statement": "GPT2AccelModel is instantiated on the meta device and loaded with assign=True from the main GPT's state dict, so it shares the GPT's weight tensors instead of copying them, and its wte/wpe tables are deleted.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L310-L320",
+          "version": "repo-lines-v1:sha256:e21ce3ae13250a945b0031b56ee09c42196e34d2f8bdef042823074bb1a8a624:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiNjVmZmZhOWI1ODliOTNiOGJmMThhZmI1MzU5NGJmMjU2MDc2YTFlMzUyY2RiZTZjN2E0NzZlNjM3NzQ2NWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkMmIxMGIwZTUzZmRhN2U2Mjc4MmFjYzA5ZjQ0NzhiZWNiYzUzYWY5ZTVkNTgzODBmZWI0NTFlMTkyZDg5NGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhNGZhMWQ1ODAyOTkwYmFlZWZlYmM2YjNhYWMyODdlZmQxMDg1MmNlZjIxOTQxMDc1MmE5OGFjOTc5N2RhOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NmQ3ZjdhYzFjMjUxOTE2NDEyNjc2YjRmMmZhMGZhNzgyZTgzMDc0YmM5ZjgyNGE4MjdlMjYzZDU2NzgxNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_80e765b753af4f9caf107902c357d203",
+      "statement": "The KV pool uses 256-token blocks and is sized as ceil((max_text_tokens + max_mel_tokens + 8) / 256) blocks.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L322-L334",
+          "version": "repo-lines-v1:sha256:7bea77d727689484769f845ed5fd77a4331718fefd15ba9155dc54992950ce7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMDA0YTkxY2NhNGJiMDk4ZTA3NWU3NjllYzY2N2EyOWU0ODcxZmJlNzE2YWI2ZWYwYTE3NWUxNjQ0MDIxNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDM0ODFjNTdkMGYwZGMwZjc2Y2QyY2M4YjM2MDRjNGU4Mjk2ZGE0MTIyYWRkMTllODE3NDVkYzdlMzMxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkNDMyOTRiMTRmNWM3NTIwZTUxNjJlYmFhYmE4YjQ0ZmRkYmFkNTlmNTlmNGMwYWI0MTJiNTRmYjM3NzFkMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhZTI0M2RhOTMyMzA3NDYxM2E4MDAyZDAzOGI3MDRmNmVlZDY4ZWFhY2FkMDg0ZjMzN2MxMzU1ZjQ4ZWMwYWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_904a977f9d764e9489d241cf49b3cf18",
+      "statement": "KVCacheManager allocates a single fp16 tensor [2, layers, blocks, block_size, heads, head_dim], hands out blocks from a free list as sequences grow, and has no prefix cache because prompts are embeddings behind placeholder ids.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/kv_manager.py#L33-L63",
+          "version": "repo-lines-v1:sha256:c64a7a26f28b306e81971ae6e446dba20d437ca8f10455834c0e856eb3eff3cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNzU3NTljMWMzY2E1MDljMGViMmQyY2I3ZTcwZjVhYjZkMmE3OTVkNjBhMmMwODYwMmUzNjM1YmYxMDcxMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3NDg0MmRjYjIzYzBlMmY0YjlhNzI2YWFhYzVhMTg4Yjg5NmVhMzc5ZmNmN2EyYmQzY2E0MGNkOWE1ZjcwNzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjNjFhZDQ4ZTVkZDgyMDlmYzMwOGY1M2NlYzU5NmY3M2Y3OWJjZTM3NWNkZDhjYWZiZTIyZGU5Y2MzNmMxZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d69a0a79d5d646a784db7c2f75dcfaca",
+      "statement": "Attention.forward writes new keys and values into their slots with a Triton kernel, then uses flash_attn_varlen_func for prefill and flash_attn_with_kvcache with the block table for decode.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/attention.py#L57-L148",
+          "version": "repo-lines-v1:sha256:eab02220fa4309551a0d24067b8fefbaee4e81ef8cbb96dc63c6c8503c984e47:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMDg4MGI5NzY2YzAxODBlY2I5ZmQ2YWI3YjA2ZWJlZjM3NDFkNTQ2YmE0MDVmMzVlNmY2Zjk1ZTM2Yzg1YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1YzRiODEzNWQ2NWNiMjNjNDgyZDIyMzBlM2JlOGFjMmZkNTcyZjU1ZjI5Mjc1YWY5MTRiMDAxNTViYzQzNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkNDE0YTg3MjdmMTdjNzYyY2RlYzU4ZTg3ZTllNjVjMGUyZjI4NTQ4OGU2MWNhMjJkYjkyY2E1OWUxNzExMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_08a77188dd554ceb93427e699201636d",
+      "statement": "Per-call attention metadata travels through a module-level ForwardContext that the engine sets before each forward and resets afterwards.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L178-L184",
+          "version": "repo-lines-v1:sha256:e9427522ce2a96296c2778e569337fab2633f362153ea8d4da6b887c738721dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjkwOTUxNjVkMjUzZDZkZTYwNzQyYTIxMTIwMDEzZTljNDQ5MTg4MGEwZjQ0ZmY0ODM0ZDM2ZjBlYjczZmI0MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmZlYTVjODEwZGEyOTAxNWRiMmRmNzU3NDgzZmI4MTdmODQxYmZlZGE5NTVmYmQ5MmVkZGYyNzMxMTUzZjY3YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2NlMGY4ZWY1ZGIzYmRiMTNiZGFhOWViNTFkYmUyNDcyZWE2ODc4OWQxY2NhNGNiZmFiNzA0ZjI0N2FhOWJlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWUzYzk3MmQ5ZjY4YjU2NjAxNTI1YzU5ZWU1MDgyNTc3ZjA5ZmU1ZWEwMWEwOWNhOWJlMTU3MTY4YmEwNjNlNiJ9"
+        },
+        {
+          "resource": "repo://indextts25/accel/attention.py#L10-L54",
+          "version": "repo-lines-v1:sha256:7aebf747640c8f1bb00b4b6c7fdce876fe257cb90aca10bb8ecbdcf99419b36f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZmJhZTBiOTFkNDRmYzBkNDlmNWRlNjkxZGE2ZmM0MzFmMjYwMTM0YmY3MzFlMGUyMWY3NjQ4MDk0MzM0Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjNDhjYTMyODVjOGY3YThiZmY5MGMzYmEwMzRjYzNhMThjODY3MTZiODM3NTk4N2E0MmIyZWViNTQ5NzU0NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NmY3ZGU4YmQ3NjJkNDg1NGZkZTgxNWM3YjNlOWQ1MzI2ZmEwMGZlOGRkYzc3YjhjMGI5ZjVmZWFlYmUyY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZTQ2YjI5ZTZlZmUzZTQ2ODAwZjg1NzkzYjZkMmUxOTE1YjFjY2I5NTUyNTQ0NmM1YTUwMmZmZDQ3MzJmM2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_85b578b3b2f94127a80ddd4d96eeaf34",
+      "statement": "GPT2AccelAttention casts q, k and v to fp16 for flash-attn and casts the attention output back to the model dtype.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/gpt2_accel.py#L52-L92",
+          "version": "repo-lines-v1:sha256:80dfd80f80464bbcda1e40805e97e3532f837c191d0f21bd34cc5e5b36e77e41:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwY2FmNTBkZThjMDNkNTFiOTQwODIwZTRmYzE0MDNhMTE1ZTQ1YTQ1MDFmYzY4YjVhODlhMjU5MmQ0ZDhlMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YjY3OWQ5ZjRhYzU1ODYzZDhjNmFhZDdiYTUxY2VjYzkwODFjNjhhMWFkMDFmMzQxYzhmZDljZGM4NTBkNTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliZmUwNDMyN2I0YmYyMWIwZGQxNWJiNjQwMzkyYjU0NzNiMWZlMmIzNzU4YTc0N2ZjOWRhYjllYjdkY2MyM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiZmFjZGRmOWRlMWNjZTA0YzFlNmUwYTNiNjIwOGZlMjAxMzI0MjI2ZTA2ZTdlMmNmYzYxNjNiNWNlOTdmNmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6c96fba0f67494b9c35e7a3ea881593",
+      "statement": "Prefill concatenates the prompt embeddings with the start-of-mel embedding at mel position 0, and each decode step embeds the k-th generated code at mel position k.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L168-L183",
+          "version": "repo-lines-v1:sha256:e9c2eeabc3b3a2a70e55bb328db9a03df7cbd2aa8f6d5c29d71275da1439755b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0ZDdmOTliZmE2ZGVkOWU2ZjYyNzUzNmUzMmY5OWVlOGFhNjUxNzUyZThjNDhmYWFjODI2NGUyYmJlYTg4YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1ZmY3MGVkZjdmMGE3NzQ3NGViNzM2Y2JhZDYxM2M0OTg0YjAwZDM2Y2M1OGU1YTYxMTdhNWY5ZjUyY2NkY2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlNWYyYmZhOGIwZWQyNzI0MGZmNGFiYjMyYjg1MDA1Y2YyNDU2NmRkMjJlZGZjZDdjZjJlYWMxZmYyZGVkNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1YzFhZDRlNjJlNjAzZGEyNDg1NTU5ODQzN2FlZmUwMWFiYTQ1MTY3YzIxNDc2MTFiNDc5MmQwMTQ1OWU2MmIifQ"
+        },
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L79-L103",
+          "version": "repo-lines-v1:sha256:c65e815a543ae9675d27c3917999eb5748a33c8a294e3d64e243e074ed5d6825:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YzRkNDUxOWM4Y2QzOWVhYmEzMTA4NWI1YjFhODFlMDhkMzYzNjQzMGE0Nzc2Yzk0N2NmNzAxOTExMmQyMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjYjdjOWZmYzE1N2M4ODQxMjQyNTkwMjAyYmY0ODMzMzRkMGUyOGZmMDk0ZTQ4MDQ4ZjFjZDQwOTNkZDMwODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyODMwYzBiZWFhMTNlZWM5OGRhNGRiOGZjYjlmMzZhNTM5NjYzYWY3YjVjMmQ2YThmMTYzYTVhNWI4Yzk1YmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYjc3NGEyODdlYmFjZDdmNGQ1YTYwODMwZDYyNWExZWYxMDFhMzBmNjY1ZDcyMjgxOWYyZGRkNTExNTdiMDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cea1db36dcf74deeaca2bcb1004a4ae9",
+      "statement": "The sampler applies repetition penalty to raw logits for every previously seen id, then temperature, top-k and top-p, and samples by dividing probabilities by exponential noise; a temperature of zero or less selects the argmax.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L105-L125",
+          "version": "repo-lines-v1:sha256:75074e044c07362e8f467f35381b6dc15c95bb5e2705264ae5c48f8e4c8f72d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxN2Y3MzBjNjJlMjZmN2Y1NmIyNWZiYTY1MjkzYjJkMTNkZDQyYjdlMTYzM2I5ZWQzMzlhMzI2MTZmYmRlYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMTIwY2Y1Y2ExMWQzMWRlOTJlOTFkZGNkZmVlY2EyYjU5NzAwZGQ0Zjc5MDFhZTYwNmE0NjM3ZmRjOWFmMjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZDBkNzAxNWI3YWUxMjg1OTI3N2ViODQ1OTgyN2VkMjQzMWM5MjkzZDM5NzBhNjNmMjNjNzZlMTFlYTdiMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzYWI4ZjM2N2I3M2YzMjk5YWZkMTRjNzIxNmNmZjFjYmRlNTk5YjVhNGFhZjI3MDk3YjhlNGQwMjI0ZjYwNzYifQ"
+        },
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L155-L159",
+          "version": "repo-lines-v1:sha256:d4d149e053bfcfc13a4a994663f499b9c929acc4cd399754227029551c05493e:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjU1NzRlNThiYmZlMTY5OTMxYzgxNjAyN2E2MWRiNDk4ZjE4NzBjNThhMDUxMDEzZGY3ZjQ4YmY2ZGViMGU2ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzZiOWY2MjFlZmMyMzMyZjE3NmYxNWUwZTExOThlYmQ5YTI5YjQ0NWIzOWNhMzk1NTM1MTcyZjNjYWEwYmRmZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWQyYzUyZmE2YTJkMGNhZmYwYjFjMGIwMDJkNmM1MGI0OTk4M2NjMDVjNTkyMmMyN2RmMmE2ZWE4MDNkNGM4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTZkY2EwOTI0NmE0ZmNmNTQ4OTNjOTkzMDE3OTcwYzEyOWVjZGRhM2VhMGFjMTBhOWUyZjZlNGVjOGEzODZkNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7deb1ea3f7474b438e8b321b38cba437",
+      "statement": "Generation stops at a stop code, which is kept in the returned sequence, or at max_new_tokens, and the sequence's KV blocks are always released in a finally block.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L189-L205",
+          "version": "repo-lines-v1:sha256:f97b0d39bc55a2ca22823d54073a20ca3ea5cbd4ab296571093c6ee7b3ecd9b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxOWFmZDMwZWEzYzQyZTQ1YTk5MTlkZjVmNDdkODhkZmJhZGRhMDgxNGQ3OWI1NDBiN2EwNDdiNmZhMDFjYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0M2JjOWJlOTM5YTE4MjkyMmVjODEyMjAyNTdjNTAzM2ZmYzhkYjlmODE4MmUzYjBhNmI1MGExY2JjY2I0ZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxNTRhODEzNjA3OGNjYjg2YmFiMjc4MTE4NmY0NTM0N2ZiNmEyMjFhMzBkMWUzNTg1ZThmMzczYWY0OTFiMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1cbcd2c9dfda4d06b9d73f88964727de",
+      "statement": "One decode step is captured into a CUDA graph on first use with a block-table width fixed at 2048 tokens; longer sequences fall back to an eager decode path that builds the same inputs per step.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L152-L153",
+          "version": "repo-lines-v1:sha256:f24c11f3e57844c09132aa57e7c147b4047c7bfdaccbc8182cf78a88830004af:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjAxZjk1MjlmOGU5NmY5ODcxYmFiNTE3OTI0MDQ4ZTBkMzc1MTE2MDVlZTYwMDQ0MWVhZTdiOTc0MmQ4NDE5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQxYzU0NjNkOTk5NGJiMWE1ZDZlYmQ4MjgwMTdhZjk5ZDBkN2JkMTM1M2ViNGY4NGQ1MDY1MmEyNzE1ZjEyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmM0NjJhMzc3ZTE5NGMzZTQ3YTk0OTc1MjZjN2M0MmUxODlkMjk3ZWM2MGRhNjFkZThmYzM3OGJjOTliMGYzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzM1YTljY2IxN2Y1OWY4OTZhODMxZDhkODYyZDJkNzA5YjU1ZDE0Y2FmNjZlODg2OGEzNmM5ODA4MTRjNjNiMyJ9"
+        },
+        {
+          "resource": "repo://indextts25/accel/accel_engine.py#L48-L103",
+          "version": "repo-lines-v1:sha256:2bb7bd5de7317b3d10c092d3b5e27541c24e17af339f0403ea642a5d7716ad52:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1MjY4N2RlMDQwYmU3YWY3YWIxMDk0YzBiZTcyOWE3ZGRkMjAxNDhkYjk0YjA4N2NiODBjZWNkNmVmZmVmYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjYjdjOWZmYzE1N2M4ODQxMjQyNTkwMjAyYmY0ODMzMzRkMGUyOGZmMDk0ZTQ4MDQ4ZjFjZDQwOTNkZDMwODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzYmRkZGIyYjA3NDQxODgyMDJhYzg2NGUwYzNkNjgwNzFkOGY1MWVhYWFjZDJmZjI5NzdhNWI1NmNhMTkzZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYjc3NGEyODdlYmFjZDdmNGQ1YTYwODMwZDYyNWExZWYxMDFhMzBmNjY1ZDcyMjgxOWYyZGRkNTExNTdiMDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8da410ee27184249803ec39ab974a753",
+      "statement": "GPT2AccelBlock implements a minimal pre-norm forward (attention plus MLP with residuals) instead of inheriting GPT2Block.forward.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/gpt2_accel.py#L105-L131",
+          "version": "repo-lines-v1:sha256:99aec06de63b64b2bd02197037c65ce62702ccc468f4ac748ec8a623f77eee93:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMDkxYjQ0ZDQ3ZDFmMGIxYzRkOWI2OGE1MGNiYTJkMDc1NWVlMTk5ZmQzYWIzYmNlMzc2ZGEwZmU2YjhiOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2NGJlOWUzNzRiOGEwMTIwZTYzZmFmMzQzYmNhOTBlODJhMGQ0NDc4MzZkZGQ3Yjk1OTVmYjA0NTQ3ODliMzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3ODVkMDVlN2YxZmUxZTJkN2RlNzE2ZGU3Yzk2ZGFhNjJhNGZmZTE4NDQwMzQxNzQ1NjA3MTE4NWIxZjMyNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c44cebba01324cc89d345fc55f8dcb7d",
+      "statement": "The flash path passes only temperature, top_k, top_p and repetition_penalty to the engine, so num_beams, length_penalty and the typical-sampling logits processor have no effect there.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L432-L459",
+          "version": "repo-lines-v1:sha256:8abe1a0939811ae8be8d985cc9fd07f963e0f3a260d74f4b093718dc56adfee8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNjljOWIxM2IzYWU3YWY5NWUyYmE2Yzc5MGM4YjYyYjg0NTkwNDEyMjlhMDk3ZjEzNzFiZWU0ZDc0MDFiYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDM0ODFjNTdkMGYwZGMwZjc2Y2QyY2M4YjM2MDRjNGU4Mjk2ZGE0MTIyYWRkMTllODE3NDVkYzdlMzMxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmNzEyMDk0MWFmNGI2N2I0ZmM1YzRmMjgyNDIzNzY1YWEwODFhNTY0NjVjNGU2ZWNiZjhiN2U5ODkwN2I4OGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2NjVmM2RlNWUwNTU0YTBkYTE2YWZhNTkwOWYyNTEwZGY4ZGMxYTFhNjA3NDZkOTg3YTRiMjM2ZTY2MThkN2QifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}
