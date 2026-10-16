@@ -9,8 +9,8 @@ import pytest
 
 pytest.importorskip("nemo_text_processing")
 
-from indextts25.utils.es_rules import _spell  # noqa: E402
-from indextts25.utils.nemo_tn import normalize_text  # noqa: E402
+from indextts25.utils.es_rules import _spell
+from indextts25.utils.nemo_tn import normalize_text
 
 
 def check(text, expected):
@@ -80,6 +80,34 @@ def test_spell(n, full, masc, fem):
         ("Usá el código 007.", "Usá el código cero cero siete."),
         ("Llamá al 1123456789.", "Llamá al uno uno dos tres cuatro cinco seis siete ocho nueve."),
         ("Son 1000000 de pesos.", "Son un millón de pesos."),
+        ("Tiene 1234567 vistas.", "Tiene un millón doscientas treinta y cuatro mil quinientas sesenta y siete vistas."),
+        ("Hay 1 000 000 de personas.", "Hay un millón de personas."),
+        # after a label or a name, a number still counts the noun that follows it
+        ("Qué rata, y ToxicMati 1 bit nada más?", "Qué rata, y ToxicMati un bit nada más?"),
+        (
+            "La mina está re producida, y GamerPibe 21 bits nada más?",
+            "La mina está re producida, y GamerPibe veintiún bits nada más?",
+        ),
+        ("Pagale en Fiverr 1 dólar para que lo haga.", "Pagale en Fiverr un dólar para que lo haga."),
+        ("Cada semana 1 video nuevo.", "Cada semana un video nuevo."),
+        ("Vi en YouTube 1 video.", "Vi en YouTube un video."),
+        ("Esta semana 21 personas se suscribieron.", "Esta semana veintiuna personas se suscribieron."),
+        ("Le mandé a Mati 200 fotos.", "Le mandé a Mati doscientas fotos."),
+        ("Le debo a Kimox 1 luca.", "Le debo a Kimox una luca."),
+        ("Me pasé el juego 1 vez.", "Me pasé el juego una vez."),
+        ("Capítulo 1 parte 2.", "Capítulo uno parte dos."),
+        ("Capítulo 1 empieza bien.", "Capítulo uno empieza bien."),
+        ("Estoy top 1 global.", "Estoy top uno global."),
+        ("Ver pág. 21 entera.", "Ver página veintiuno entera."),
+        ("FIFA 21 trae cosas.", "FIFA veintiuno trae cosas."),
+        # agreement
+        ("Son 101 dálmatas.", "Son ciento un dálmatas."),
+        ("Tiene 1 arma nueva.", "Tiene un arma nueva."),
+        ("Tuve 1 crisis existencial.", "Tuve una crisis existencial."),
+        ("Tengo 1 gran idea.", "Tengo una gran idea."),
+        ("Este año 1 sola vez fui al médico.", "Este año una sola vez fui al médico."),
+        ("Tengo 1 solo.", "Tengo uno solo."),
+        ("Hice 1 kill.", "Hice una kill."),
     ],
 )
 def test_integers(text, expected):
@@ -103,6 +131,10 @@ def test_integers(text, expected):
             "El cero ochocientos tres tres tres uno dos tres cuatro no atiende nunca.",
         ),
         ("Kimox es 0800-PELADO.", "Kimox es cero ochocientos PELADO."),
+        # and before units, when a word follows
+        ("Hay 800 m hasta la esquina.", "Hay ochocientos metros hasta la esquina."),
+        ("Recorrió 1.800 km hasta Salta.", "Recorrió mil ochocientos kilómetros hasta Salta."),
+        ("Son 8000 m de ruta.", "Son ocho mil metros de ruta."),
     ],
 )
 def test_eight_hundred(text, expected):
@@ -126,6 +158,20 @@ def test_eight_hundred(text, expected):
         ("Cuesta 20 USD.", "Cuesta veinte dólares."),
         ("Son 20 USD el 12/03.", "Son veinte dólares el doce de marzo."),
         ("Salen 100 pesos c/u.", "Salen cien pesos cada uno."),
+        ("Son 1500$.", "Son mil quinientos pesos."),
+        ("Costó 2.500$ el kilo.", "Costó dos mil quinientos pesos el kilo."),
+        ("Son USD $500.", "Son quinientos dólares."),
+        ("Cuesta $500 USD.", "Cuesta quinientos dólares."),
+        ("Son $500 dólares.", "Son quinientos dólares."),
+        ("Pagué US$ 20 USD.", "Pagué veinte dólares."),
+        ("Me donaron $1,000.", "Me donaron mil pesos."),
+        ("Cuesta US$1,250.50 en Amazon.", "Cuesta mil doscientos cincuenta dólares con cincuenta en Amazon."),
+        ("Me donaron US$1,000.00.", "Me donaron mil dólares."),
+        ("Son 5usd.", "Son cinco dólares."),
+        ("Son AR$ 2.000.", "Son dos mil pesos."),
+        ("Me donaron €5,00.", "Me donaron cinco euros."),
+        ("Pagué $ 1.500.- por eso.", "Pagué mil quinientos pesos por eso."),
+        ("Cuesta $1.500/mes.", "Cuesta mil quinientos pesos por mes."),
     ],
 )
 def test_money(text, expected):
@@ -151,6 +197,19 @@ def test_money(text, expected):
         ("Comprás a 0.0001, y vendés.", "Comprás a cero punto cero cero cero uno, y vendés."),
         ("Recorrí 15.5 km.", "Recorrí quince coma cinco kilómetros."),
         ("Nos vemos a las 3.30.", "Nos vemos a las tres y media."),
+        # times written with a period
+        ("Hoy 21.30 en el canal.", "Hoy veintiuna y media en el canal."),
+        ("Nos vemos 9.30 en la puerta.", "Nos vemos nueve y media en la puerta."),
+        ("Llego 8.15.", "Llego ocho y cuarto."),
+        ("El stream arranca 21.30 hs.", "El stream arranca veintiuna y media."),
+        ("Arranco 21.30hs.", "Arranco veintiuna y media."),
+        ("Arranca a las 21.30 hs.", "Arranca a las veintiuna y media."),
+        ("Lo vi a 1.5x.", "Lo vi a uno punto cinco x."),
+        ("Velocidad 1.25x.", "Velocidad uno punto veinticinco x."),
+        ("Ponelo en x1.5.", "Ponelo en por uno punto cinco."),
+        ("Tomé 1.75 litros de agua.", "Tomé uno punto setenta y cinco litros de agua."),
+        ("Desde 1.50 hasta 1.90 de altura.", "Desde uno cincuenta hasta uno noventa de altura."),
+        ("La versión 2.1.3 rompió todo.", "La versión dos punto uno punto tres rompió todo."),
     ],
 )
 def test_heights_and_decimals(text, expected):
@@ -178,6 +237,21 @@ def test_heights_and_decimals(text, expected):
         ("Vivo en el N.º 5.", "Vivo en el número cinco."),
         ("Hay +50 bots.", "Hay más cincuenta bots."),
         ("Sabe que 2+2 es 4.", "Sabe que dos más dos es cuatro."),
+        # a score is no count; a range before a plural noun is
+        ("Vamos 1-0 arriba.", "Vamos uno a cero arriba."),
+        ("Empatamos 1-1 otra vez.", "Empatamos uno a uno otra vez."),
+        ("Ganamos 2-1 merecido.", "Ganamos dos a uno merecido."),
+        ("Perdimos 3-1 feo.", "Perdimos tres a uno feo."),
+        ("Van 0-1 abajo.", "Van cero a uno abajo."),
+        ("Ganamos 2-1 gracias a Messi.", "Ganamos dos a uno gracias a Messi."),
+        ("Tardo 1-3 horas.", "Tardo una a tres horas."),
+        ("Uso VS Code para programar.", "Uso VS Code para programar."),
+        ("El VS de Street Fighter.", "El VS de Street Fighter."),
+        ("Vence 31/12.", "Vence treinta y uno de diciembre."),
+        ("Le doy 5/5.", "Le doy cinco de cinco."),
+        ("Le doy un 15/10.", "Le doy un quince de diez."),
+        ("Es 50/50.", "Es cincuenta y cincuenta."),
+        ("Llamá al 911.", "Llamá al nueve once."),
         # still NeMo's, untouched
         ("Llamá al 4567-8901.", "Llamá al cuatro cinco seis siete ocho nueve cero uno."),
         ("Nos vemos el 12/03/2026.", "Nos vemos el doce de marzo de dos mil veintiséis."),
@@ -227,6 +301,23 @@ def test_scores_ranges_and_signs(text, expected):
         ("Ahora 1,1 km.", "Ahora uno coma uno kilómetros."),
         ("Son 2,31 km.", "Son dos coma treinta y uno kilómetros."),
         ("A las 12:21.", "A las doce y veintiuno."),
+        # minutes ending in 1 before a word
+        ("Llego 13:01 a casa.", "Llego trece y uno a casa."),
+        ("Nos vemos 21:31 en el canal.", "Nos vemos veintiuna y treinta y uno en el canal."),
+        ("A las 10:41 empieza.", "A las diez y cuarenta y uno empieza."),
+        ("Son las 21:31 y no llegó.", "Son las veintiuna y treinta y uno y no llegó."),
+        ("Son las 10:31 pm ya.", "Son las diez y treinta y uno de la noche ya."),
+        ("Tengo 4K seguidores.", "Tengo cuatro mil seguidores."),
+        ("Llegamos a 8k subs.", "Llegamos a ocho mil subs."),
+        ("Corrí 21 km.", "Corrí veintiún kilómetros."),
+        ("Duermo 1 h.", "Duermo una hora."),
+        ("Un depto de 50 m2.", "Un depto de cincuenta metros cuadrados."),
+        ("Van a 100 km/h.", "Van a cien kilómetros por hora."),
+        ("Tomá 0,5 mg.", "Tomá cero coma cinco miligramos."),
+        ("Vivo en el km 21 de la ruta 2.", "Vivo en el kilómetro veintiuno de la ruta dos."),
+        ("Hace 30° de calor.", "Hace treinta grados de calor."),
+        ("Hace 30 °C.", "Hace treinta grados."),
+        ("Hace -5° afuera.", "Hace menos cinco grados afuera."),
     ],
 )
 def test_units(text, expected):
@@ -256,9 +347,46 @@ def test_units(text, expected):
         ("Despertate a las 3am.", "Despertate a las tres de la mañana."),
         ("El vecino del 4to.", "El vecino del cuarto."),
         ("Necesitás un AK-47, no una guitarra.", "Necesitás un AK cuarenta y siete, no una guitarra."),
+        # handles with "_", mails and URLs
+        ("Gracias @juan_2004 por los subs.", "Gracias arroba juan dos mil cuatro por los subs."),
+        ("Gracias Mati_99 por los bits.", "Gracias Mati noventa y nueve por los bits."),
+        ("Gracias user_123!", "Gracias user ciento veintitrés!"),
+        ("Mi mail es kohai.vtuber@gmail.com.", "Mi mail es kohai punto vtuber arroba gmail punto com."),
+        ("Visitá https://kohai.tv ya.", "Visitá kohai punto tv ya."),
+        ("Mirá twitch.tv/kohai.", "Mirá twitch punto tv barra kohai."),
+        (
+            "Mirá https://www.youtube.com/watch?v=abc ya.",
+            "Mirá doble ve doble ve doble ve punto youtube punto com barra watch ya.",
+        ),
+        ("Usá el hashtag #KohAI.", "Usá el hashtag KohAI."),
+        ("Comprate una RTX 4090.", "Comprate una RTX cuarenta noventa."),
+        ("Ganaste x2.", "Ganaste por dos."),
+        ("Salu2.", "Saludos."),
     ],
 )
 def test_glued_digits(text, expected):
+    check(text, expected)
+
+
+# NeMo leaves "1eras", "2dos" and "9no" raw and reads "1º puesto" as "primero puesto".
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("Es la 1era vez que juego.", "Es la primera vez que juego."),
+        ("El 1ero de mayo.", "El primero de mayo."),
+        ("Quedé 3ero en el torneo.", "Quedé tercero en el torneo."),
+        ("Es la 3era temporada.", "Es la tercera temporada."),
+        ("Las 1eras veces duelen.", "Las primeras veces duelen."),
+        ("Los 1eros días.", "Los primeros días."),
+        ("Quedamos 2dos.", "Quedamos segundos."),
+        ("Es el 9no.", "Es el noveno."),
+        ("El 1er piso.", "El primer piso."),
+        ("El 1° puesto.", "El primer puesto."),
+        ("Vivo en el 3º piso.", "Vivo en el tercer piso."),
+        ("La 2da vez.", "La segunda vez."),
+    ],
+)
+def test_ordinals(text, expected):
     check(text, expected)
 
 
@@ -303,6 +431,25 @@ def test_glued_digits(text, expected):
         ("Final Fantasy XIV está lleno.", "Final Fantasy catorce está lleno."),
         ("Son del I al XII, por si no fuiste.", "Son del uno al doce, por si no fuiste."),
         ("NUNCA VI ALGO ASÍ.", "NUNCA VI ALGO ASÍ."),
+        ("POR FIN VI EL CAPÍTULO.", "POR FIN VI EL CAPÍTULO."),
+        ("Video XXX gratis.", "Video XXX gratis."),
+        ("Super Bowl LVIII.", "Super Bowl cincuenta y ocho."),
+        ("Fui a los XV de mi prima.", "Fui a los quince de mi prima."),
+        ("El Vol. II salió.", "El volumen dos salió."),
+        ("La reina Isabel II murió.", "La reina Isabel segunda murió."),
+        ("Juana I de Castilla.", "Juana primera de Castilla."),
+        # initials are no numerals; "D." alone is still NeMo's "Don"
+        ("Juan D. Perón fue presidente.", "Juan D. Perón fue presidente."),
+        ("Jorge L. Borges escribió eso.", "Jorge L. Borges escribió eso."),
+        ("Juan M. de Rosas.", "Juan M. de Rosas."),
+        ("Saludos a Pedro D. Gómez.", "Saludos a Pedro D. Gómez."),
+        ("D. Juan Pérez.", "Don Juan Pérez."),
+        ("Saludos a D. Juan.", "Saludos a Don Juan."),
+        ("Te falta vitamina D. Juan dijo que sí.", "Te falta vitamina D. Juan dijo que sí."),
+        ("Compré pan, leche, etc.", "Compré pan, leche, etcétera."),
+        ("Tardo aprox. 10 minutos.", "Tardo aproximadamente diez minutos."),
+        ("Depto. 4B.", "Departamento cuatro B."),
+        ("Lo hice c/ mi hermano.", "Lo hice con mi hermano."),
     ],
 )
 def test_capitals(text, expected):
