@@ -68,6 +68,16 @@ text is not normalized). `warm()` runs one short synthesis: it extracts the voic
 conditioning, loads the language's normalization grammar and, with `"flash"`, captures the
 CUDA graph. Pass it `lang=` if you will not be synthesizing Spanish.
 
+### Spanish numbers
+
+Spanish text goes through NeMo plus a layer of rules for what NeMo reads wrong
+(`indextts25/utils/es_rules.py`), following Argentine usage. `$` is pesos, the Latin American
+convention (`$1.250,50` → "mil doscientos cincuenta pesos con cincuenta"); `US$`, `U$S` and
+`USD` are dollars. Numbers agree with their noun ("ciento una personas", "a la una") and keep
+their full form as labels ("capítulo uno"); heights read "uno setenta" and scores "tres a uno".
+Roman numerals are read only in clear contexts ("siglo veintiuno", "Juan Pablo segundo", "Luis
+catorce"); other capitals such as "CV", "MI" or "GTA V" stay letters.
+
 ### Streaming with synchronized text
 
 Each chunk carries the text it was generated from, which is what subtitles or an on-screen

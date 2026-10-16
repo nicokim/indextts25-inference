@@ -27,11 +27,14 @@ Design notes:
 - **Lazy load + cache**: ``Normalizer`` grammars are slow to build (seconds); cached per language.
 - **Degrade on failure**: if ``nemo_text_processing`` is missing, the grammar build fails,
   or normalize raises, a warning is logged and the raw text is returned; never aborts.
+- **Spanish** runs through ``es_rules`` around NeMo (numbers, money, heights, Roman numerals).
 """
 
 import logging
 import os
 import pickle
+
+from indextts25.utils import es_rules
 
 logger = logging.getLogger(__name__)
 
@@ -175,6 +178,8 @@ class TextNormalizer:
             return text
 
         try:
+            if nemo_lang == "es":  # NeMo's Spanish misreads numbers, money and capitals: see es_rules
+                return es_rules.normalize(text, lambda t: normalizer.normalize(t, verbose=False))
             return normalizer.normalize(text, verbose=False)
         except Exception as e:
             logger.warning(
