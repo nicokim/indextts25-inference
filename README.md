@@ -72,11 +72,14 @@ CUDA graph. Pass it `lang=` if you will not be synthesizing Spanish.
 
 Spanish text goes through NeMo plus a layer of rules for what NeMo reads wrong
 (`indextts25/utils/es_rules.py`), following Argentine usage. `$` is pesos, the Latin American
-convention (`$1.250,50` → "mil doscientos cincuenta pesos con cincuenta"); `US$`, `U$S` and
-`USD` are dollars. Numbers agree with their noun ("ciento una personas", "a la una") and keep
-their full form as labels ("capítulo uno"); heights read "uno setenta" and scores "tres a uno".
-Roman numerals are read only in clear contexts ("siglo veintiuno", "Juan Pablo segundo", "Luis
-catorce"); other capitals such as "CV", "MI" or "GTA V" stay letters.
+convention, before or after the amount (`$1.250,50` → "mil doscientos cincuenta pesos con
+cincuenta", `1500$` → "mil quinientos pesos"); `US$`, `U$S` and `USD` are dollars, also in
+`USD $500` and `$500 USD`. Numbers agree with their noun ("ciento una personas", "a la una") and
+keep their full form as labels ("capítulo uno"), unless the label or name is followed by what
+they count ("ToxicMati un bit"). Heights read "uno setenta", scores "tres a uno", ordinals
+"1era" → "primera", and `21.30 hs` is a time. Roman numerals are read only in clear contexts
+("siglo veintiuno", "Juan Pablo segundo", "Isabel segunda", "Luis catorce"); other capitals
+such as "CV", "MI", "GTA V" or the initial in "Juan D. Perón" stay letters.
 
 ### Streaming with synchronized text
 
