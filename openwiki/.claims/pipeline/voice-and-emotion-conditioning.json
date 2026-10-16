@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:064bdc65173b566dea5241eb40734dbfa00bc7c2df588654877bee1d83e2cea9",
+  "claims": [
+    {
+      "id": "claim_44dff96e46a642e48b4b0e0744547942",
+      "statement": "The voice clip is loaded at 22,050 Hz and truncated to 15 s; its 16 kHz resample feeds w2v-bert and an 80-bin Kaldi filterbank, the filterbank is mean-normalized and passed to CAMPPlus for the 192-dimensional style, and the length regulator maps the w2v-bert features onto the reference mel's frame count as the prompt condition.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L239-L267",
+          "version": "repo-lines-v1:sha256:56f29924d4cdea34b9d032b83e13ed210a8d78c572239d08c6105e85119ea23d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjYTg1YWE3NWQ4NzQ0MmNiYjVjOGZmZmM4NmU5ZjIwNzcxN2Q5NTI3ZjY4MzA4ZGQ0ZTY2Y2U1OWI3OTA2NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwYTI5OGNkMDY0N2Y0ZjQwODA0NGI3MThiZTMwMTIwOGQ4NjM1NWZhNzM1MGUxN2EzMGQ4NmY2ZGI0NjdhYzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExMzEwNTdkODUyNDk2MDQxODlhZDNjZmMxMzU2OGJmNDg2MjBhZmM3ZWFhMDM0ODc0OWI0NGMxNmMwMmY4MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiODA1NWUzYWEzZGNhY2E5OTdiZjA0OTExODVjZTExMzU3MjAzMWRjZDhkOGMxYWVhZWNlODZkNTZmZmJhMjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dac483d03ffd4d12ae986026e36c06ab",
+      "statement": "get_emb runs without autograd, takes the w2v-bert hidden state after layer 17 and normalizes it with the mean and square root of the variance loaded from the w2v_stat file.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L168-L170",
+          "version": "repo-lines-v1:sha256:1c2b6ab0447b5b770e58b773908d74f19dbef1bfea11c4f88af826f0778a0fb2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBhOTU4Nzc5ODE4NTkzNmUyMWNjYWQxMzQyZjk0NGJlZWY2ODdlNGFhNTFhNDYyYzJjNWQ2YzA3NGQwMjZlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjVmY2U1MGI4MGVmYjU5NGExZDEyZmM2ZGJkOWU2MzY2MjMyMDQ2MTVjNTcwMzVlNjVjMjFiMDBmMjExYzQ4NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTA2ZjRhYTlhNWVjZDNhNTQ4NDhlMDAxOTYwNzc2Y2Q1YTgyMWEwZTZhYTMxNjU3YTUxNzY3YzQ4MjgzOGFmNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWZhNzZjMTJjNjk2Mjk3ODViY2Q3ZDM3MWRiZTgwZWNlZGE1MTUyNDhiY2Y5N2NiNWNlNzdjMDZjNWRiMWRiMyJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L228-L237",
+          "version": "repo-lines-v1:sha256:c970b088981e25aff3eb5d46f82621abfecfdcdcf39ba95c3cb66af4727fb925:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0NWNlOWRlZmJiMzFlMmU1OTU2ZDJiNGIzMGM5YzI0NjNjYjFjZDkzZGJhMjQ3NDQ3YjdkYmRkMWM2NWNjN2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1MzRlMTI3MGRjM2ZhZTAxNTU4ZmUxYzY4MWM4ODU2ODY1MWIzOTk4ZTlhYjdiZDdiMDY5MGY3ZDI3MGNhN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjNzdiNDgwMzg3ODJiN2U2NzI5YmNiNGI1M2ZkOTFmMGM5Mjg1Zjc0MDM5ZGEyMWI1ZGI3MWM4NTRkYTQzOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhOGVmYzFlZjk0YzY1ZjJjNWI5ZTNiNzlhN2U5NTYwNzExODU2NDhmOTVmZDk3ZmY3NTBlNmJiMWI5MTc2YTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6ff677aca7c84a57a3c032527a20ccb9",
+      "statement": "The emotion clip is loaded directly at 16 kHz, truncated to 15 s, and only its normalized w2v-bert layer-17 features are kept.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L269-L276",
+          "version": "repo-lines-v1:sha256:95470e30d6d5f18a4e162c3a1f7a0f2bd425b307dd6424be89382143acd4ce33:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzRjYTY1Njk1NDE0M2NlZmNmYzQxZDg0OTZlNGFmYjhkYTJjMjRmMTNlNWJhYjNhZTg3MjM0ODk4MTBiMjgyYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGVjYmNjYTNlNGU5ZWViZTBhNDdiMTNlYmM5NDg0MjllZmM2ZDBhZGY3NGNiY2Y4M2UzYmZiNzZhOTgxMDZhYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjVhYzMyZmQwZGViZjEzN2I1MmZmYjVmNmY1NzU0MTBiYmEwYTE4YjViNzkyNzg4MjliZjdiN2ExNTQzZTJmMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWNhMDlmOTA5MTc2NmQ5NDYyZTM2MjJhYmYyYTc4MTMyNTBlMDdkMmQ4YTk5OWNmMThhZmMwZDdiYmQyMTBmMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d9dff3d55d742aab7d6a6a01953c612",
+      "statement": "The GPT's emotion encoder is a Conformer followed by a single-latent perceiver resampler and two linear layers, and merge_emovec returns base + alpha * (emotion - base) for the voice and emotion features.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L469-L487",
+          "version": "repo-lines-v1:sha256:1690cba49776a7721186f9e370d609f6eb5c71e012c95422f53159dcd0813a43:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzNTNmNTkxNzIxYjZlMTc4OGI5NTJkYjUzYWNiODE3OTViZWRkY2IyZjFiZTQyOGUyOGExNjRkNTFkMmFmZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYjU0MmE5MDcwY2FhNGM5OTg5ZmQxN2U0NGE5NmIwMmViNTBmY2JjZWQ2N2VhMGU0N2FjODgzZTg5NjgwZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4MzRhMmE0ODBlZTcyMmMzNGViMzJjODViY2I5ZTNmMGFlMTE2MjA0NDE5Y2Q2MDYzNWEyZTQ2MDk2YWQ1ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f6b85be271b40bab66a4cd5dcff9d32",
+      "statement": "Without an emotion clip the voice clip is used as the emotion source and alpha is forced to 1.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L398-L401",
+          "version": "repo-lines-v1:sha256:2c70a817561c28606464beeaebb9dbbbb5a0d2a44f93cfcc7ba94955f13c9289:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzEwZGY0ZDRmNDNlNmQ0MDc1NWZlYWNjY2YyZjIyMDRjN2NmNGViOWU1NmUxNDUwZjE3ZDAzMzBkNWZkZjg0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzOGFhOTRkYzJhM2Y1NTM5MWFjYWZlZTk3YTU0Mzg3Njg4ZGM4ZmM4ZWQzMzI1NWQ2OGJlMjM5MjBlYTZiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDZmZGEwMDBiNGY2YTk1MDUzMjIxMDU4YTRkYjJmYjg2ZTg0ZTJhMDM4NDQyYWY2ZGI5NDJmOTViZjk3ZWE3YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzVhNGE0ZjAzYTg4MDUwMmRhNGQ3YWNiNzViYzliMjYyODk2YjdmYWQzNzMyNzFiNTJiNDY1OTg0NjJlYzY3OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9d38ddc46ab6494ab07c24958dc7abd1",
+      "statement": "With emo_vector, one row per emotion group of the emotion matrix is selected by cosine similarity of the speaker matrix to the voice style (or randomly with use_random), weighted by the vector, and blended as emovec_mat + (1 - sum(weights)) * emovec.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L407-L414",
+          "version": "repo-lines-v1:sha256:ae30d7f62a7528e2c1d025ad55726ff6080de8ee12f962c4420705f97d505866:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ5N2UwZmU3YzZiM2U2Mjg3MmI3MDVkYWU5NjM0NmQxZDcxMGMxOGMwMjJhZWMxZDQwZjNmNWVjZjRjY2FiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTMyZjhkYjI1YTc2ZDNlZmEwYTMyZTE5ZjVjNjI5MmM4ZDdiMzgyZWMxZjQyNTA0OTQxMzY0YTViNzM5ZmVmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODc5NmRmNDA5MjA5MzgyMjQ3ZDA0NWY5NTdjNzE0MzlkZjNkZWQ4MGIyNzM2NjQ0YmFhOWQ2OTMwZDJjODdmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDVjMjE1NWFmNzlmOWYyYjY2YTMyM2ExYTcwNmUxMTY4ODY5MzdlNzRmOWJhMGQ1OGQxOTlkNDIyODIzOGY2ZiJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L460-L462",
+          "version": "repo-lines-v1:sha256:f2a72740346ca2d3f5b3679ce1c289900961015b74966ca3616a3be8af3f7eca:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ5N2UwZmU3YzZiM2U2Mjg3MmI3MDVkYWU5NjM0NmQxZDcxMGMxOGMwMjJhZWMxZDQwZjNmNWVjZjRjY2FiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGRkYTI3OTNkY2QwOTZlMTA5NDdmYmM1MDVmNTRlYzQ0MGFjMmZjMjQ3ZTU4OTM5ZjM3ODg1ZTU5NTRmNTM5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTZkNjNjYTA1YzM0Mzc4MWMxZThhNjA5MmJjMDIzYjE4MjJjNmQ2OTQ2NzkyZDc3YjZhNWJhOTFiYjFiMWQ4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGYzMjNlZGE1NmFiNGM4MTllNmJmZDIyNDBlYTZjYjZlMTFhYjgyYzU0MWEyYjRiZTJmOGNhMjEwYmJiN2EwOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9d0be4f4764c44a7b247cc7425d24dd9",
+      "statement": "Speaker conditioning, emotion features and merged emotion vectors are cached on the engine under keys built from the reference file's absolute path and modification time, with FIFO eviction beyond eight entries.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L253-L276",
+          "version": "repo-lines-v1:sha256:ccdd12dc6ee85475f6e5adffb610f3705a375433cc63a5bcbb7f2973228cbdd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMzNjNmI2OTFjZTY3Y2I0NTk4YzZlMjZjYmE3NGJkOTMzMzE0OGQzODI2NGY0NGNhMTVmNjBjYmExMzAyMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlY2JjY2EzZTRlOWVlYmUwYTQ3YjEzZWJjOTQ4NDI5ZWZjNmQwYWRmNzRjYmNmODNlM2JmYjc2YTk4MTA2YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0ZDA1NGEyZTBjZTAxNzc5MzA4ZjkyNWE1NWEwNDYyM2U4Y2U5NGNmNjAyZjZhZWFlNTZhOTM0YmZmMjg5NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjYTA5ZjkwOTE3NjZkOTQ2MmUzNjIyYWJmMmE3ODEzMjUwZTA3ZDJkOGE5OTljZjE4YWZjMGQ3YmJkMjEwZjAifQ"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L448-L459",
+          "version": "repo-lines-v1:sha256:518c81989cc777eb8025759eea77efbfc3589c46483690c96f493016db25a5b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYTY3MWVhN2U1YjhkNjBlZTU0NzFiZTAwNDJhOWFhYzZiYzJlNjNkNzQ5ZDg1ZDAyMmVjYzM2ZWExYzNiYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlODMxNTdkYWRmNGNhNTJiMGZlODdmMDdmN2NkZTljNzQ5NmU4YjRkOThiY2ZmYjA5MjEzNTQyZGI3YzVjMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmNWUxMGY3MDc4Y2QzZmRjYmU4NzMyYjE2MWM1YTQxZWU4NmM5YzExNzRjNTQ2Yjk0Zjg4NTdiYzM0YjA5ODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYTcyNzQwMzQ2Y2EyZDNmNWIzNjc5Y2UxYzI4OTkwMDk2MTAxNWI3NDk2NmNhMzYxNmEzYmU4YWYzZjdlY2EifQ"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L90-L100",
+          "version": "repo-lines-v1:sha256:dd7a2ed5f4d8d59e1963e49f7bedc456328913a72ea6d3d23a1152f0798a7aa9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ZGE5NWZkNzhiZmMxZDdiM2EwOGFjZjQyMTU4ODI2NDNjMGFjZWYwZTY2MjNkMjQxNjI2OGY0NjEzZDJjY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5M2ExMzA2MmYxMGVlNGYxMjE4ZDkzZTM3YTZmODFkMzQ2ZmYxMWVjN2U1NWRkNTQyZTJkMmQyZWYwNzExZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhMmQ0M2EzOTk4MTFiZDRjOTQ2YTFjNTk5MDg3NWU0ZDYxYWRlNjJmNDc5MTAwYmEzNTJiM2Q3ODAyNjUyMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0YzJjZGI2NGQ2NjdlYWVmNTliNGJjZmJjZmM5ODIyYzE0ZWNkZWVhMmU1YmVhMDE1ZDIwZGJhY2ZhYTNhN2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_257a8392547247f3a07fa14a882e0053",
+      "statement": "Regression tests assert that get_emb output does not require gradients and that cached speaker conditioning tensors hold no autograd state after a real synthesis.",
+      "evidence": [
+        {
+          "resource": "repo://tests/test_regressions.py#L121-L121",
+          "version": "repo-lines-v1:sha256:5b5ac0ae24ad81d6afbba4894ff8278f64906492cbc897a0677d53e927ae9fb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWI1YWMwYWUyNGFkODFkNmFmYmJhNDg5NGZmODI3OGY2NDkwNjQ5MmNiYzg5N2EwNjc3ZDUzZTkyN2FlOWZiMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWI1YWMwYWUyNGFkODFkNmFmYmJhNDg5NGZmODI3OGY2NDkwNjQ5MmNiYzg5N2EwNjc3ZDUzZTkyN2FlOWZiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmU3MDQ4ZTZjYmI1OWY3NTQ2YzE1ZWIyNDY3ODNjZGU0ODVhZjI0YjBhZmE2M2U3MDdiMWRhNjY0M2U1MTEwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTI1N2YyMDFiOGJkMjAwZGM1ZDJkMWVjYjY5OGM5MjhlOGJkMGQzMzUyMTgxYmRhYmU2N2Q0OWQ0ZDMwY2JjMyJ9"
+        },
+        {
+          "resource": "repo://tests/test_regressions.py#L28-L36",
+          "version": "repo-lines-v1:sha256:e3e2cb12a79657c891e5b7100d930bc5284010e25302e1452e896d0c2adc3e32:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDkxOWU5MWU0NDNjYTZiNDI5ZjQwNDVlMTM0NDJkNWI5Yjg0NGNiMWQxMjIyNTY3YmFkYTAwMjMyOThiMWE3ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjA1MjI4NjM3MTBjZDc3ZGQ3MDI0YWQ1YTNhZWM0OWM5MjhiMGIxMjhiMjdlY2ZiNmU1ZWExOTQ3MTdlZTZiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGZkYzU0MTdhMzY2OTUyMWVlYzRiNWJiNzQyNDM1MWEzZGEwMTI0OTUyMWMzYjFhZjI2NjMwMGNmYzJlYmMxNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTg0YzNhMDE3MzI2OTA4ZDhiZWYyZjc5YjEyN2Y3YWVkZjQzYzVjMTA0MThlOWY0OWJhN2Q5ZDNjZjFlYmEwZiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}

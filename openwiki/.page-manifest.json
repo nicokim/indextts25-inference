@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "pages": {
+    "/openwiki/api/public-api.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:e2161f31ad952e9c10045bec651cd21a91c58bc62a43ac946e55a9d38aa26716",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    },
+    "/openwiki/architecture/overview.md": {
+      "pageVersion": "sha256:b20371822a6338f3979e76b27942cc55ecacc5f8151c534726abc2707960f2bb",
+      "completedBy": "claude-code",
+      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
+      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
+      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+    },
+    "/openwiki/operations/dependencies-and-compatibility.md": {
+      "pageVersion": "sha256:a6f13cef073679669b69be89a1d82140d4e9b1804ef33534b2d628892c8c98fb",
+      "completedBy": "claude-code",
+      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
+      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
+      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+    },
+    "/openwiki/operations/model-loading-and-caches.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:ae26bebeb7e6ba2a6f5959fef704f23a9b9c5f48fec2deebb534f61349983e23",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    },
+    "/openwiki/pipeline/acoustic-decoding.md": {
+      "pageVersion": "sha256:8dee76b1df0ebc24be1848178d81808bfac93f91a0aba3edab59241ed81ef4d1",
+      "completedBy": "claude-code",
+      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
+      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
+      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+    },
+    "/openwiki/pipeline/flash-engine.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:6049dc5d1211a44146900b933d278490cf23149f95a2e49cd364f163475410e1",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    },
+    "/openwiki/pipeline/gpt-generation.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:6efcca59032af95137b492ef86381f716a41c96fb661152c29922ac5ce649244",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    },
+    "/openwiki/pipeline/text-frontend.md": {
+      "pageVersion": "sha256:095803bf4488489d55142dd55aa74c5f4f68dee831fc2319c8f844495eda40e2",
+      "completedBy": "claude-code",
+      "completedRunId": "9f9b9d09-a53d-4ea0-92c3-f4cc6d036b6f",
+      "gitHead": "1dce95616bfd07c2ff9e47ffe4287378548f17b9",
+      "sourceFingerprint": "sha256:1eb958ca9d2806b5fb42acab71f3e39dd7ac2b6ad7e5519cf826365668788977"
+    },
+    "/openwiki/pipeline/voice-and-emotion-conditioning.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:064bdc65173b566dea5241eb40734dbfa00bc7c2df588654877bee1d83e2cea9",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    },
+    "/openwiki/quickstart.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:dd07cc302160db46d35703392e205c41f57edd6dee0f4fabc2ec03050ca41b3e",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    },
+    "/openwiki/testing/testing-and-benchmarks.md": {
+      "gitHead": "769f87198723a83babfb081a345471433b05c227",
+      "sourceFingerprint": "sha256:500ded14e715a57de09a4dfec8b92c71a45f2bc177a1c24912ebeebc6b0bb41d",
+      "pageVersion": "sha256:3f5868f8efd1b162e7b76ffd30115beb258ad852cc4d62fb9ccfd46481a2f522",
+      "completedBy": "claude-code",
+      "completedRunId": "d94b1e41-bdc3-4b22-8d7c-88e597214837"
+    }
+  }
+}

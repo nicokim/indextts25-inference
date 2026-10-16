@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a6f13cef073679669b69be89a1d82140d4e9b1804ef33534b2d628892c8c98fb",
+  "claims": [
+    {
+      "id": "claim_637da39668b1435386494f44046729ed",
+      "statement": "The runtime dependencies are torch>=2.8, transformers>=4.52, huggingface_hub, tiktoken, librosa, omegaconf, pyyaml, safetensors, einops and numpy, plus nemo-text-processing only on Linux x86_64 with Python below 3.14.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L24-L39",
+          "version": "repo-lines-v1:sha256:3a9e108cb866369385e98aac1e214ce2cc9b8da3b72fbfd1e2ea82e5c5037eef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOTVmNWU5ZWRlMDE4MTYwNDNjMDc5N2FjZThkYTJhYzRlOTlhOGE2YTYxMGZhOTg1NzBlZjM0YjkzNTYxMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlMTJiY2QyYTczMDlkMGEyZWFjNmQ5OWVhNTRmZTE4ZGI1NzY5M2RiNmNhNTk5MDdmYjc3Y2EyNDAyMzM4YjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3Yjk5NzU1ODMyYmEyMmY0NTdiMDBhZTBlZWIyNjYwMDg1NzcyOTVhOGY4ZGZlNTcyMTAzNjA0MjljM2Q3NTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2441122f6a294779940a6063fc0c0105",
+      "statement": "The flash extra adds flash-attn>=2.8.3 and triton; the zh extra adds WeTextProcessing on Linux and wetext elsewhere; the ja extra adds fugashi and unidic-lite.",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L41-L47",
+          "version": "repo-lines-v1:sha256:9d8a3ea306914ef939341ea8b81d03b9a817eefa9f70208430e85d418d20610d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTkyMThkYzRjZTk3MWNiZTNkMzhkNzc0MzBlNjM5OTE4ODg0ZGQ3N2Q3MTg0YzdiOTNkZmRjMmU5OTg2OTFiNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZiZDE1MDUzMGNkODgwN2MyM2JhZjJlNTdjNTQzN2EyOWQzMzZhNzRlMTVkYzU4ODY3Njg2MGI4N2I1MDkxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI4OTdhMTdjYTJjNmIwNTVkMzAxZjNjZTlhMWFiYTA2N2MzNzU0NTBiZDBlN2M1YjkzOWUwOWRlMWJhYWYxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDllYzg1YjEzZTMzZDc5ZGNmOWM1MmVlZDdiZDM3YzVhYWNjZWQ1MmNmZjk5YWZkNmU0YmY2NzYwOTljZjE3NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_973ae9cf27a74ebe9f70fd137a007cc7",
+      "statement": "The sinc resampler and Kaldi filterbank are vendored from torchaudio under BSD-2-Clause and documented as bit-identical, and a regression test compares them against torchaudio when it is installed.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/common.py#L52-L56",
+          "version": "repo-lines-v1:sha256:2f7f1c97ed5f36cf2195a4adb5bdc53789725599c222d81f3836a5666c1f91d7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjMyNzRiODk2YjMyYzI3MGQzYzg1ZjE3N2Q0MTBhMGFjNTBkMDljNzcwM2IyOGRlMjI2NTJiZGY1MGYyYTczZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjRlODAwMjJkMDNlMTZkYzVlZThjZTIyYzRiNjg2ODFiNDhiZmFiYjc2ZWIzOWI2ZmJkNjdhMmQwM2RlNjU3YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjYxZDFjMDUwNWY4ZjkyZjc5ZWEzMTMxMzA5NTVjYzhjYWZhOGUzYjg5YjVmZTMwMmJjMTg3OWQ3MzkxY2Q5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNhOWM0OTBmODk2MDBjM2IxODQ3NjkwZTY1MTAwMDE4NmYwYWZiNzRhMTc5MmJjNDE1YjM4ZjUzNjI5NmEyMCJ9"
+        },
+        {
+          "resource": "repo://tests/test_regressions.py#L90-L95",
+          "version": "repo-lines-v1:sha256:5d04f86bf23835307fce8dae91b1cf3a69b8a675a4e54f3588193220cccd5967:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjI3MDg0MWFjZGRmMTkxNzQyOWQyYTQ4NzllZTZjNmJmN2I2MTRkMTIzYjhkNTJlMzNiOTEzOGVhMGViOTk1ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmRlMzU2MjM4MmUyNjUwNzQxODg1Njc3MjQ2ZjcxZThkNmE1NjJmODQ5ZTQ0ZGE3MWM1N2Q2OWQ2YTFlYzQzNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDNlNTdhN2IzMjQwZDFmZjYwMjU5NDVjZTAxYWJlNzFiNTEzZjhiZDhmOGYxYzkzNzAxYTNhNWE4ZTE3NWNkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjhlYmVmZmU1Y2YxNTU2MDg2YjIxZTRjNDQxZDIzYWE5MzM2MDkwN2YyOGJlMTVlMTIyYThlNTY3YjM2NWU0ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_457d69cd25ea4c34b7fb8bb89a7e5439",
+      "statement": "WAV files are written with the standard-library wave module as 16-bit PCM instead of torchaudio.save.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/common.py#L12-L25",
+          "version": "repo-lines-v1:sha256:359f4f1088694ff006e1affc7f04c4e181930614a133131aefc468f614de2d24:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzMjI2ZGNjMmI2YmI2ZWIyZmQ3OTBjZWFkOWUxMTdlZWNmMGQzYWMxYjMzOWI3NTdkMDUzODIzYWFmMzk5MTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1OGRjM2Q3MTg5NDg1N2JmNmY2ZmJiZGZmYjYyM2VjZDY5N2I2MDY0ODRlNzg2MDdhNmZkMjMxMDQyM2EyZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZGFjZDNjZTJkZDY2YzY3ZjQ4YTNiODA2NDkzM2U4NGY3NmYxMDZiOTQ2YWI3NmJmMmRhMTBkYWVkMWY0MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkYWY3NWQ5N2Y0ODI1NmUxNzFjODVlYTcyYTZlOTYxYzMxNjAwMTk1YmJkNjEwNWM0Y2JlMzczYWRhYzhmOTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_faf2baf0f722424cbe674b8cc2a10453",
+      "statement": "The text tokenizer is a tiktoken Encoding built from the model directory's vocabulary file plus Whisper-style special tokens whose order fixes their ids.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/tokenizer.py#L1-L3",
+          "version": "repo-lines-v1:sha256:6fc2f2f0892640cafacdf01930f698a0443cf064f9afb009c2500cc2fc54c1c8:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY5ZjU2NGY3YWEzNzk3Y2QyODZjYjhlNGVlODMwZmYxNjZiMDk1OTAyOTc2N2I5NjljOTFjY2I2MjI3MGM1ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY3MDhlNTg5ODVkYWM2MzgzYWZjNmNlZDU1ZmQ2NDFmOTVjOTk2MTMxYjdmYjAzMWM5YzlmOGVhMTQ2NGEzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjhmMjBjYTZmYjI0MTRhZDBjOTRjYmIwMjAwYzA2YmZkZDg0MmNkYzQ3NGNlNWY3N2E1OGUzNGY4YjVhZmU0NSJ9"
+        },
+        {
+          "resource": "repo://indextts25/utils/tokenizer.py#L162-L200",
+          "version": "repo-lines-v1:sha256:f7803f95cfffcd7cb7edc15805fc982e98e350e6c671a1308ea6942d376b8af5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMjFhMzYzNWFhNDFmMTUyNmVjYzkwMGE1OGM5NzRhYTQwOGM3OThmOThjNDdkYjE3ZmJlYjNhMzgwNjRlMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxMDU2NzE1MjJiYWE2ZGU0OTEyZDcxNGQwMDJlMDdlMjQwOTdjNTRjMDAxNTYxMDY3NWYzZDE0YzM5MjNiNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_66dcf6ab03bd463496078cc8109ee4c5",
+      "statement": "GPT2InferenceModel inherits GenerationMixin explicitly because transformers 5.x no longer provides it through PreTrainedModel.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L43-L43",
+          "version": "repo-lines-v1:sha256:6242edff30ebb28d3b642cddad7c20e09f4ad74a75bd55e37281bb332242ae5e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjI0MmVkZmYzMGViYjI4ZDNiNjQyY2RkYWQ3YzIwZTA5ZjRhZDc0YTc1YmQ1NWUzNzI4MWJiMzMyMjQyYWU1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjI0MmVkZmYzMGViYjI4ZDNiNjQyY2RkYWQ3YzIwZTA5ZjRhZDc0YTc1YmQ1NWUzNzI4MWJiMzMyMjQyYWU1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDE0NTdmYzAzMjA0YzY4ZGRhNTE5NjIwOWY3NjI4MDQ5YWM5ZjI3ODVkMmYyY2NkODk3M2ExOWQ5ZTUyNWIwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTNhNmI5OWUyM2VmNTVhNWU5MThjZjFhNTVkOTU3NTM0YzIwNTA2ZWM1YmU0ZTk0N2IyZmE0ZGVmNGE5ZmE1OSJ9"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L44-L44",
+          "version": "repo-lines-v1:sha256:c68312bae91909fea0f1df5790c1279abb41b8d8141c63565b0d3256710a2294:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzY4MzEyYmFlOTE5MDlmZWEwZjFkZjU3OTBjMTI3OWFiYjQxYjhkODE0MWM2MzU2NWIwZDMyNTY3MTBhMjI5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzY4MzEyYmFlOTE5MDlmZWEwZjFkZjU3OTBjMTI3OWFiYjQxYjhkODE0MWM2MzU2NWIwZDMyNTY3MTBhMjI5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTJmMTQ3MDI5YmVmMDNiZTk4MjgwZjVlOGVmY2FjYmMwMTFjNjhmMDMyNDZjODYzYTJlMThkYjliNjIzYzFlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzA5NDAzNThmOGRiY2RkNTVhNThjNGNiYTdmYWY1Y2EwY2QyOGVhZjg1N2M5ODg4NDA4MTcwYmJhMWE1MjMwOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2bee796743d84c27b3cdd835c025d2a1",
+      "statement": "_past_len derives the cached sequence length from either a transformers Cache object or a legacy nested tuple, deliberately avoiding truthiness checks because an empty Cache is truthy.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L28-L40",
+          "version": "repo-lines-v1:sha256:224cf537909fdfada98bd4c20a0a2ae574d40a4eb66e9a173134ba9cd050f482:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3MDBjYjNiOTlkODIyYjJhYmIzZjNmMTkzN2EzMzM4ODFlNDNiZTc1MjMzMDgwOTg2NmVlYzkzNzljMjBjZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhMmRjMzQ3ZTAxN2U4Y2M5YjI4N2UzNmI0ZGJlNWRkMzhiZGY0NzI5NzcwYjA1MWFlNDlhMTYzYjY5NmQ5MzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzZDAwYTljNWNhMmVmYWZkMzA0N2Y1YWZhOWE1ZmFkODI1YjEzYTQ3OGUxZTFkOTAwOWVlNjVlZDJiY2JlMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyZjE0NzAyOWJlZjAzYmU5ODI4MGY1ZThlZmNhY2JjMDExYzY4ZjAzMjQ2Yzg2M2EyZTE4ZGI5YjYyM2MxZWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1a121e730e5f47ddbee96ea8d8f7a13f",
+      "statement": "_reorder_cache uses Cache.reorder_cache when the cache object provides it and otherwise index-selects each tensor of the legacy tuple.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L171-L185",
+          "version": "repo-lines-v1:sha256:dcfcf63aefb040f80205be621f9e785d45cf54a3e05f6dfb4ec50088260de192:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxYWJjZDBjYzY5MTNkNGY1MWViMjFlNGY1YWZjMmU5MGY4NmQzNmE0NTBiYjQyY2IwNWM2ZjNlMGQ3MDZmOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYzZlZWE5MzJjYjc1ZDEyYWIwYjY1NDAxODNkOWZmNDA2ZGIzMWM5MzQxYWEwZmIxMzIwMzdiNTc5YWZiZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxZGQ5OWIxZjc1YzFjOGZmY2FkZGFlN2JiZWQxNGNjYTU1ZDg1ZDhhNjJiNDVkYmMzNWJmMzI2ZDNiMWRjYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzZGYyYWNmMDZlOGMzZjAzYzcxMzVjNmU4YWM1YTljYTU0MzJhYmUwNmE3NGFjYTBmZGQ5YTUzYTAwOGY5ODcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1fd5d59591f4bbfadc7de0288ac505b",
+      "statement": "GPT2AccelBlock defines its own forward because GPT2Block's return contract changed between transformers versions (a tuple up to 5.2, a tensor from 5.3).",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/accel/gpt2_accel.py#L105-L114",
+          "version": "repo-lines-v1:sha256:11e7635e020297da3aa010c9ea6593bcf09a41efaaab74dc325cec97881c9a8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMDkxYjQ0ZDQ3ZDFmMGIxYzRkOWI2OGE1MGNiYTJkMDc1NWVlMTk5ZmQzYWIzYmNlMzc2ZGEwZmU2YjhiOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMmE3OTFiZGUxZDVjZTk2ZDRmMTBmMjc3OTk5ZjE2NGFlYzk1NzQzZjVjNTFhOTEyZDFmNGRiM2Q4Nzk5Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3ODVkMDVlN2YxZmUxZTJkN2RlNzE2ZGU3Yzk2ZGFhNjJhNGZmZTE4NDQwMzQxNzQ1NjA3MTE4NWIxZjMyNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5Y2MwNDEwN2EwZGUwNWQxMGE3ODdhMDk0ZTg4MzgyNTU2NzE5YjdiZTNhYTUwZTc0MzA5NzkxMmYzZjA0MWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eb8e6b7bcc04460aa65538fa92c3ee2b",
+      "statement": "Both GPT2Config objects set bos_token_id and eos_token_id to None, while the sdpa generate() call passes the mel start and stop tokens explicitly.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L207-L218",
+          "version": "repo-lines-v1:sha256:048e055500f83a4759a8702198336bef6f9caaf3cb0f80b9aa17977d6a9ba907:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2ZGEyY2JmOGIzNDEwODU0NzcyZjg2YjZmMjRiYTliYWZkYTFjOWJiZjQ1YjRiNjZiOGEwNDRmNTVlNmUyZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZDY2NjFjNDhmZTA5NTEwZjJkYWEyODFiMzk1YmFhNGM4Nzg3ZjYyMjkzNDBjMDc4ZmFiZmM1ZTlmNjBkY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljY2Y0ZGRkZGIwYzY5ZGU2ZTAxZWFhZDZhYmFlOWY2OGM5MjY3ZTJkOThlYjA5NDMzZDBjZWJjNmIzMTc1YTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2NzY1ZWVlNTY4NDlhMTc1NGJiYmFmZjliODUyMWZkYjQ4NGZlZjg2MGE4ZmE5NWI3OTEzMzI5OTU0NjE3ZGQifQ"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L293-L304",
+          "version": "repo-lines-v1:sha256:f0952657b976a5bc2162d24c0842c4f948903bb00d4f5fbbacbff97032867b20:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjNhMTVjNDU0NjllMTRjYzRhMWNiMDFkMjhjNTAzNjVkMmNiY2ZiMTZjYWVhYzJmOTkzYTgxNjA1Yzk1ZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDlhNTNhNjE4ZDAyOGUxZDMwMDBjMGE3YWJjZWVjYmU1ZmIzN2Y0ZTUxMWVmZTQ2NjQzZmFkNmU2Njg3MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmOGQwNjBhMjU1MGVmOGY3YjZhMjYwYmUwYTM4MDg3MzRkYTI3NjQ3ZTcwMTc1MDNjMmY2YzgxYjhlNjhiZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxMTgxNmQ2NTUxY2JmNzEyZjM4MTBlZjkwNjc0YWU5OTAxNWQ3NmI5MGNiOGJmZjc4OGZkNmEwZmNhOTdkNGUifQ"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L461-L466",
+          "version": "repo-lines-v1:sha256:bc9a274af91fb2b82555c3335b23d6dfe0c8baec55735879e77ee7a555176757:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzVhN2Y2MTBjYTNjZDE2MDA0YjNlNjMzYmJkNDg1ZmFmZDE2MjhmMmIxMzNmM2E1MThlODJhMDNmY2U1MzNiYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmM3ZjNlZmE4NjhlMTBmZGFhYTZmOWViNmVlNDRmZmE0YjhhMmVkYjYyNjVmODU1ZjM3YjlmMmRmNDY4YzQ3ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWQ5YjM0YjljYjZlYzVjMTIxYzFlMTczMDc3ZWM3YTViNWJkYTIxYmY5M2QyNDIyYWIzY2ExYmIyMGUxNmUwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODIxNGIzNWFlYzU5OTdjNGUwNWE2NGY0ZTBkMGRiODUzNGQ5ZDBhYjFiZDRiMmMyNmM1YTIxMzNjMDIzOThiMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c1b0d5e0f844a2a87053ef2e056093d",
+      "statement": "The causal-mask buffer that transformers 4.x registers on each GPT-2 attention layer is removed after construction because the model runs with SDPA.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L224-L227",
+          "version": "repo-lines-v1:sha256:a2206f30734a7ba8ae7aaecf83e88982dfeaebaeb8d2b9c4853a46d967fba727:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTRmOGU2YjU4Mzc3Y2Y5Zjg1MjRhNDYwYjBmNmQ0ODAyYjAwOGQ2MjdiYWJiZTA0YjViMTYyNTA3MmRkZGU1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWQxZDJiODdmNGQ0MDNkZTBkZTg2M2I5YjFiODU0YzU4MjY3OWQ0MWJjOTQ0YzE2ZDY2Njg5MTc0ZTI5MzZkZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQ1MTZkNTQ3Y2U3OGEyMjljODY5NTc0MmY0ODEwNGMyMDY0MzU3M2QyMDA3NTZkODJmNzJhYTkyMTA5NDliNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGIxM2I3MTQzZjQxMmQxNjk5ODQ2MGJkMWFjNDJlOTM0ODU4N2IxMWY1NmM3YTBlZjM1NjViNjFmYzQ5NjQ1YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0db964793ccc45cba09f935d65d3516a",
+      "statement": "w2v-bert is constructed from its config with 17 hidden layers on the target device and loaded strictly from only the matching tensors of model.safetensors, instead of through from_pretrained.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L157-L167",
+          "version": "repo-lines-v1:sha256:af6f40e93403975e3c0af142a9eed0efc71f887c4d5afbf75516ed8a7bf8b38c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3NmFkNTM5YWRmZWJiZDYxN2YwNTBlMjAwMDY4ZTdhODllNGExYTMzZGU5NzBlMzRlOWY0MzNhYzcwZDgyNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNDU3Y2IxZmU0ZjUzYjQyZTM4NzcwNjNjMTlmZWNhNmNlZjc0Njc1OTU2OWY4YTJhZDZkNDc1Njg0ZTY4NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ODljMWU5YjYyNGJmZTRkM2U0ODUyZWY2ZTk1M2Y5ZTdhYTNhMDZmZTk3ZWIzMmE3NGI0YmFiOWNhOWFkYTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjMmI2YWIwNDQ3YjViNzcwZTU4Yjc3MzkwOGQ3NGYxOWRiZWYxYmZlYTExYzRmODhhZjgyNmYwNzc4YTBmYjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_70b875880dca4ba7ba335cd04032a921",
+      "statement": "If NeMo cannot build a normalizer or normalization raises, the text is returned unchanged after a logged warning instead of failing synthesis.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/utils/nemo_tn.py#L134-L185",
+          "version": "repo-lines-v1:sha256:f945a0402209533dc5f2a5a7fff968e22298f7963f007971de062ade2eece6dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MmU2ZTYzMmU1YzkzMTEwODNmNWE2ZjQ5YTFjYTVlNzJjODY5YTYxMzU1ZDZhNWI2OThjNGU5MTgxNjIxZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiODlmNGE1ODdlNmU4ZmVjNTE4YTYwYjI3ZDY2MzUxZTM4NDNhZmEwZTk4ZjA5Nzg4NmQ1ZTQ5ZWUxNmQ4Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiMjAxMmRiZjk0MDEwMGJkYmRhMWYwZTEwYTU5NTc1NWM2NzVmMmEzNjVhZTRjNjA0NTM0ZTI3ZjdlOTE2OGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkM2Y5ZWFmMjE0NTA0YTNlNmU4ZTA1ZDcwZGNmZjBhMDBmMzUyNDA2OTUwMmI1ZDMzMTZjZGNmYmIxZDM2NzYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T07:02:23.388Z"
+  }
+}

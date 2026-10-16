@@ -6,3 +6,4 @@ build/
 *.egg-info/
 checkpoints/
 *.wav
+.pytest_cache/

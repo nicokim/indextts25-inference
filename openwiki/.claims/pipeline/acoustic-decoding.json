@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8dee76b1df0ebc24be1848178d81808bfac93f91a0aba3edab59241ed81ef4d1",
+  "claims": [
+    {
+      "id": "claim_3184c655f1694370937b19cdbb9fc135",
+      "statement": "EnhancedCodec only implements decoding: codebook lookup and projection, a Vocos ConvNeXt backbone, a linear layer back to the hidden size, nearest-neighbour upsampling by two and a final convolution, turning 25 Hz codes into 50 Hz features.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/codec/models.py#L74-L88",
+          "version": "repo-lines-v1:sha256:71431963520c6809d49e5a4bd504b067bfa7637696e4f5a5dbbfcd7c7e92ed36:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyMzdiZTZjMzZhYmQ0NDkzMmMxNmQzYzQ0MWYzZTRlODFhODY5ODQzMmMxZjUxOTc5ZjFlMTc2MDhlMjc5ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4NjM2OTk4Y2U0YTg3NGZmNjlkMTM5ZjRmNTU5YTYwNTFiMjg2YTJhNTRjNjY2ZWY4OGI2YmE0NzU4ZGFlNDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhMWJkMDkxYTdjZmE1ZTEzZTYyMWZjY2E3M2E2NGNmODUwZjE1MDI3ZGZjYzM3YTc2ZjU5MmQwODRkMzQwYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxNGVlNTU2OTQyNzdmOGYwYmQ2YmJhYmViYjkyYTljNjAxNDlmNTk0NDgzM2Y5MGU5NTI3N2I4N2RiYTE1ZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8a77a542c1b44628e05957b551e6c6c",
+      "statement": "The mel length of a segment is int(codec feature frames x 1.72 x duration_factor), and the length regulator's output is appended after the voice's prompt condition before flow matching.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L513-L517",
+          "version": "repo-lines-v1:sha256:bba79b90e53e159f09f68fe640fe0480b200d7e950b380b85432170d546a0138:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODU4OGM3MDA5MzM5YTAxYzVlZTU4ZWQzYzE5NDZiNTM1MWYwYWZmOTM5ODZkNDA5NTJiY2VmMjVjZGIxMTQzYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTc4OGIxYTE4YmM1OThlMzFmZmJhY2Q5M2RhNzNmZGUxOTQxZWRmNzAxMmQxNTE0ZGJkYTQyODc3YjQ3YjYxNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzVlZTVkNGEzYjQ4ODU0NDQ0YzE1YWQyNjdkMTMzNTU0ZGNmOGQ5YzMwMTRhMjEzYzQ3YWI3NTgyNmFkOWNhNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2M5MTBmYzY0MmM5ZDY5YmFiMjkwNzVhYTIyMzBmYTc2MDEzOTU0ZmQ5NmMwZjBhZGY0ZTcyZjE0MDY1MjM4MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_41cf122a721e4ceca05e5041eba59812",
+      "statement": "InterpolateRegulator projects the continuous features, stretches them to the target frame count with nearest-neighbour interpolation, refines them with convolution/GroupNorm/Mish blocks and masks frames beyond the target length.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/s2mel/modules/length_regulator.py#L18-L34",
+          "version": "repo-lines-v1:sha256:fafc887266168834a87e9540f4d09cd16cd6b6f3072a0cc2a7f81c83eb8e198d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlMmUzNTcyYTFhY2Q0N2FjYzZkZWY2OTRlYjIzOGRkNWVmNDY5YjljY2I4ZGMyZjZlYzI1NzAwNDk0MzkxZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMmFkNjkzNzkyM2FmNWYwYzgwYzg5OWVmMGRhMzFjZGRiOWI4MjIxMTJkYzY5NDFmOTYzNDNmNmViNTQyNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQwOTZhY2E2MTBjMWYwMzk0ZmRkNjU3MDg0NzkxNzA0MmY3YjRmNzNhNGMxM2NjNjRjNDUyODRmM2RiMzEzMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_295a2748c7334b1db3e8132847ae751a",
+      "statement": "CFM inference starts from Gaussian noise and integrates with explicit Euler steps over a linear time grid, zeroing the prompt region of the state at every step while the reference mel is supplied as prompt_x.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/s2mel/modules/flow_matching.py#L16-L55",
+          "version": "repo-lines-v1:sha256:09bcd214f154d90f286edd62cb23f063d1a289a1f5d666668ff4370977056a92:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNTk3YzRlMDEwODg5Y2FjYzMxYzY3Yzk0MTkwOWZjZmM2ZTI2MWMxYzE3MmE2MDdjNjU5NTg3OWE4NWNjOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwMjhjY2UyNDFmYmZhYmVjMjQ4MjAxMmI5ODkxNjJkNzE2MDFiMDExN2YzYzQyY2M0ZTYwNTE2YTNjMzc3NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3ZTUyNzhiZDJjYTM5OGMxNzE1MjhkMWI0MGYxNjJiMjgxNjRiYmQ2NDRkYmE3ZTViYzM2YmYzMDBmYTFkZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_45bd5e3309894eef8bbd471f90e258e0",
+      "statement": "With inference_cfg_rate > 0 each Euler step runs the estimator once on a batch of two (conditional and with prompt, style and content zeroed, built once before the loop) and combines them as (1 + w) * v_cond - w * v_uncond.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/s2mel/modules/flow_matching.py#L35-L55",
+          "version": "repo-lines-v1:sha256:8af2a03e50af2ea7ac5111a54d94a186c7d8de1da641758e1cd4fb571918065b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NzRjNTZhNTI5OTE3ZTZlYTU5YmIxOTM5Y2E5NWUxMTkzZGY3Y2VjZTlhM2NmODg1Mjg2MWZkZmEwMWYxZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwMjhjY2UyNDFmYmZhYmVjMjQ4MjAxMmI5ODkxNjJkNzE2MDFiMDExN2YzYzQyY2M0ZTYwNTE2YTNjMzc3NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmY2QxY2NmNTQ0ZTYwMDZmYjRiYjgxMjczNGIzOTQ2ODQ2MjczODFiMDU3NGM0MzJjODk5ZTVhMGM5NWE3ODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a742e704ff6a4bce86a380c5084dce17",
+      "statement": "The DiT estimator merges the noisy state, prompt mel, projected content and repeated style vector per frame, runs a transformer conditioned on the timestep without an attention mask, applies a long skip connection and a timestep-conditioned WaveNet final layer.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/s2mel/modules/diffusion_transformer.py#L164-L236",
+          "version": "repo-lines-v1:sha256:b9c016baa8a53b297f0c88ae062f05b292f60a305e1e60f4d248d34d9f70a07d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MDllYTc2NTNjZTA3MmFhYjY4YTlhMzAwY2MwYzhlNDY3MjNjNjZjNzVmYTM5ZmMzYWZhNjlmYTI4ODAwOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwMjhjY2UyNDFmYmZhYmVjMjQ4MjAxMmI5ODkxNjJkNzE2MDFiMDExN2YzYzQyY2M0ZTYwNTE2YTNjMzc3NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyZWRiOTA0M2VmMWVkZTI2NjdlOWQ0OGJkZmVjMzQ0ODIzMDQ5ZGNjNTEwNDdjMjdmYTVlNzBmOTdjYThjYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c3e6bd5bf12450f92d2e46bb25a9fb0",
+      "statement": "A causal DiT configuration is rejected with NotImplementedError at construction.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/s2mel/modules/diffusion_transformer.py#L114-L116",
+          "version": "repo-lines-v1:sha256:87e5535b0ddac2d3ddcfb28f112e1d685b2fca212bb68ea0da28265689c9d370:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDNkY2M2YmI4ZjE3OTA5ZmI5ZDVhZWFiODQzMDdmZTVkZDI5MWFmZjVkYjI0ZjczMGU0NzcxNmVlZjI5YTg0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc1OTI1ZjI2Njk0YzQ4OTZiMmZjZDhjOGE4M2FhOTVmOWRjNDJhZTVhYjE4N2U4ZTA2MzFhYWNmNWFkNWYwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTZkN2JlYTc2OTAxYmNjYjQ0MjViNTQ5ZTZmMDkxOWY1NGNmMWY1NGIzMmJhNzNlNzhjYTExYTNlM2MzZDNiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWRmOTc3MzFhM2YzNmZlZjdiM2IyMTIzNmViYzIzNGJlZTg2MThjZWQ5NTU1NjEyMDNhOTA5ZmEzZjg0MDU0NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0aa695ec4f8d4640bb4a79da1618965e",
+      "statement": "After the CFM, the prompt's mel frames are removed and BigVGAN renders the remaining mel; its output is passed through tanh or clamped to [-1, 1] depending on the configuration.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L522-L526",
+          "version": "repo-lines-v1:sha256:5800cb5ec7c066b44374459ede90a7e7dbf97486489db819186dd1b0ed009342:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTViODBjZGEwN2FmMmRhMDU4YjQzZWU5NDVhZDJkOTU0OTI5MzU2M2M0MzE3NTlkM2I4OGVlYjc0OGQyNzRkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExZjk2ZWEwNzY3MmIwZjE4MzUzNGJhYjljODE0YWJmZGE3OWVjNzZkZTc3ODdlNWZlYTUzZGYwMGU2ZjI1MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDQ5OGI4Y2YyMWViNWQ0N2U2M2I2Y2Q0YzUwNjM3OGE1Y2NmZTFhMGU3MjVjNjk5ODc0YTM4Y2MwNTY2NWZhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNmMjYyZmE5ZGJjZmM0NGYxZWIxOWEyYWNhYjk0ZWE3MmFhOWE5MTQ3ZGRhMWNmNjMzOTdkNzY1MTk3NDc1NCJ9"
+        },
+        {
+          "resource": "repo://indextts25/s2mel/modules/bigvgan/bigvgan.py#L103-L119",
+          "version": "repo-lines-v1:sha256:d3ac296f83b650eaa21296ceaeb730153efc03f2eb36e061151dbe005850aa06:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0YzQxM2JhZDA3NWMxNjk0M2Q5YzgxMDljMGRlYTA0N2M5ODZkOWQ3YmVhNzIyMDRhZmYzNmZmMzcxMGI4YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1YWI1ODA1ODcxNjUzMzYxOTk2ZmNjYjQzMjIzYWFkZDc5MzhlNTAyODgzYmMxOTJkMjM2MjY2NjRhMjUxMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiZmM3NTZiYWNmOTBiNjdkMTRlM2MzOWYzYTcwZmIwNmNmYWJjNGE1ZWU1Nzg2MDEzNjBiNmU2ZTNmYjY0NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ebec73ac48124ef3a3634da73f339e61",
+      "statement": "The diffusion step count and classifier-free guidance weight are per-call generation arguments (diffusion_steps, default 25; inference_cfg_rate, default 0.7) passed to the CFM.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L440-L441",
+          "version": "repo-lines-v1:sha256:12e6905a1ab5f8437b59a27603c317b9a456e2e612e412553ecd976d68afb9c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2NmNzg2MDYxMjRmYTAwMWM2NjExNDYwNzQ2OWIyNTBhZmU1MDBjYmQzZDQ1NzNhY2I0MjcyNzU4ODIxNGI5MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDAyYTBiZDExMTFkY2Y4YjFhM2FmYmI4Njc0MmVhYjdjNjc1NGRmNTQxY2EyZDlhMjE0ODQyNDBlOGY1OTAxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmY0OTJhYzQ2Mzg4MmE1NGU5ZTk4MmUzNmFjY2NhOWFlZjgzYTdhMTJkZjg2MTA2YjY1Nzk4MmExMzhkNGVkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmFiZjQyNGM1MTljMGNjZjg2NTI4M2QxZjhlZmY0ODUxM2E4YWI5MThhMjAwMzdkMDZmZDM1NDYzOGYxNTNjNiJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L518-L521",
+          "version": "repo-lines-v1:sha256:ac7037ca86644bfc17d863fa44e50c0a059fad196912b85239d659cdced8f96d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTRhYzY2NWYyOTc3ZGIyMWY1N2I3MzY0YTIxMWUwZjA5MTljOWI2NmEwOTQ5ZGNkMTdiODhhMjFhZjdmYzBjMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJlOGFiM2Y5NzFmOTc4MDFkZDBjMzk4ZjBiNTRlMThhN2Q5MGUxMzhjODAyMmFmMmFkZTA1NGZlMTM2Mjg0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYThiNGYzODVmNGIxNDI3MzRlNTVlYjEyNWE2NzYzMzAyNmNiNjU4NmJiN2ZjNDQxN2M2YjBjMWEzMmNiMGJmZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmM3NWU5MjQ5YWFjNzg1NzM4ZDY3YzgyZjMxY2VjOWVkYmM5NmFjNmFjYTRhZjE2MjQ5MTczMDBjMWFkMmUzMyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T07:02:23.388Z"
+  }
+}

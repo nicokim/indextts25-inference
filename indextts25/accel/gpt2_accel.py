@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from transformers.modeling_outputs import BaseModelOutputWithPastAndCrossAttentions
 from transformers.models.gpt2.modeling_gpt2 import Conv1D, GPT2Block, GPT2Model
 
 from .attention import Attention
@@ -11,16 +10,6 @@ class GPT2AccelAttention(nn.Module):
         super().__init__()
         self.config = config
         self.layer_idx = layer_idx
-
-        max_positions = config.max_position_embeddings
-        self.register_buffer(
-            "bias",
-            torch.tril(
-                torch.ones((max_positions, max_positions), dtype=torch.bool)
-            ).view(1, 1, max_positions, max_positions),
-            persistent=False,
-        )
-        self.register_buffer("masked_bias", torch.tensor(-1e4), persistent=False)
 
         self.embed_dim = config.hidden_size
         self.num_heads = config.num_attention_heads
@@ -42,9 +31,7 @@ class GPT2AccelAttention(nn.Module):
         self.resid_dropout = nn.Dropout(config.resid_pdrop)
 
         scale = (self.head_dim**-0.5) if self.scale_attn_weights else 1.0
-        self.accel_attn = Attention(
-            self.num_heads, self.head_dim, scale, self.num_heads
-        )
+        self.accel_attn = Attention(scale)
 
     def forward(
         self,
@@ -61,13 +48,6 @@ class GPT2AccelAttention(nn.Module):
     ):
         if encoder_hidden_states is not None:
             raise NotImplementedError("Cross attention not supported in accel mode")
-
-        # El motor accel captura los CUDA graphs con inputs_embeds aplanado
-        # ([total_tokens, C], formato varlen). transformers 4.x lo entregaba en 3D;
-        # 5.x lo pasa tal cual. Se normaliza acá y se devuelve en la forma recibida.
-        aplanado = hidden_states.dim() == 2
-        if aplanado:
-            hidden_states = hidden_states.unsqueeze(0)
 
         qkv = self.c_attn(hidden_states)
         query, key, value = qkv.split(self.split_size, dim=-1)
@@ -104,8 +84,6 @@ class GPT2AccelAttention(nn.Module):
 
         attn_output = self.c_proj(attn_output)
         attn_output = self.resid_dropout(attn_output)
-        if aplanado:
-            attn_output = attn_output.squeeze(0)
 
         outputs = (attn_output, None)
         if output_attentions:
@@ -129,62 +107,25 @@ class GPT2AccelBlock(GPT2Block):
         super().__init__(config, layer_idx)
         self.attn = GPT2AccelAttention(config, layer_idx)
 
+    def forward(self, hidden_states):
+        # Custom forward: GPT2Block's forward changed its contract across transformers
+        # versions (through 5.2 it returns a tuple; from 5.3 on, the tensor).
+        hidden_states = hidden_states + self.attn(self.ln_1(hidden_states))[0]
+        return hidden_states + self.mlp(self.ln_2(hidden_states))
+
 
 class GPT2AccelModel(GPT2Model):
+    """GPT2 with the accel attention. Only used with inputs_embeds (the codes are
+    embedded outside) and returns the final hidden state, with ln_f already applied."""
+
     def __init__(self, config):
         super().__init__(config)
         self.h = nn.ModuleList(
-            [
-                GPT2AccelBlock(config, layer_idx=i)
-                for i in range(config.num_hidden_layers)
-            ]
+            [GPT2AccelBlock(config, layer_idx=i) for i in range(config.num_hidden_layers)]
         )
 
-    def forward(
-        self,
-        input_ids=None,
-        past_key_values=None,
-        attention_mask=None,
-        token_type_ids=None,
-        position_ids=None,
-        head_mask=None,
-        inputs_embeds=None,
-        encoder_hidden_states=None,
-        encoder_attention_mask=None,
-        use_cache=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
-    ):
-        if inputs_embeds is not None:
-            hidden_states = inputs_embeds
-
-            for block in self.h:
-                hidden_states = block(hidden_states)[0]
-
-            hidden_states = self.ln_f(hidden_states)
-
-            if return_dict:
-                return BaseModelOutputWithPastAndCrossAttentions(
-                    last_hidden_state=hidden_states,
-                    past_key_values=None,
-                    hidden_states=None,
-                    attentions=None,
-                )
-            return (hidden_states,)
-        else:
-            return super().forward(
-                input_ids=input_ids,
-                past_key_values=None,
-                attention_mask=attention_mask,
-                token_type_ids=token_type_ids,
-                position_ids=position_ids,
-                head_mask=head_mask,
-                inputs_embeds=None,
-                encoder_hidden_states=encoder_hidden_states,
-                encoder_attention_mask=encoder_attention_mask,
-                use_cache=False,
-                output_attentions=output_attentions,
-                output_hidden_states=output_hidden_states,
-                return_dict=return_dict,
-            )
+    def forward(self, inputs_embeds):
+        hidden_states = inputs_embeds
+        for block in self.h:
+            hidden_states = block(hidden_states)
+        return self.ln_f(hidden_states)

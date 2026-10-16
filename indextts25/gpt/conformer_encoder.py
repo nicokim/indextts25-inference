@@ -9,11 +9,7 @@ from indextts25.gpt.conformer.attention import (MultiHeadedAttention,
 from indextts25.gpt.conformer.embedding import (NoPositionalEncoding,
                                               PositionalEncoding,
                                               RelPositionalEncoding)
-from indextts25.gpt.conformer.subsampling import (Conv2dSubsampling2,
-                                                Conv2dSubsampling4,
-                                                Conv2dSubsampling6,
-                                                Conv2dSubsampling8,
-                                                LinearNoSubsampling)
+from indextts25.gpt.conformer.subsampling import Conv2dSubsampling2
 from indextts25.utils.common import make_pad_mask
 
 
@@ -242,12 +238,12 @@ class ConformerEncoderLayer(nn.Module):
 
         Args:
             x (torch.Tensor): (#batch, time, size)
-            mask (torch.Tensor): Mask tensor for the input (#batch, time，time),
+            mask (torch.Tensor): Mask tensor for the input (#batch, time, time),
                 (0, 0, 0) means fake mask.
             pos_emb (torch.Tensor): positional encoding, must not be None
                 for ConformerEncoderLayer.
             mask_pad (torch.Tensor): batch padding mask used for conv module.
-                (#batch, 1，time), (0, 0, 0) means fake mask.
+                (#batch, 1, time), (0, 0, 0) means fake mask.
             att_cache (torch.Tensor): Cache tensor of the KEY & VALUE
                 (#batch=1, head, cache_t1, d_k * 2), head * d_k == size.
             cnn_cache (torch.Tensor): Convolution cache in conformer layer
@@ -371,20 +367,11 @@ class BaseEncoder(torch.nn.Module):
         else:
             raise ValueError("unknown pos_enc_layer: " + pos_enc_layer_type)
 
-        if input_layer == "linear":
-            subsampling_class = LinearNoSubsampling
-        elif input_layer == "conv2d2":
-            subsampling_class = Conv2dSubsampling2
-        elif input_layer == "conv2d":
-            subsampling_class = Conv2dSubsampling4
-        elif input_layer == "conv2d6":
-            subsampling_class = Conv2dSubsampling6
-        elif input_layer == "conv2d8":
-            subsampling_class = Conv2dSubsampling8
-        else:
+        # The 2.5 emotion Conformer uses "conv2d2"; the other WeNet variants are unused.
+        if input_layer != "conv2d2":
             raise ValueError("unknown input_layer: " + input_layer)
 
-        self.embed = subsampling_class(
+        self.embed = Conv2dSubsampling2(
             input_size,
             output_size,
             dropout_rate,

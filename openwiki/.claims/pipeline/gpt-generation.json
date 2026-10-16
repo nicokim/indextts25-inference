@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6efcca59032af95137b492ef86381f716a41c96fb661152c29922ac5ce649244",
+  "claims": [
+    {
+      "id": "claim_b3f338cf180e4639940a529f877c303a",
+      "statement": "inference_speech builds the conditioning prefix as spk_emb_proj(CAMPPlus style) plus the emotion vector, followed by two zero vectors, before preparing the GPT inputs.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L428-L433",
+          "version": "repo-lines-v1:sha256:970e3cc50ed23c4c945e1e6b53c566b062d2d250a4a2b5acca06a0d4d978022f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWU3NTA0NzkxOWI1NGE1ODM1Y2E3Y2I4NTU5N2M3ZWRkMGE5ZTE4M2VmMzVmZDk3YWY1NjczNGJkY2MzOWFlYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2ExZWRkNzYzOTA1ZGMyNTEwNTFiMzZmNTA5MzcxYzgzOTkyYmMyNTliYzVjYzBjOGI0NmViMzAzZDg2ODRhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjVjMDg3ZTc0M2M3ZWQxYTIzODhmMTcyN2ZjOTgxNDMzM2MwZWMyNzk5MTRiYzc2NDFmMTJmMDY3MWQwNTU4OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzIxMjJmYzc2NjhiNGU3ZGE2MGUyODZhNDRkMDZjYzQxZDg0YjAwZjAzYjcyNjlmNzY5ZDhjYWM3ZGM2MGZmNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_80da5fbb037449efad194795aa875cc4",
+      "statement": "prepare_gpt_inputs removes only stop-text ids from the text, wraps it in start and stop text tokens, adds text-position and language embeddings, left-pads [cond][text] when needed with a zero attention mask, and returns placeholder ids of ones ending in the start-mel code.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L345-L412",
+          "version": "repo-lines-v1:sha256:d1214339deb888653a6e7f6efd2888027f0e7d312f56942771a17f8952b27f50:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4ZDZiODZmODAxODc0YjUxZGVkYjY2YTM0N2I1ZjhlMzBmZTVhOGU5NTg5NGM4Mzc3NWQyNDdiMGFhMjkxNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjYzY3OGEwNDFkMDU1ZjRjYTIzNzc1Y2YxZWIwNTg1Yzc0MmFhOTU2NGYwNWZjZWJjOWMyMzQ1MGUwYzY4MTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyNThjYjVkNDFlYWY2YTJiYWFiM2Y5ODIyZjM5ZmVmYjg5ZGY1NTQ4ODFlMTJlMzdmZDM3YzRiZGFhYzlmMzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMTM0ZjQxMDdjOTAyZjkwNjRmMTlkZDA2NzU0ZDJkZTc2OGFlNDUxNWE1ODRjZDA5ODgyODAzNmFkNDk4OWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_48b76ceab9f546d1b34d49f1dc5316e3",
+      "statement": "The start-text id 0 is also the tokenizer's \"!\", so it is deliberately not filtered out of the text input.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L370-L373",
+          "version": "repo-lines-v1:sha256:b4a261fe3685d4bd9f5078a3ea8f9c2ae59c71d59f8f079b4e33f16f4dfe618d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGIyOTRiNTljM2VhY2RmMTVkZTVhZGViYWFjNmM1MThlYTZjZWY0NWYwZDkxYjZhMDY0YmVjZTMxYmE0NzhjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JhYTg4ZDNiYzU0MjgwYTc1OWE4OTlhZDM1NTBmZjM0Y2RjYjYyNWE1N2FjNjc0OTM2MGI1ZDlkOTFjY2I2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGQxNjk1Y2YzMzkwYWI5Y2Y3MTQ5YzQwYjA3ZjM3NjAwZTYxZTYxMzZjNjJkNTc4NTE0ZmQ4ZjNhMzExZjA0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGU2OTMwZmM2OGU0OGNjOGE5NjE0NGVlMTEyZDIyNDIzYjI0YzA2NGU2ZmY1YmM3MmM4NmExMmJmMTc3N2RmNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a4657b1800746bd855e66977d541eb5",
+      "statement": "GPT2InferenceModel replaces the placeholder prompt ids with the stored prompt embeddings on the first forward pass and embeds the start-mel code with mel position 0.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L121-L132",
+          "version": "repo-lines-v1:sha256:848ec92866e24c48fef1731cd0e94390bcdd067062049ae91344652ed3d4362d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliZWFlODllOTExZDAwZDk2Nzk4ZjFjZjg0ZjVjNTBlNTYxMTQxYzVjY2MxN2Q5NmY3MDc0MzZhZTU5OWM1MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZjM5M2ZhMmZmZTQzM2UyZDUzODRmZGRiNGJiMmI2MWM1ZWJkNzY3ZDMzYjZjNTYwOTI3YTE2ZDE2ZDNkZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlZDg2M2NmOTI1ZmM5MjVjNTFkYThkM2ZhNjI3YzE4ZmU4YWQ2NDJiMTYwOGNhMjg4NmRmZjQ5MzdmYjVkODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0ZTM4YmNjNzk4MmE2MGJhZTE3ZjkyMWJlZjkwODUwNmE4YjFlYzAzN2I5NjEzMWY0ODRiMTg1YWYzNzViN2YifQ"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L65-L66",
+          "version": "repo-lines-v1:sha256:62a738627a5592ab30ba63f110d922838bfd9cccbb1992e752f3be3b4c2a2d66:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTljOTQ5ODRmM2U5NGMzMmJiOWMxYzlkMGU5ZmNjYzk2YmJkMzRlYjM2YTMzZGVlMGFkOWJjN2M4MWZiZmQ1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjE1MzA4OTc3M2FmNjc1YzViNWYxMzNhMGY1MzllOWFlZTUzZTlhNDhhZDMwZWM4ODQ3ZjJhMzU5YWYyNGVmZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTA3MjU0NzE5NTRlYWRlNjVlZGM0M2EzZDZlNTRkYTZlM2NkM2E1ZDk0ZWMwZDk1Yzk0MjE5ZTFlOGFiNjk3YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDkwYzBkMTkyZTYyMDZjMjcwZTkyZDk4Y2ZkZmRjYzc2MzAzYjEyOWNlODMxNWQzM2Y3M2M1M2M5MDQ5ZGM3YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_38c179f802fc4156921eb0f1291f40f5",
+      "statement": "During decoding each generated code receives the mel position equal to the KV-cache length minus the prefix length, so the k-th code sits at position k; the cache length is used because transformers 5.x omits an all-ones attention mask.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L133-L141",
+          "version": "repo-lines-v1:sha256:fd26fcadefe10cdff119e5ae01f0f0d549a48a24e8c146cae068ea28c085c849:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk3YjQ3YmI4MWNlOTNjYmE2N2FmYzA4Njk4YTgwY2ZhMDkzYTg2NjdlOWM5Zjk2NTMzNzgxOGQ2NTc4ZDE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUwMzJlOTY0ZDA5MzIzNTFlNWQxODUyNjkyODFiMTcxYTNhMDliMDhiMjg2ZTY2MWVhNDcwMzIzYzgyZWI0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTlhYmM4MjcwMDZiYjQ5NGI4YjY4MTNmODdkYzgxM2FmOGU0N2ZhYTUwOTY5YjhmZWEzZTU5N2ZhYzUwZmQyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjU2N2YwOGUxNDU4NDliY2I1MjZhNTRlMmJlYTE2MjkzZmE1ZDQwY2YwMmYyYzliY2EwMzFiMWNkOWUzZDEzYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a02f5ccfd7e4fdfbbd1f88def9cb1cc",
+      "statement": "The GPT-2 position-embedding hook returns a scalar zero, so positions supplied by generate() add nothing and cannot upcast bf16 embeddings.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L21-L24",
+          "version": "repo-lines-v1:sha256:ebd4e50a0a2b270fa0c18c4a39ca79805c4b60ab1076603012189a3c58e6c90b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE0Zjc3MjEwYTdmNjQ3NDBkOGJhMzA4OGQ1MGY0NzMwNTgzNzRhZjU3MzMzM2RhM2JkMTA1ZDEzYjkyMDJjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjNjJhZDFiMTkzMmM4YWE5NjEzMjY3MzEyNjJkOGIyODQ2OTcwNzkxYTlhNmNmZmQyMDU4YjRkOTZkZjBkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzc3NGRlMmRhYWRiZmNhYzg2OTk0NDNiMGFjZjJhYmFkMDI0NmQxNDZjMWEwNDdiNTNjZGJlODYwM2QxOGVlOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzNkMDBhOWM1Y2EyZWZhZmQzMDQ3ZjVhZmE5YTVmYWQ4MjViMTNhNDc4ZTFlMWQ5MDA5ZWU2NWVkMmJjYmUxYyJ9"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L219-L221",
+          "version": "repo-lines-v1:sha256:86765eee56849a1754bbbaff9b8521fdb484fef860a8fa95b7913329954617dd:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDIwYjI4ZTM5Y2UyYzU5ZTZmMDU4ZGZiZWFhNGMzMDQwYjFmZTIxYTJmY2YwOWZiNmU3ZDgyZjU1NzA0ODhkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmNlZjNlMWM3YmE3NzUzZjlkMmNiNmUxODI4MzY5NWYyZmIxOWIzZDU4M2IyNTY3YmQxNmQ5ZjA0NTE5ZjZiMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2RkYjI5YzZkZjY5MTBmNzFjYTc3NmQwMGU5MjU3YzU3ZTUyZTFmMWY4MjliZWY4OTEyOTlhNGMxNDU2MDQxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDk1OTRmNDY0NDMyMjcxZjBhZjBlNGY2NTcwNzZlZjc3ZjYwNmMzYjBiNTMwMzZlZWQwNGM4YWZjZDQ0NmJiMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_fb65d1b1014a428ba682005c4e73f7b7",
+      "statement": "On the sdpa path generate() is called with the mel start code as bos and the stop code as eos and pad, a max_length of the prompt length plus the generation cap, and the result is truncated to the generated codes.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L443-L443",
+          "version": "repo-lines-v1:sha256:f60bf41b6552bc995b7eb6a436d35f6675bf28248c3d4afd30747a1d79039f88:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjYwYmY0MWI2NTUyYmM5OTViN2ViNmE0MzZkMzVmNjY3NWJmMjgyNDhjM2Q0YWZkMzA3NDdhMWQ3OTAzOWY4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjYwYmY0MWI2NTUyYmM5OTViN2ViNmE0MzZkMzVmNjY3NWJmMjgyNDhjM2Q0YWZkMzA3NDdhMWQ3OTAzOWY4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODI5MjU4YmY3YjlkNjAyMWIyN2Q5N2RhYjYzNTg1ZWE3OWMwNDFhZjIxZDI2OTg4ZTdjMDNjMjg5NjcwMzI3NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTM3ODczMzg1NzBjZGIxODc1MmY3YmU4YmJjMjZmNTVlYzVkOWJiZmQxYTJkZDNhMDdjMTJmYTc3ZGQyYWZhZiJ9"
+        },
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L460-L467",
+          "version": "repo-lines-v1:sha256:fae761cef158ad46ddaa530406d53b8e410b3f98aef5edf55224049673a69e17:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk3YjQ3YmI4MWNlOTNjYmE2N2FmYzA4Njk4YTgwY2ZhMDkzYTg2NjdlOWM5Zjk2NTMzNzgxOGQ2NTc4ZDE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MwZDEwNDI1NzliYzBlMzY0ZGIxZGJiODk4YjBkOTMxMjc5NmY3YjEwMzcyOTZmODRkMzFmMGM3OTQwNGQ3MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzQxNmIzMjc0ZWEzM2NlM2FlY2YxYzFkMGU4NDdiYjM0MzBlZGM2Y2RlNGMxMTZmMTkwOWI5MGRhYmI2OTEyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjNkM2E5YzBlZTE0N2QwZTQ2NGY2YTExNzgzNGI0YmNlZDQxODhkMzkyMDU3NTYwNWJjNThhOTQ4ZmM2ZGNjOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c326b263ca44f9aa94bc1b3418f7e1c",
+      "statement": "typical_sampling=True adds a TypicalLogitsWarper to the logits processors and rejects typical_mass outside (0, 1).",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L436-L442",
+          "version": "repo-lines-v1:sha256:109b21033f410a80b7ddd33133fe44c7ec788fc6f342f621d0d9d1196ccff4ff:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUxYjYzOTA2MzBlNzVmN2Q4ZDI3M2ZiYzI2YmUyMDFiNWRmMmEyMjE4MzI3NjEzNjlhZGJkYjJlZGFkZmEzOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjg4MzZhMzJlNjBkODNkNzg1YWRkMDE1ZWYxYTJjMGI3NDQyM2E2MTE4NzAyMmI1ODQ2YzRhNTc3MjMzZWE1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTVjY2RjNzk4YmUzODBiNjcyMWU3OGQyZDg2ZWNiOTg1ZDQ3NTc4ZTc4NGI2YzZmYmRjNjEwZGFjZGRjYTQ1MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDkzNzc2YjAxODhjMjc1OGU1ZjMyMGNkYWUyMTE2YjU1ZTM4OTcwNGEzNzZlZTMzMmM4ZjE1YjIzMWY1NDM2MSJ9"
+        },
+        {
+          "resource": "repo://indextts25/utils/typical_sampling.py#L4-L30",
+          "version": "repo-lines-v1:sha256:7935d961882e34c15a8fa690a8da63b366c9ae926c2955862807091cc30a4202:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxMTVlZDlmZmVjNGEzYmIzMzVkMGQ1MTJmOTdiMDY5ZWJmN2UyZmY3Y2FjNTk5YjdmMjZiMzg4YTQ1MGU2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExNTg3NTQ3NDk3ZjQ4YTgyY2U5ZmIwYmFlZDExOGU5MDE5ODRiZWM5NWUzYTVjZTZmNTAxOGFkNGRmOGM1NzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkZDE2YmVkYjc1ZjBiMDE0OTg1NGNlNTIxZjY1Mzc5ZjUyM2JkYWIxZTY1MWY0Y2FhNGE2MWFjNTcwOTAwN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0235bd4d75734a2986a1def3d5ead5ed",
+      "statement": "infer_generator runs the GPT under bf16 autocast only when the engine was created with bf16 enabled.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L443-L443",
+          "version": "repo-lines-v1:sha256:dfa735d911fc30f534e3949b92361dfa1eb3dbdb2392a6163a009c842bdad3ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZhNzM1ZDkxMWZjMzBmNTM0ZTM5NDliOTIzNjFkZmExZWIzZGJkYjIzOTJhNjE2M2EwMDljODQyYmRhZDNlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZhNzM1ZDkxMWZjMzBmNTM0ZTM5NDliOTIzNjFkZmExZWIzZGJkYjIzOTJhNjE2M2EwMDljODQyYmRhZDNlYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDM4MDIwNzVmZDQ5MjQwMzQzMmU5OTNkN2RjOTNmODQzZjQ2OTJiMTkxNjg0MGEwOThmZDJjODVjMmVhZWM5ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGVlNDUzZDYwNGRkMGQ3MmM5MjlkY2Q1OTZiYzI2ZTk4MzBiMTVhNzAxOTE4MjFiNWRmNDk4YjcwOGZhMDA0YSJ9"
+        },
+        {
+          "resource": "repo://indextts25/infer_v2_5.py#L478-L494",
+          "version": "repo-lines-v1:sha256:b406553502487d8944d03eb2a10ffe41fea1e456dd41b6ede38d2df9356bdcf0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODhjNzAwOTMzOWEwMWM1ZWU1OGVkM2MxOTQ2YjUzNTFmMGFmZjkzOTg2ZDQwOTUyYmNlZjI1Y2RiMTE0M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDM0ODFjNTdkMGYwZGMwZjc2Y2QyY2M4YjM2MDRjNGU4Mjk2ZGE0MTIyYWRkMTllODE3NDVkYzdlMzMxYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1MzRjYTA3ZDUzYzg0OGY1MWRlMzk0MGVhN2YwYjRlODE5Y2M0ZjcxYzA3MjhlYTYzODJhYjliNzI3NDAyNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2ZjJhMDk4YTJkODViOTYxNjk5MmJmZDE4YjVhZTExODg0NzY2YWU4OTMzMjNlZmZmNjhlM2Q1NDVjN2M2OWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0d0f2d30331d455db958f9050d5be73b",
+      "statement": "merge_emovec interpolates between the speaker's own emotion vector and the emotion reference's vector with weight alpha.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/gpt/model_v2.py#L476-L487",
+          "version": "repo-lines-v1:sha256:c31ae0f01f0d6e9441578701dab8e091dec0aa0bb4d0fdb845aa63975eb269a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzMjA3ZmYwMTQwYzVmYzBiODU0ZmRlOTc0NjhjYzA5ZGI0Njk4YjFiNDEyZmQ1MDY1ZmZkZjBkNmZmN2Q5NmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYjU0MmE5MDcwY2FhNGM5OTg5ZmQxN2U0NGE5NmIwMmViNTBmY2JjZWQ2N2VhMGU0N2FjODgzZTg5NjgwZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMWEzYzgxYzMwNDAwNWE1M2QzZjNhZmYyZmZlZTU3OGY5NDFkYjc2MmY5ZWI4NjM0MDM3M2I0ODczYTg2ZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}

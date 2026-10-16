@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:dd07cc302160db46d35703392e205c41f57edd6dee0f4fabc2ec03050ca41b3e",
+  "claims": [
+    {
+      "id": "claim_0fe1d79268f746039e9a0cabaa5b0b9d",
+      "statement": "The library's entry point is IndexTTS25, whose default backend is sdpa and default language ES, with synthesize() writing a WAV and stream() yielding Chunk objects that pair audio with segment text.",
+      "evidence": [
+        {
+          "resource": "repo://indextts25/__init__.py#L1-L5",
+          "version": "repo-lines-v1:sha256:122b301d75d9bec2bb393dacaf129adc08e577d1b5ab6631f7512fee5b5d4cdb:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgzYjgxYWUyYjYzYzA3YzVmZTM0Yzc5NzFhZTljODA3NjE5YzI2NDU4NzdmZjliZWM3ZDIxMGI4N2QxNWExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY3ZDRhMTViOTcwYjg1MWUyMGQxNzUxMDIyNDY3MGMxNDY0NmNmYjZkNWExZTM4OGNhNmI5Y2M2ZGE4YmY0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://indextts25/api.py#L120-L131",
+          "version": "repo-lines-v1:sha256:73677c3c669f8fe273546bc1d74ac091fc5e47f6ce68c5a1ec3aa9dccb7a76a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4N2YzMWU1OWY1NDlhMzQ2NDdmNjMxZjYxZmM2NDc4OTU4NjljN2ExMWFhNjcwYTNhNjc4ODhlYTEyNmRlYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3ZTYzYmVlNzZlMjlkNTE5NzBiY2EzNjYyODRkNDdjMjMyNGQ4ZjhjZDJlZmM0YmQ2YTAzZDQxNzQzMmYxYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyZmQ2MTAwNjkyNWUxZWZhYjYyZDkzODI3MWUyZjkyMDE1YmVjOWVjNGVjY2I3MjAyNjE4Mjg2NDlmZjg0ODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1OTM0ZWFjMmQ5MzYzMjczMzUzMjU5Yjc0ZmQzOTdlZWY0OTI5YjIwMGI3ZDg5ODc2MWY1NTBmMGM2ZTNkNjkifQ"
+        },
+        {
+          "resource": "repo://indextts25/api.py#L152-L190",
+          "version": "repo-lines-v1:sha256:ebf0ec091864097fccb3159e1eb6c7f717364f656667fa5e4864efceb80683ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMDJmY2NjNWE1YWFkOWQyZmRmNzU2ZmM3ZmU2OTM0MGYxZDM3ODAxNzQwMTY2MzgzMjQwYzNlYTZjMWY0NGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0Y2VmN2M1OTRiZTA2Y2NjZjQzZmRkMDAyYjMxMjcwMzc5ZTkwYmIyOTQxZjAzYzNmODJhYTBlYmQ0NGRlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1NTM0ODQ0NDAyNTQ3OGYzMGMwNDgzZTFmMWYyNTBmNTg1NTRjMzc1NmRiNzEwMDU4NjQxNjI0YmZhMjVhZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://indextts25/api.py#L58-L66",
+          "version": "repo-lines-v1:sha256:a841c67137648c3ab0aec49c2e3bf9554d1783f4e9fbd4e6f1bd745e17591652:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZkN2EwN2E4M2RkMTk5NmZiNTE2ODRiNDJhZWNhZjRlOTBmYjc4YmE3MjMwZTU0MmVkN2JkMDFkNDIzMDFiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzAxNGFlYjAxNWU4YjhlNzEwN2M1NDI2ZmM4NjZkZmY5ZGJhYzI2MGM2ZjExNmFjMzU4NjFiNzA5OTk4YzhmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWZhNWNhZTljMDQyOTQ1ZjgyZTUzYWE5ZTcwOTNjYTM0ZTIzNzAzYjc4YmFjOTE3NjEyYjBiMjhiNWY5ZGIyZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGVlNGM3OTYxNDFhYzA3NWJmNmJmZjkwZTA3ZDVmMjVjODA3YmE4ZGYyYmZiZjk0MTdiMDAwNTFjNDIyZmZiZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f58724a388034840b26bf2d59637e178",
+      "statement": "Installing the package pulls the runtime dependencies from pyproject.toml, while the accelerated backend, WeTextProcessing normalization and Japanese segmentation are opt-in extras (flash, zh, ja).",
+      "evidence": [
+        {
+          "resource": "repo://pyproject.toml#L24-L47",
+          "version": "repo-lines-v1:sha256:9bcfe2f6666054e4adb30e643860749bd62dcd2e4093e39c77e459c5e22779b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOTVmNWU5ZWRlMDE4MTYwNDNjMDc5N2FjZThkYTJhYzRlOTlhOGE2YTYxMGZhOTg1NzBlZjM0YjkzNTYxMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmYmQxNTA1MzBjZDg4MDdjMjNiYWYyZTU3YzU0MzdhMjlkMzM2YTc0ZTE1ZGM1ODg2NzY4NjBiODdiNTA5MTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlMTJiY2QyYTczMDlkMGEyZWFjNmQ5OWVhNTRmZTE4ZGI1NzY5M2RiNmNhNTk5MDdmYjc3Y2EyNDAyMzM4YjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5ZWM4NWIxM2UzM2Q3OWRjZjljNTJlZWQ3YmQzN2M1YWFjY2VkNTJjZmY5OWFmZDZlNGJmNjc2MDk5Y2YxNzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_34ae939136a7434199b4d5b86d38baf8",
+      "statement": "The README documents downloading the IndexTTS-2.5 weights separately and skipping the unused qwen0.6bemo4-merge text-emotion model.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L18-L24",
+          "version": "repo-lines-v1:sha256:29da2e08a43a51394d04157efc8fc5e255d75d591090647d0eacf89cdf0d8ec6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzU2N2U2MzhlMzA5YTA4NTYwNjBlNWEzMDAzZmJhN2RhM2VjYzk5NGQwY2FjZTFlZWM4Njg1MWNiMjI2NTQ4YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMDZjNTYxZDVjMzI3MzQzNjg1MjY4YTQ2YjMzOTFmMzk5OGVlZTg5MGQyYmU1MWYwZDIxY2M0YTUzYWU2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGFmNjEyMmUyZDZhNDA0MDRhNDUwYjBmNWZhNTk2ZTllZWYxZmUwNzhlZGE0MGZkYjAwOWE5Y2JmYjMxNzc2MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjczNjcyYTFlNzdhMzVhNTVkM2YwMzYyZGQ1NDE4OGZmODFiY2ZkZDdhM2FjYjU5MzM4ZDUwNjFmODE5YmUwZCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-16T06:43:45.974Z"
+  }
+}
