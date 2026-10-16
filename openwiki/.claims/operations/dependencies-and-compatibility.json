@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d0bab9b4113f3f66280e9ecf90f03476c23cb2ce902239b1deeb1e5cdb87d70d",
+  "pageVersion": "sha256:a6f13cef073679669b69be89a1d82140d4e9b1804ef33534b2d628892c8c98fb",
   "claims": [
     {
       "id": "claim_637da39668b1435386494f44046729ed",
@@ -147,14 +147,14 @@
       "statement": "If NeMo cannot build a normalizer or normalization raises, the text is returned unchanged after a logged warning instead of failing synthesis.",
       "evidence": [
         {
-          "resource": "repo://indextts25/utils/nemo_tn.py#L132-L185",
-          "version": "repo-lines-v1:sha256:23d6eef6e5facc8ad1d4772598487da1109536e06943798f67723afb74cd5c1a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3ZmJkYTk2YzBiY2U0YzZkNWU2NjA1ZTcwNWQzZjU3MjM5NzdkODlkNzg3YTQ2OTFmZDY0NzY2YmZlZGM1NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiODlmNGE1ODdlNmU4ZmVjNTE4YTYwYjI3ZDY2MzUxZTM4NDNhZmEwZTk4ZjA5Nzg4NmQ1ZTQ5ZWUxNmQ4Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjNDdlZWM4MDc3NGM0OGY5MjNkNWEyZWEzMjYwMjU5OGYyMWJlNGYwYmRhZmMwYWIxYzYwZjZlNzkxNmFkMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkM2Y5ZWFmMjE0NTA0YTNlNmU4ZTA1ZDcwZGNmZjBhMDBmMzUyNDA2OTUwMmI1ZDMzMTZjZGNmYmIxZDM2NzYifQ"
+          "resource": "repo://indextts25/utils/nemo_tn.py#L134-L185",
+          "version": "repo-lines-v1:sha256:f945a0402209533dc5f2a5a7fff968e22298f7963f007971de062ade2eece6dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MmU2ZTYzMmU1YzkzMTEwODNmNWE2ZjQ5YTFjYTVlNzJjODY5YTYxMzU1ZDZhNWI2OThjNGU5MTgxNjIxZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiODlmNGE1ODdlNmU4ZmVjNTE4YTYwYjI3ZDY2MzUxZTM4NDNhZmEwZTk4ZjA5Nzg4NmQ1ZTQ5ZWUxNmQ4Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiMjAxMmRiZjk0MDEwMGJkYmRhMWYwZTEwYTU5NTc1NWM2NzVmMmEzNjVhZTRjNjA0NTM0ZTI3ZjdlOTE2OGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkM2Y5ZWFmMjE0NTA0YTNlNmU4ZTA1ZDcwZGNmZjBhMDBmMzUyNDA2OTUwMmI1ZDMzMTZjZGNmYmIxZDM2NzYifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-16T06:43:45.974Z"
+    "at": "2026-10-16T07:02:23.388Z"
   }
 }

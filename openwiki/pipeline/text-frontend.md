@@ -17,7 +17,7 @@ sources:
 generated: { by: "claude-code", at: "2026-10-16T06:02:56.648Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-16T06:43:45.974Z
+    at: 2026-10-16T07:02:23.388Z
 ---
 
 # Text front-end: normalization, casing and segmentation
