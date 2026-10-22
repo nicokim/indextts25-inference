@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/nicokim/indextts25-inference/compare/v0.2.0...v0.2.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* Spanish number normalization (uno/un, $ as pesos, dates, heights, Roman numerals) ([#6](https://github.com/nicokim/indextts25-inference/issues/6)) ([c98cabb](https://github.com/nicokim/indextts25-inference/commit/c98cabb8c760c5ee336021cb88ce236b3186e6df))
+
 ## [0.2.0](https://github.com/nicokim/indextts25-inference/compare/v0.1.1...v0.2.0) (2026-10-16)
 
 
