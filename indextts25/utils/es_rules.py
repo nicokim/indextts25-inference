@@ -1,0 +1,1179 @@
+# Copyright 2026 Kimox
+# SPDX-License-Identifier: Apache-2.0
+"""Spanish rules around NeMo's text normalization, tuned for Argentine (Rioplatense) chat text.
+
+``normalize(text, nemo)`` is ``post(nemo(pre(text)))``. The pre-rules handle what NeMo's
+Spanish grammar reads wrong:
+
+- Plain integers are spelled here, with agreement. NeMo always apocopates ("Capítulo un",
+  "a la un", "ciento un personas", "En 2021 empecé" -> "veintiún empecé") and misreads any
+  number containing 800 before a word ("2.800 perros" -> "dos ochocientos perros", "1.800 km
+  hasta" -> "uno ochocientos km"), so integers with a unit ("5 km", "300kg") are spelled here
+  too. Only 1 counts a singular noun: "21" before a verb or a singular keeps its full form.
+- Money: ``$`` is pesos (the Latin American convention), before or after the amount;
+  ``US$``/``U$S``/``USD`` are dollars, also as "USD $500" or "$500 USD"; cents go after
+  "con": "$1.250,50" -> "mil doscientos cincuenta pesos con cincuenta". "$1,000.50" (US
+  style), "$500-600" ("quinientos a seiscientos pesos"), "20-30 USD" and "US$9,99-14,99" work too.
+- Ordinals ("1era", "2dos", "9no", "1a vez", "1º puesto" -> "primer puesto", "la 1° vez" ->
+  "primera"), times written with a period ("21.30": a time unless a unit or a measure follows,
+  "9.58 segundos", or a version precedes, "Python 3.11"), heights ("mide 1,70" -> "uno setenta"),
+  scores, ranges and formations ("3-1" -> "tres a uno", "3 a 1 Argentina" -> "tres a uno", "1-3
+  horas" -> "una a tres horas", "10-15 km", "4-4-2"; NeMo reads a date), "vs", "2x1", "24/7",
+  ratings ("8/10", "8.5/10"; "1/10 de segundo" is a fraction), kills/deaths/assists ("10/2/5"),
+  decimals and versions written with a period ("13.8", "2.1.3", "v1.2"), short or capitalized month
+  names ("20 de nov.", "22 nov", "1 de Mayo": NeMo reads a date only with the full lower-case name;
+  "3 de Mar del Plata" is a place), a day and a month after a weekday ("el sábado 8/11").
+- What NeMo leaves raw: GB/MB/TB, "k"/"M" multipliers ("13700K" is a model), "hs" ("21 Hs",
+  "21HS", "7.5 hs"), degrees, decades ("los 90s", "re 90s"; a bare "30s" and "hace re 30s" are
+  seconds), durations ("2h 30m", "2h30m"; "vuelvo en 5m" is minutes, "en 2m de distancia" meters),
+  digits glued to letters ("MatiGamer99", "F1", "3D", "4K"), handles with "_" or "." ("Mati_99",
+  "@kohai.vtuber"), mails and URLs (NeMo spells them letter by letter), "p. m.", "art. 14",
+  emoticons ("<3", ":3" are dropped; "le quedan <3 vidas" is "menos de tres").
+- Roman numerals are read only in clear contexts: after "siglo", "capítulo"..., after a regnal
+  name from a list ("Juan Pablo II" -> "segundo", "Isabel II" -> "segunda", "Luis XIV" ->
+  "catorce": ordinals up to ten, nothing above thirty), in "del I al XII", after a title
+  ("Final Fantasy XIV" -> "catorce", two letters or more), and between a determiner and
+  "aniversario", "edición"... ("el XX aniversario" -> "veinte", "la III edición" -> "tercera").
+  Any other Roman-looking token ("MI",
+  "CV", "GTA V", "vitamina D", "Juan M", the initial of "Juan D. Perón"), "S"/"N" (NeMo: "sur",
+  "norte") and "da." ("doña") get an invisible word joiner, which no NeMo grammar matches and
+  which is removed afterwards.
+
+The post-rules remove the space NeMo leaves before punctuation (and a period before a comma, which
+NeMo would spell: "junio.," -> "j u n i o punto coma") and fix the number words it still
+apocopates inside times and decimals ("trece y un a casa" -> "trece y uno a casa").
+"""
+
+import re
+from collections.abc import Callable
+
+_WJ = "\u2060"  # WORD JOINER
+_L = "A-Za-zÁÉÍÓÚÜÑáéíóúüñ"  # letters; \w would also take digits and "º"
+
+# ---------------------------------------------------------------------------------------------
+# Spelling
+# ---------------------------------------------------------------------------------------------
+_ONES = (
+    "cero uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciséis "
+    "diecisiete dieciocho diecinueve veinte veintiuno veintidós veintitrés veinticuatro veinticinco "
+    "veintiséis veintisiete veintiocho veintinueve"
+).split()
+_TENS = "treinta cuarenta cincuenta sesenta setenta ochenta noventa".split()
+_HUNDREDS = (
+    "ciento doscientos trescientos cuatrocientos quinientos seiscientos setecientos ochocientos novecientos".split()
+)
+_ORDINALS = "primero segundo tercero cuarto quinto sexto séptimo octavo noveno décimo".split()
+_SCALES = ("millón", "millones", "billón", "billones")
+_APOCOPE = {"uno": "un", "veintiuno": "veintiún", "una": "un", "veintiuna": "veintiún"}
+_TO_FEM = {"uno": "una", "veintiuno": "veintiuna", **{h: h[:-2] + "as" for h in _HUNDREDS[1:]}}
+
+
+def _apocope(words: list[str]) -> list[str]:
+    return words[:-1] + [_APOCOPE.get(words[-1], words[-1])]
+
+
+def _words(n: int) -> list[str]:
+    out: list[str] = []
+    for scale, one, many in ((10**12, "billón", "billones"), (10**6, "millón", "millones")):
+        q, n = divmod(n, scale)
+        if q:
+            out += ["un", one] if q == 1 else _apocope(_words(q)) + [many]
+    q, n = divmod(n, 1000)
+    if q:
+        out += ["mil"] if q == 1 else _apocope(_words(q)) + ["mil"]
+    h, r = divmod(n, 100)
+    if h:
+        out.append("cien" if n == 100 else _HUNDREDS[h - 1])
+    if r >= 30:
+        out += [_TENS[r // 10 - 3]] + (["y", _ONES[r % 10]] if r % 10 else [])
+    elif r:
+        out.append(_ONES[r])
+    return out or ["cero"]
+
+
+def _spell(n: int, gender: str = "") -> str:
+    """Cardinal. ``gender`` "" is the full form ("uno", "veintiuno"); "m"/"f" the form before a
+    masculine/feminine noun ("un", "veintiún"; "una", "doscientas"). Millions stay masculine."""
+    words = _words(n)
+    if gender == "m":
+        words = _apocope(words)
+    elif gender == "f":
+        cut = max((i + 1 for i, w in enumerate(words) if w in _SCALES), default=0)
+        words = words[:cut] + [_TO_FEM.get(w, w) for w in words[cut:]]
+    return " ".join(words)
+
+
+def _digits(s: str) -> str:
+    return " ".join(_ONES[int(c)] for c in s)
+
+
+def _fraction(s: str) -> str:
+    """Digits after a decimal point: leading zeros one by one, then up to two digits as a number."""
+    rest = s.lstrip("0")
+    words = [_digits(s[: len(s) - len(rest)]), _spell(int(rest)) if 0 < len(rest) <= 2 else _digits(rest)]
+    return " ".join(w for w in words if w)
+
+
+def _height(m: re.Match) -> str:
+    """'1,70' -> 'uno setenta', '1.05' -> 'uno cero cinco'."""
+    a, b = m.group("m"), m.group("cm")
+    return (m.groupdict().get("pre") or "") + f"{_spell(int(a))} {_digits(b) if b[0] == '0' else _spell(int(b))}"
+
+
+# ---------------------------------------------------------------------------------------------
+# What surrounds a number
+# ---------------------------------------------------------------------------------------------
+# A number before these does not count them, so it keeps its full form ("tres a uno", "21 en").
+_CLOSED = frozenset(
+    """
+a al ante bajo con contra de del desde durante en entre hacia hasta para por según sin sobre tras versus vía
+y e o u ni pero sino que porque pues aunque si como cuando donde mientras entonces
+el la los las lo un una unos unas este esta estos estas ese esa esos esas mi mis tu tus su sus cada
+muchos muchas varios varias pocos pocas algunos algunas nuestros nuestras
+yo vos tú él ella ellos ellas nosotros me te se le les nos usted ustedes todos todas ambos ambas otros otras
+no sí ya más menos muy también tampoco nomás solamente apenas casi ahora hoy ayer siempre nunca jamás
+acá allá ahí aquí allí así todavía aún después antes luego recién igual nada algo todo
+afuera adentro arriba abajo atrás adelante cerca lejos encima debajo anoche temprano
+es son era eran fue fueron será serán sería sea sean está están estaba estaban estuvo hay había hubo habrá
+tiene tienen tenía tenían tuvo tengo tenés tenemos va van iba iban vamos voy viene vienen vino sale salen
+queda quedan pasa pasan dice dicen hace hacen puede pueden sigue siguen vale valen cuesta cuestan
+soy sos eres somos estoy estás estamos dijo hizo puso trajo quiso supo pudo anduvo gracias
+alcanza basta sobra entero entera enteros enteras completo completa completos completas
+global mundial general total nacional oficial especial normal ideal internacional local
+""".split()
+)
+# Verb endings no counted noun has ("guardan", "jugando", "ganó"), minus the nouns that do.
+_VERB = re.compile(rf"(?:ando|iendo|yendo|aron|ieron|aban|ían|[{_L}]{{3}}(?:an|en)|[{_L}]ó)$")
+_NOUN_EN = frozenset("imagen examen volumen origen orden crimen joven virgen resumen margen abdomen régimen".split())
+_NOUN_MOS = frozenset("gramos kilogramos miligramos centigramos ramos primos remos racimos".split())  # not "ganamos"
+# Plurals ending like a voseo verb, and nouns with the same singular and plural
+_PLURAL_TONIC = frozenset(
+    "cafés bebés tés sofás papás mamás esquís manís ajís colibrís rubís jabalís purés clichés comités canapés bidés "
+    "carnés menús champús tabús bambús iglús ñandús gurús dominós frappés pokémon pokemon robux".split()
+)
+_MASC_DET = frozenset("el del al este ese aquel".split())  # "El 1 ataja todo": the number is the noun
+# A number right after these is a label, read in full: "capítulo uno", "área cincuenta y uno".
+_LABELS = frozenset(
+    """
+área area villa número numero nro núm capítulo capitulo página pagina pág person persona fila ruta
+habitación piso puerta mesa línea linea canal calle avenida distrito sector nivel temporada episodio parte
+tomo volumen round ronda jugador player top puesto versión version modelo año siglo kilómetro km minuto
+lote zona sala aula asiento vagón andén vuelo colectivo curso categoría artículo ley paso opción pregunta
+ejercicio juego equipo grupo team fase etapa día semana camiseta edición tema track canción level
+""".split()
+)
+_LABEL_ABBR = re.compile(r"(?i)\b(?:pág|pag|cap|art|vol|ep|temp|nro|núm|num)\.\s*$")  # "pág. 21"
+_LABEL_NEXT = re.compile(rf"\s+[{_L}]+\.?\s*\d")  # "capítulo 1 parte 2": the next word is a label too
+_FEM_NOUNS = frozenset(
+    """
+vez veces noche noches mujer mujeres foto fotos moto motos mano manos calle calles parte partes clase clases
+red redes imagen imágenes ley leyes flor flores llave llaves torre torres tarde tardes muerte muertes
+frase frases serie series radio radios piel pieles luz luces voz voces razón razones
+crisis tesis dosis hipótesis síntesis kill kills skin skins build builds run runs
+vista vistas revista revistas pista pistas lista listas entrevista entrevistas conquista conquistas
+nave naves nube nubes especie especies señal señales base bases fase fases fuente fuentes mente mentes
+cárcel cárceles cruz cruces nariz narices actriz actrices sede sedes carne carnes suerte suertes
+fiebre fiebres pared paredes mamá mamás madre madres
+""".split()
+)
+_MASC_A = frozenset(
+    """
+día días mapa mapas problema problemas tema temas sistema sistemas programa programas idioma idiomas clima
+planeta planetas poema poemas drama dramas fantasma fantasmas pijama pijamas cometa cometas dilema dilemas
+esquema esquemas síntoma síntomas trauma traumas enigma enigmas diagrama diagramas aroma aromas
+giga gigas mega megas tera teras dálmata dálmatas idiota idiotas hincha hinchas policía policías
+pirata piratas atleta atletas poeta poetas colega colegas astronauta astronautas psicópata psicópatas
+pana panas gorila gorilas panda pandas koala koalas puma pumas avión aviones camión camiones
+""".split()
+)
+# Feminine nouns that take "un" in the singular: "un arma", "un águila"
+_TONIC_A = frozenset("arma alma águila agua área aula hacha hambre ala ancla ave hada habla álgebra arpa alba".split())
+# Singular nouns ending in -a/-e that a 1 after a label or a name still counts ("Kimox 1 luca")
+_COUNT_SG = frozenset(
+    "partida luca birra cerveza pizza empanada idea palabra pregunta cosa persona hora semana moneda vida "
+    "carta ronda mina mensaje like chiste golpe viaje".split()
+)
+# Skipped to find the noun: "1 gran idea", "1 sola vez"; "Tengo 1 solo." has none
+_ADJ_PRE = frozenset("gran mejor peor solo sola solos solas".split())
+_FEM_END = re.compile(r"(?:a|as|ión|iones|dad|dades|tud|tudes|umbre|umbres)$")
+_MONTH_NAMES = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split()
+_MONTHS = "|".join(_MONTH_NAMES + ["setiembre"])
+_UNIT = rf"\s?(?:km²|m²|m³|°|%|kph|mph|kg|km|cm|mm|ml|ms|min|am|pm|AM|PM|a\.m\.|p\.m\.|[ghlms])(?![{_L}])"
+# Left to NeMo: "1 de mayo" (dates), "5 %", "3am" (times).
+_NEMO_AFTER = re.compile(rf"\s+de\s+(?i:{_MONTHS})\b|{_UNIT}")
+_HOLD, _HOLD_END = "\ue000", "\ue001"  # private use, around an annotation's word: see normalize()
+_NEXT = re.compile(rf"\s+{_HOLD}?([{_L}]+)")
+_COORD = re.compile(rf"\s+[oueya]\s+\d[\d.]*\s+([{_L}]+)")  # "1 o 2 veces", "de 1 a 3 horas"
+_SCORE_BEFORE = re.compile(rf"(?:([{_L}]+)\s+)?(?<![\d.,:])\d{{1,2}}\s+a\s+$")  # the 1 of "Ganó 3 a 1 Argentina"
+_PARTITIVE = re.compile(  # "1 de las mejores", "1 de mis amigas"
+    rf"\s+de\s+(?:(?:las|estas|esas|aquellas|nuestras|ellas)\b|(?:mis|tus|sus)\s+(?:(?:mejores|peores)\s+)?([{_L}]+))",
+    re.I,
+)
+_PREV = re.compile(rf"([{_L}]+)\s+$")
+_UNIT_AT = re.compile(_UNIT)
+_BACK = 60  # how far back the rules look for the previous word; keeps them linear in long texts
+
+
+def _prev_word(text: str, pos: int) -> str:
+    m = _PREV.search(text, max(0, pos - _BACK), pos)
+    return m.group(1).lower() if m else ""
+
+
+def _is_fem(word: str) -> bool:
+    w = word.lower()
+    return w in _FEM_NOUNS or (w not in _MASC_A and not w.endswith(("ista", "istas")) and bool(_FEM_END.search(w)))
+
+
+def _counted(text: str, end: int) -> tuple[str, str]:
+    """(noun, adjective) for a number ending at ``text[end]``: "1 perro" -> ("perro", ""), "1 sola
+    vez" -> ("vez", "sola"), "1 solo." -> ("", "solo"); no noun before a verb, a function word or
+    punctuation."""
+    nxt = _NEXT.match(text, end)
+    word = nxt.group(1).lower() if nxt else ""
+    adj = ""
+    if word in _ADJ_PRE:
+        adj, nxt = word, _NEXT.match(text, nxt.end())
+        word = nxt.group(1).lower() if nxt else ""
+    if not word or word in _CLOSED or (word not in _NOUN_EN and _VERB.search(word)):
+        return "", adj
+    return word, adj
+
+
+def _plural(noun: str) -> bool:
+    """A plural noun ("perros", "veces", "cafés", "menús", "pokémon"), not a verb ("ganamos", "tenés")."""
+    if noun in _PLURAL_TONIC:
+        return True
+    return (
+        noun.endswith("s")
+        and not noun.endswith(("ás", "és", "ís", "ós", "ús"))  # "tenés", "jugás", "vivís"; "Jesús"
+        and (noun in _NOUN_MOS or not noun.endswith(("amos", "emos", "imos")))
+    )
+
+
+def _counts_after_label(n: int, noun: str, text: str, end: int) -> bool:
+    """After a label or a name, a number counts only a noun that clearly is one: a plural
+    ("ToxicMati 100 bits"), or for 1 a singular that is no verb form ("Kimox 1 bit", not
+    "Capítulo 1 empieza")."""
+    if not noun or (noun in _LABELS and _LABEL_NEXT.match(text, end)):
+        return False
+    if n != 1:
+        return _plural(noun)
+    return noun[-1] not in "ae" or noun in _FEM_NOUNS or noun in _COUNT_SG
+
+
+def _say(n: int, text: str, start: int, end: int) -> str:
+    """Spell the number ``n`` found at ``text[start:end]`` the way its neighbors ask for."""
+    nxt = _NEXT.match(text, end)
+    word = nxt.group(1) if nxt else ""
+    lw = word.lower()
+    noun, adj = _counted(text, end)
+    if n != 1 and not _plural(noun):
+        noun = ""  # only 1 counts a singular: "En 2021 empecé", "El 21 juega" keep the full form
+    score = noun and not _plural(noun) and _SCORE_BEFORE.search(text, max(0, start - _BACK), start)
+    if score and (score[1] or "").lower() not in ("de", "desde", "entre"):
+        noun = ""  # "Ganó 3 a 1 Argentina", "Va 2 a 1 River": a score ("de 0 a 1 hora" is a range)
+    prev = _PREV.search(text, max(0, start - _BACK), start)
+    pw = prev.group(1) if prev else ""
+    if noun and ((pw.lower() in _MASC_DET and _is_fem(noun)) or (pw.lower() == "la" and n == 1 and not _is_fem(noun))):
+        noun = ""  # "El 1 ataja todo", "a la 1 arrancamos": a verb, not the noun counted
+    head = text[max(0, prev.start() - _BACK) : prev.start()].rstrip() if prev else ""
+    # "Capítulo 1", "el Area 51 guardan": a label, not a count (a capital word is a name unless
+    # it starts the sentence and is not all caps like "FIFA 21", or the whole text is shouted)
+    name = (
+        pw[:1].isupper()
+        and not (len(word) > 1 and word.isupper())
+        and ((head and head[-1] not in ".!?¡¿…:;'\"«(") or (len(pw) > 1 and pw.isupper()))
+    )
+    if (
+        pw.lower() in _LABELS or name or _LABEL_ABBR.search(text, max(0, start - _BACK), start)
+    ) and not _counts_after_label(n, noun, text, end):
+        return _spell(n)
+    if lw == "mil":  # "21 mil" -> "veintiún mil"; "200 mil personas" agrees with the noun after it
+        after = _counted(text, nxt.end())[0]
+        return " ".join(_apocope(_spell(n, "f" if after and _is_fem(after) else "m").split()))
+    if not noun:
+        if adj:  # "una sola", "uno solo"
+            return _spell(n, "f" if adj.endswith(("a", "as")) else "")
+        coord = _COORD.match(text, end)
+        part = _PARTITIVE.match(text, end)
+        # "una o dos veces", "a la una", "a las veintiuna", "una de las", "una de mis amigas"; but "la
+        # 500" is a route or a line, not an hour, and "1 a 0 Boca" a score
+        if (
+            (coord and _plural(coord[1].lower()) and _is_fem(coord[1]))
+            or pw.lower() == "las"
+            or (pw.lower() == "la" and n == 1)
+            or (part and (not part[1] or _is_fem(part[1])))
+        ):
+            return _spell(n, "f")
+        return _spell(n)
+    words = _spell(n, "f" if _is_fem(noun) and noun not in _TONIC_A else "m")
+    return words + " de" if words.endswith(_SCALES) else words  # "un millón de personas"
+
+
+def _code(digits: str) -> str | None:
+    """Digit strings read one digit at a time: leading zeros ("07"; "0800" is "cero ochocientos")
+    and long unseparated runs that are not round (phone numbers, ids). None for plain numbers."""
+    if len(digits) > 1 and digits[0] == "0":
+        toll_free = re.match(r"0(?:800|810|600)", digits)
+        return f"cero {_spell(int(digits[1:4]))} {_digits(digits[4:])}".rstrip() if toll_free else _digits(digits)
+    return _digits(digits) if len(digits) > 6 and not digits.endswith("000") else None
+
+
+def _phone(m: re.Match) -> str:
+    """'11 4567-8901' -> 'once cuatro cinco seis siete ocho nueve cero uno'; '0800' -> 'cero ochocientos'."""
+    groups = re.findall(r"\d+", m.group(0))
+    if len(groups) == 2 and re.fullmatch(r"(?:19|20)\d\d", groups[0]) and _prev_word(m.string, m.start()) in _YEAR_CUES:
+        return m.group(0)  # "En 2020 1500 personas": a year and a number
+    words = [_spell(int(g)) if len(g) <= 2 and g[0] != "0" else _code(g) or _digits(g) for g in groups]
+    return ("más " if m.group(0).startswith("+") else "") + " ".join(words)
+
+
+_YEAR_CUES = frozenset("en de del desde hasta para año el".split())
+
+
+def _integer(m: re.Match) -> str:
+    s, text = m.group(0), m.string
+    digits = s.replace(".", "")
+    if _NEMO_AFTER.match(text, m.end()) or len(digits) > 18:
+        return s
+    # a long run is a code, unless it counts something: "1234567 vistas"
+    if "." not in s and (code := _code(digits)) and not (digits[0] != "0" and _plural(_counted(text, m.end())[0])):
+        return code
+    return _say(int(digits), text, m.start(), m.end())
+
+
+# ---------------------------------------------------------------------------------------------
+# Rule callbacks
+# ---------------------------------------------------------------------------------------------
+_MULT = {"k": 10**3, "K": 10**3, "mil": 10**3, "M": 10**6, "millón": 10**6, "millones": 10**6, "mil millones": 10**9}
+
+
+def _scaled(whole: str, dec: str | None, mult: str) -> int:
+    """'2', '5', 'K' -> 2500."""
+    k = _MULT[" ".join(mult.split())]
+    return int(whole) * k + (int(dec) * k // 10 ** len(dec) if dec else 0)
+
+
+def _code_of_previous(m: re.Match) -> bool:
+    """A currency code right after a number is that number's: "1500 ARS 2 veces", "20 a 30 USD 1-2"; not
+    after a year, which is no amount: "En 2019 US$ 1 valía $40"."""
+    prev = m.group(0)[0].isalpha() and re.search(r"\d+\s?$", m.string[max(0, m.start() - 6) : m.start()])
+    if not prev:
+        return False
+    year = re.fullmatch(r"(?:19|20)\d\d", prev[0].rstrip())
+    return not (year and _prev_word(m.string, m.start() - len(prev[0])) in _YEAR_CUES)
+
+
+def _money(m: re.Match) -> str:
+    if _code_of_previous(m):
+        return m.group(0)
+    raw = re.sub(r"[.,]", "", m["n"])
+    if len(raw) > 18:
+        return m.group(0)
+    n, cents, mult = int(raw), m["c"], m["mult"]
+    if mult:  # "$1,5 millones": the decimals belong to the multiplier
+        n, cents = _scaled(raw, cents, mult), None
+    cur = (m.groupdict().get("cur2") or m["cur"]).lower()
+    if cur in ("$", "ar$", "ars", "pesos"):
+        one, many = "peso", "pesos"
+    elif cur in ("€", "euros"):
+        one, many = "euro", "euros"
+    elif cur == "r$":
+        one, many = "real", "reales"
+    else:
+        one, many = "dólar", "dólares"
+    c = int(cents.ljust(2, "0")) if cents else 0
+    if n == 0 and c:
+        return f"{_spell(c, 'm')} {'centavo' if c == 1 else 'centavos'}"
+    words = _spell(n, "m")
+    words += f"{' de' if words.endswith(_SCALES) else ''} {one if n == 1 else many}"
+    return f"{words} con {_spell(c)}" if c else words
+
+
+def _money_range(m: re.Match) -> str:
+    """'$500-600' -> '500 a 600 $', read later as 'quinientos a seiscientos pesos'; '$1-2 millones';
+    a currency after the range wins: '20-30 usd' and '$20-30 USD' -> '20 a 30 USD' (dollars)."""
+    if _code_of_previous(m):
+        return m.group(0)
+    cur = (m.groupdict().get("cur2") or m["cur"]).replace(" ", "")
+    mult = f" {m['mult']}" if m["mult"] else ""
+    code = "USD" if cur[0] in "Uu" else cur
+    if m["ac"] or m["bc"]:  # decimals: "US$9,99-14,99" -> "9,99 USD a 14,99 USD", each one an amount for _money
+        code = {"pesos": "$", "dólares": "USD", "dolares": "USD", "euros": "€"}.get(code.lower(), code)
+        return " a ".join(f"{n}{',' + c if c else ''}{mult} {code}" for n, c in ((m["a"], m["ac"]), (m["b"], m["bc"])))
+    return f"{m['a']} a {m['b']}{mult} {code}"
+
+
+_KILO_COUNT = frozenset(
+    "seguidores suscriptores subs views vistas visitas bits followers likes viewers espectadores personas".split()
+)
+
+
+def _kilo(m: re.Match) -> str:
+    """'2.5K' -> '2.500', spelled later with its context; '4K' and '8K' are resolutions, unless
+    they count followers ('4k subs'), and four digits or more are a model ('i7 13700K')."""
+    whole, dec, mult, de = m.groups()
+    if mult in "kK" and not dec:
+        if len(whole) > 3:
+            return m.group(0)
+        nxt = _NEXT.match(m.string, m.end())
+        prev = _PREV.search(m.string, max(0, m.start() - _BACK), m.start())
+        title = prev and len(prev.group(1)) > 1 and prev.group(1).isupper()  # "NBA 2K"
+        if title or (whole in ("4", "8") and not (nxt and nxt.group(1).lower() in _KILO_COUNT)):
+            return f"{whole} K{de or ''}"
+    return f"{_scaled(whole, dec, mult):,}".replace(",", ".") + (de if mult == "M" and de else "")
+
+
+def _data(m: re.Match) -> str:
+    word = {"g": "giga", "m": "mega", "t": "tera", "k": "kilobyte"}[m.group(2)[0].lower()]
+    return f"{m.group(1)} {word}{'' if m.group(1) == '1' else 's'}"
+
+
+_ABBR_UNITS = {
+    "hs": "hora",
+    "hr": "hora",
+    "hrs": "hora",
+    "seg": "segundo",
+    "segs": "segundo",
+    "mins": "minuto",
+    "mg": "miligramo",  # NeMo leaves "0,5 mg" as is
+    "mts": "metro",
+    "kms": "kilómetro",
+}
+
+
+def _abbr_unit(m: re.Match) -> str:
+    before = m.string[max(0, m.start() - _BACK) : m.start()].rstrip()
+    unit = m[1].lower()
+    if unit in ("hs", "hr", "hrs") and re.search(r"(?i)\bla\s+1$", before):
+        return ""  # "a la 1 hs" -> "a la una"
+    one = re.search(r"(?<![\d.,])1$", before)
+    return f" {_ABBR_UNITS[unit]}{'' if one else 's'}"
+
+
+# Measures. NeMo misreads 800 here too ("1.800 km hasta" -> "uno ochocientos km"); the words are NeMo's.
+_MEASURES = {
+    "km": "kilómetro",
+    "m": "metro",
+    "cm": "centímetro",
+    "mm": "milímetro",
+    "kg": "kilogramo",
+    "g": "gramo",
+    "ml": "mililitro",
+    "l": "litro",
+    "ms": "milisegundo",
+    "min": "minuto",
+    "s": "segundo",
+    "h": "hora",
+    "km²": "kilómetro cuadrado",
+    "km2": "kilómetro cuadrado",
+    "m²": "metro cuadrado",
+    "m2": "metro cuadrado",
+    "m³": "metro cúbico",
+    "m3": "metro cúbico",
+    "km/h": "kilómetro por hora",
+    "kph": "kilómetro por hora",
+    "mph": "milla por hora",
+}
+
+
+def _liters(m: re.Match) -> str:
+    """'2L', '2,25 L' -> '2l', '2,25 l' (NeMo reads 'L' as fifty); not the car ('Renault 4L', 'un 4L')."""
+    prev = _PREV.search(m.string, max(0, m.start() - _BACK), m.start())
+    car = prev and (prev.group(1)[0].isupper() or prev.group(1).lower() in _MASC_DET | {"un", "mi", "tu", "su"})
+    return m.group(0) if car else m.group(0)[:-1] + "l"
+
+
+_MEASURE_UNITS = r"km/h|km²|km2|m²|m2|m³|m3|kph|mph|[Kk][mg]|KM|KG|cm|mm|ml|ms|min|[ghlms]"
+
+
+def _unit_name(unit: str, n: str) -> str:
+    one, _, rest = _MEASURES[unit.lower()].partition(" ")
+    many = one + "s" + (" " + rest + ("s" if rest.endswith("o") else "") if rest else "")
+    return one + (" " + rest if rest else "") if n == "1" else many
+
+
+def _measure(m: re.Match) -> str:
+    return f"{m.group(1)} {_unit_name(m.group(2), m.group(1))}"
+
+
+def _decimal_unit(m: re.Match) -> str:
+    """'2,50 kg' -> 'dos coma cincuenta kilogramos': in some sentences NeMo reads the final zero digit by
+    digit ('Pesa 2,50 kg' -> 'dos coma cinco cero')."""
+    a, b, unit = m.groups()
+    return f"{_spell(int(a))} coma {_spell(int(b))} {'por ciento' if unit == '%' else _unit_name(unit, b)}"
+
+
+_TIME_UNIT = re.compile(rf"\s?(?:(?i:hs|hrs)|hr|h|horas|am|pm|AM|PM)(?![{_L}])|\s?[ap]\.\s?m\.")
+_ABBR_UNIT = r"(?i:hs|hrs)|hr|segs?|mins|mts|kms|mg"  # "21 Hs", "21HS" (not "HR 50"): the keys of _ABBR_UNITS
+_ABBR_UNIT_AT = re.compile(rf"\s?(?:{_ABBR_UNIT})\b")
+_DECIMAL_CUES = (
+    "versión version v ver python ios android parche patch update build nota promedio kd pesa pesó pesaba un "
+    "minecraft node java unity godot"
+)
+_DECIMAL_BEFORE = re.compile(rf"(?i)\b(?:{'|'.join(_DECIMAL_CUES.split())})\s+(?:de\s+)?$")  # "promedio de 7.50"
+_MEASURE_NOUN = re.compile(
+    r"\s+(?:litros?|kilos?|kilogramos?|gramos?|metros?|kilómetros?|centímetros?|segundos?|minutos?|veces|puntos?"
+    r"|goles?|pesos|dólares|euros|mil|millones|grados|por\s?ciento|años?|horas?)\b"
+)
+
+
+def _dot_time(text: str, start: int, end: int, h: str, mm: str, cues: frozenset | None = None) -> str | None:
+    """'21.30 hs', 'te espero 21.30', 'Lunes 20.00': a time, written 'H:MM' for NeMo, unless a unit
+    or a measure follows ('9.58 segundos', '3.15 %') or a version precedes ('Python 3.11'). Bare
+    heights pass ``cues``, the only previous words that make them a time ('a las 1.50')."""
+    if len(mm) != 2 or int(h) > 23 or int(mm) > 59:
+        return None
+    if not _TIME_UNIT.match(text, end) and (
+        text[end : end + 1].isalpha()
+        or _UNIT_AT.match(text, end)
+        or _ABBR_UNIT_AT.match(text, end)  # "1.25 mg", "2.50 kms"
+        or _MEASURE_NOUN.match(text, end)
+        or _DECIMAL_BEFORE.search(text, max(0, start - _BACK), start)
+        or (cues is not None and _prev_word(text, start) not in cues)
+    ):
+        return None
+    return f"{h}:{mm}"
+
+
+def _decimal(a: str, b: str, text: str, end: int) -> str:
+    """'13.8' -> 'trece punto ocho' (NeMo: thousands, or a time); '1.5x' -> 'uno punto cinco x'."""
+    words = f"{_spell(int(a))} punto {_fraction(b)}"
+    return words + " " if text[end : end + 1].isalpha() else words
+
+
+def _period_decimal(m: re.Match) -> str:
+    a, b, text = m[1], m[2], m.string
+    if time := _dot_time(text, m.start(), m.end(), a, b):
+        return time
+    if _UNIT_AT.match(text, m.end()) or _ABBR_UNIT_AT.match(text, m.end()):
+        return f"{a},{b}"  # before a unit, a Spanish comma: "quince coma cinco kilómetros", "7,5 hs" (see _abbr_unit)
+    return _decimal(a, b, text, m.end())
+
+
+def _bare_height(m: re.Match) -> str:
+    """'1.80' alone, with a period, is a height in chat ('galanes de 1.80', '1.55 perfectos')."""
+    a, b, text = m["m"], m["cm"], m.string
+    if time := _dot_time(text, m.start(), m.end(), a, b, frozenset(("la", "las"))):  # not "desde 1.50"
+        return time
+    if (
+        text[m.end() : m.end() + 1].isalpha()
+        or _MEASURE_NOUN.match(text, m.end())
+        or _DECIMAL_BEFORE.search(text, max(0, m.start() - _BACK), m.start())
+    ):
+        return _decimal(a, b, text, m.end())  # "1.75 litros", "1.25x", "versión 1.50"
+    return _height(m)
+
+
+def _version(m: re.Match) -> str:
+    """'2.1.3' -> 'dos punto uno punto tres'; '1.000.000' stays a number, '12.03.2026' a date."""
+    parts = m.group(0).split(".")
+    if all(len(p) == 3 for p in parts[1:]) or (
+        len(parts) == 3 and int(parts[0]) <= 31 and 0 < int(parts[1]) <= 12 and len(parts[2]) in (2, 4)
+    ):
+        return m.group(0)
+    return " punto ".join(_spell(int(p)) if p[0] != "0" or p == "0" else _digits(p) for p in parts)
+
+
+# What a number keeps in digits for: "10-15 km", "2-3%", "20-25°", "10-20 GB" (money has its own rules)
+_RANGE_UNIT = re.compile(rf"{_UNIT}|\s?(?:[GgMmTtKk][Bb]|{_ABBR_UNIT}|º)(?![{_L}])")
+
+
+_LEVELS = frozenset("mundo nivel level world stage fase etapa".split())
+_OF_LEVEL = re.compile(rf"(?i)\bde\s+[{_L}]+\s+$")  # "enemigos de nivel 1-5": a range of levels
+
+
+def _range(m: re.Match) -> str:
+    """'3-5 días' is a range of counts (spelled later, with agreement: 'una a tres horas'), and so
+    is '10-15 km'; '1-0 arriba' is a score and '1990-2000' a span, read in full; 'mundo 1-2' a level."""
+    a, b, text = m.group(1), m.group(2), m.string
+    if (
+        len(a) == len(b) == 1
+        and _prev_word(text, m.start()) in _LEVELS
+        and not (a < b and _OF_LEVEL.search(text, max(0, m.start() - _BACK), m.start()))
+    ):
+        return f"{_spell(int(a))} {_spell(int(b))}"
+    if _plural(_counted(m.string, m.end())[0]) or _RANGE_UNIT.match(m.string, m.end()):
+        return f"{a} a {b}"
+    return f"{_spell(int(a.replace('.', '')))} a {_spell(int(b.replace('.', '')))}"
+
+
+def _ordinal(m: re.Match) -> str:
+    """'1era' -> 'primera', '2dos' -> 'segundos', '9no' -> 'noveno', '1º puesto' -> 'primer puesto';
+    º/° agree with the noun ('la 1° vez' -> 'primera'), and '1° B' (a flat) stays 'primero'."""
+    word, suffix = _ORDINALS[int(m.group(1)) - 1], m.group(2)
+    noun, pw = _counted(m.string, m.end())[0], _prev_word(m.string, m.start())
+    plural = "s" if suffix.endswith("s") or (suffix[0] in "º°" and pw in ("los", "las")) else ""
+    fem = suffix.rstrip("s")[-1] in "aª" or (suffix[0] in "º°" and (_is_fem(noun) if noun else pw in ("la", "las")))
+    if fem:
+        return word[:-1] + "a" + plural
+    if word in ("primero", "tercero") and len(noun) > 1 and not plural and noun[-1] != "s":
+        return word[:-1]
+    return word + plural
+
+
+_DEGREE_CUES = frozenset("hace hacía hacen hará hizo marca marcaba marcó marcan unos".split())
+_RANK_CUES = frozenset("quedó quedé quedaste quedamos quedaron salió salí salimos terminó terminé llegó llegué".split())
+_DEGREE_BEFORE = re.compile(r"(?i)\b(?:giro|ángulo|vuelta|mínima|máxima|temperatura|térmica)\s+(?:de\s+)?$")
+_DEGREE_AFTER = re.compile(
+    r"\s+(?:bajo cero|de (?:calor|fiebre|temperatura|sensación|mínima|máxima)|a la sombra|afuera)\b"
+)
+_WEATHER_CUES = frozenset("a hoy hay ahora mañana".split())  # "estamos a 5°", "Hoy 25° en Rosario"
+_ORDINAL_AFTER = re.compile(
+    rf"\s+(?:en\s+(?:el|la)\s+(?:tabla|ranking|torneo|general|clasificación|liga)|de\s+(?i:{_MONTHS}))\b"
+)
+_AND_ORDINAL = re.compile(r"\s+[yo]\s+\d+\s?[º°]")  # "Hay 1° y 2° premio"
+
+
+def _degrees(m: re.Match) -> str:
+    """'Hace 30°' -> 'Hace 30 grados' (NeMo: 'trigésimo'), also with a sign, after 'giro de' or
+    'mínima de', at 30 or more, or after 'a' or 'hoy' with no noun ('estamos a 5°'); '1º puesto' and
+    'Estuvo 40° en la tabla' stay ordinals and so does the flat in 'el 4º C'."""
+    sign, n, scale = m.groups()
+    text, start = m.string, m.start()
+    pw = _prev_word(text, start)
+    noun = _counted(text, m.end())[0]
+    if not (
+        sign
+        or (scale and pw not in ("el", "la", "del", "al"))
+        or pw in _DEGREE_CUES
+        or _DEGREE_BEFORE.search(text, max(0, start - _BACK), start)
+        or _DEGREE_AFTER.match(text, m.end())
+        or (
+            not noun
+            and not _ORDINAL_AFTER.match(text, m.end())  # "40° en la tabla", "1° de mayo"
+            and (
+                (pw in _WEATHER_CUES and not _AND_ORDINAL.match(text, m.end()))
+                or (int(n) >= 30 and pw not in _RANK_CUES)  # not "quedó 30°"
+            )
+        )
+    ):
+        return m.group(0)
+    return f"{'menos ' if sign else ''}{n} grado{'' if n == '1' else 's'}"
+
+
+_SUFFIXES = frozenset(
+    "km kg cm mm ml ms m g h l min s mph kph am pm AM PM ro do to vo no mo er ra da ta va na ma".split()
+)
+_EXTENSIONS = (
+    "exe|com|net|org|ar|io|gg|tv|co|app|dev|ly|xyz|ee|ai|me|live|la|link"  # "linktr.ee/kohai", "kohai.carrd.co"
+    "|txt|pdf|jpg|png|gif|zip|rar|py|js|html|json|md|css|sh|yml"
+)
+
+
+def _web(tok: str) -> str:
+    """Mails and URLs the way they are said: 'kohai.vtuber@gmail.com' -> 'kohai punto vtuber arroba
+    gmail punto com', 'https://twitch.tv/kohai' -> 'twitch punto tv barra kohai'."""
+    core, tail = re.fullmatch(r"(.*?)([.,;:!?)\]'\"»]*)", tok).groups()
+    core = re.sub(r"^https?://|[?#].*", "", core)  # no query strings
+    core = re.sub(r"^www\.", "doble ve doble ve doble ve punto ", core)
+    core = re.sub(r"(?<=\w)\.(?=\w)", " punto ", core.replace("@", " arroba "))
+    core = re.sub(r"(?<=\w)/(?=\w)", " barra ", core).rstrip("/")
+    return core.replace("_", " guion bajo ").replace("-", " guion ") + tail
+
+
+def _token(m: re.Match) -> str:
+    """Spell digits glued to letters ("MatiGamer99", "3D", "C5N"), except before the suffixes
+    NeMo reads (units, am/pm, ordinals); mails, URLs and files ("virus.exe") with "punto"."""
+    tok = m.group(0)
+    if re.search(rf"\w@\w|://|www\.|\w\.(?:{_EXTENSIONS})\b", tok):
+        tok = _web(tok)
+
+    def glued(g: re.Match) -> str:
+        digits, letters = g.groups()
+        after_letter = g.start() > 0 and re.match(rf"[{_L}]", tok[g.start() - 1])
+        if not after_letter and (not letters or letters in _SUFFIXES):
+            return g.group(0)
+        words = _code(digits) or _spell(int(digits))
+        return f"{' ' if after_letter else ''}{words}{' ' + letters if letters else ''}"
+
+    return re.sub(rf"(\d+)([{_L}]*)", glued, tok)
+
+
+def _underscores(m: re.Match) -> str:
+    """'Mati_99' -> 'Mati 99' (the digits are spelled later); mails and URLs keep theirs."""
+    tok = m.group(0)
+    return tok if re.search(r"\w@\w|://|www\.", tok) else re.sub(r"(?<=[^\W_])_+(?=[^\W_])", " ", tok)
+
+
+def _roman(s: str) -> int:
+    """Value of a valid Roman numeral (either case), else 0."""
+    s = s.upper()
+    if not s or not re.fullmatch(r"M{0,3}(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})", s):
+        return 0
+    vals = [{"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}[c] for c in s]
+    return sum(-v if v < w else v for v, w in zip(vals, vals[1:] + [0]))
+
+
+_ROMAN = r"[IVXLCDM]+|(?!vi\b)[ivx]+"  # in lower case not "mi", "di", "mix" ("fases mi rey") nor "vi"
+_REGNAL = frozenset(
+    """
+Juan Pablo Luis Felipe Carlos Isabel Enrique Fernando Alfonso Benedicto Pío León Gregorio Pedro Jorge Eduardo
+Guillermo Napoleón Ricardo Jaime Clemente Francisco Juana Federico Alejandro Constantino Nicolás Iván Sancho
+Ramsés Inocencio Urbano Sixto Bonifacio Leopoldo Gustavo Carlota Victoria Martín Manuel Catalina
+Henry Charles Elizabeth William George Edward Louis Mary
+""".split()
+)
+_FEM_REGNAL = frozenset("Isabel Juana Carlota Victoria Catalina Elizabeth Mary".split())
+_INITIAL = re.compile(r"\.\s+(?:[A-ZÁÉÍÓÚÑ]|de\b|del\b)")  # "Juan D. Perón", "Juan M. de Rosas"
+
+
+def _roman_nouns(m: re.Match) -> str:
+    """'siglo XXI' -> 'siglo veintiuno', 'siglos XV y XVI' -> 'siglos quince y dieciséis'; not the letter
+    of 'la parte C' or 'nivel D'."""
+    if not _roman(m.group(2)) or m.group(2) in ("L", "C", "D", "M"):
+        return m.group(0)
+    more = re.sub(_ROMAN, lambda r: _spell(_roman(r.group(0))) if _roman(r.group(0)) else r.group(0), m.group(3))
+    return m.group(1) + _spell(_roman(m.group(2))) + more
+
+
+def _regnal(m: re.Match) -> str:
+    """'Juan Pablo II' -> 'segundo'; not 'Juan M' or 'Luis C' (no king is past XXX) nor 'Juan D. Perón'."""
+    name, num = m.group(1), m.group(2)
+    v = _roman(num)
+    if not v or v > 30 or name not in _REGNAL or (len(num) == 1 and _INITIAL.match(m.string, m.end())):
+        return m.group(0)  # an initial is shielded below
+    if v > 10:
+        return f"{name} {_spell(v)}"
+    word = _ORDINALS[v - 1]
+    return f"{name} {word[:-1] + 'a' if name in _FEM_REGNAL else word}"
+
+
+_EVENTS = "aniversario|edici[oó]n|congreso|festival|encuentro|torneo|campeonato|jornada|cumbre|feria|gala"
+
+
+def _event(m: re.Match) -> str:
+    """'el XX aniversario' -> 'el veinte aniversario'; up to ten an ordinal: 'la III edición' -> 'la tercera'."""
+    v = _roman(m[2])
+    if not v:
+        return m.group(0)
+    if v > 10:
+        return m[1] + _spell(v)
+    word = _ORDINALS[v - 1]
+    if _is_fem(_NEXT.match(m.string, m.end())[1]):
+        return m[1] + word[:-1] + "a"
+    return m[1] + (word[:-1] if word in ("primero", "tercero") else word)
+
+
+def _span(m: re.Match) -> str:
+    """'del I al XII'; not 'de D a C' (ranks) nor 'de M a XL' (sizes)."""
+    if {m.group(2), m.group(4)} & {"L", "C", "D", "M", "XL"}:
+        return m.group(0)
+    a, b = _roman(m.group(2)), _roman(m.group(4))
+    return f"{m.group(1)} {_spell(a)} {m.group(3)} {_spell(b)}" if a and b else m.group(0)
+
+
+def _sequel(m: re.Match) -> str:
+    """'Final Fantasy XIV' -> 'catorce'; not 'XXX', 'XL' or shouted text ('POR FIN VI EL CAPÍTULO')."""
+    prev, num = m.group(1), m.group(2)
+    v = _roman(num)
+    after = _NEXT.match(m.string, m.end())
+    shouted = len(prev) > 1 and prev.isupper() and after and len(after.group(1)) > 1 and after.group(1).isupper()
+    if not v or prev.lower() in _CLOSED or num == "XXX" or ("L" in num and len(num) < 3) or shouted:
+        return m.group(0)
+    return f"{prev} {_spell(v)}"
+
+
+_DON = re.compile(r"\.\s+(?!Do[nñ])[A-ZÁÉÍÓÚÑ][a-záéíóúñ]")
+
+
+def _shield(m: re.Match) -> str:
+    """Append the word joiner, except to the 'D.' of 'D. Juan Pérez' or 'a D. Juan', which NeMo
+    reads 'Don' (not 'vitamina D. Juan dijo', nor the initial of 'Juan D. Perón')."""
+    tok = m.group(1)
+    if tok == "D" and _DON.match(m.string, m.end()):
+        prev = _PREV.search(m.string, max(0, m.start() - _BACK), m.start())
+        if not prev or prev.group(1) in _CLOSED:
+            return tok
+    return tok + _WJ
+
+
+def _abbr(name: str) -> Callable[[re.Match], str]:
+    # NeMo's own "EE. UU." -> "Estados Unidos" swallows the final period too; keep it at the end
+    return lambda m: name + ("." if m.group(0).endswith(".") and m.end() == len(m.string) else "")
+
+
+_ABBR_WORDS = {"art": "artículo", "cap": "capítulo", "ep": "episodio", "tel": "teléfono", "ing": "ingeniero"}
+
+
+def _abbr_word(m: re.Match) -> str:
+    """'Ep. 21' -> 'Episodio 21', 'Cap. IV' -> 'Capítulo IV', 'Ing. Pérez' -> 'Ingeniero Pérez' (NeMo leaves them)."""
+    abbr = m[1] or m[2] or m[3]
+    word = _ABBR_WORDS[abbr.lower()]
+    return (word.capitalize() if abbr[0].isupper() else word) + " "
+
+
+_AMPM_END = re.compile(r"\s*$|\s+[A-ZÁÉÍÓÚÑ¿¡]")
+
+
+def _ampm(m: re.Match) -> str:
+    """'6 p. m.' -> '6 pm', which NeMo reads ('a. m.' it leaves); the period stays if it ends a sentence."""
+    return f" {m[1]}m" + ("." if _AMPM_END.match(m.string, m.end()) else "")
+
+
+_MONTH_ABBR = dict(zip("ene feb mar abr may jun jul ago sep oct nov dic".split(), _MONTH_NAMES))
+_PUNCT_AT = re.compile(r"[.,;:!?)\]»'\"]|\s*$")
+
+
+def _month_abbr(m: re.Match) -> str:
+    """'el 20 de nov.', '22 nov,' -> 'el 20 de noviembre', '22 de noviembre', a date for NeMo; the period
+    stays if it ends a sentence. A capital "Mar" is March only before punctuation ('3 de Mar del Plata', '2 de
+    Mar Chiquita' are places), and '3 set' without 'de' is tennis."""
+    day, space, de, abbr, dot = m.groups()
+    if (abbr[0] == "M" and abbr.lower() == "mar" and not _PUNCT_AT.match(m.string, m.end(4))) or (
+        not de and abbr.lower() == "set"
+    ):
+        return m.group(0)
+    month = _MONTH_ABBR[abbr.lower()[:3].replace("set", "sep")]
+    return f"{day}{space}de {month}" + ("." if dot and _AMPM_END.match(m.string, m.end()) else "")
+
+
+_LESS_CUES = frozenset(
+    "hay había quedan queda quedaba quedaban tengo tenés tiene tienen faltan falta son con en de a".split()
+)
+
+
+def _emoticon(m: re.Match) -> str:
+    """'<3' and ':3' are dropped, not read 'tres'; but 'Le quedan <3 vidas' is 'menos de 3' (not 'a todos <3 besos')."""
+    if m[0] == "<3" and _prev_word(m.string, m.start()) in _LESS_CUES and _plural(_counted(m.string, m.end())[0]):
+        return "menos de 3"
+    return ""
+
+
+def _half(m: re.Match) -> str:
+    """'1/2 hora' -> 'media hora' (NeMo: 'medio'); '1/2 kilo' is left to NeMo's 'medio kilo'."""
+    noun = _counted(m.string, m.end())[0]
+    return "media" if noun and _is_fem(noun) else m.group(0)
+
+
+_MEASURE_PLURAL = re.compile(
+    r"\s+(?:litros|kilos|kilogramos|gramos|metros|kilómetros|centímetros|segundos|minutos|horas|grados)\b"
+)
+
+
+def _comma_thousands(m: re.Match) -> str:
+    """'1,000 seguidores' (English style) -> '1000 seguidores'; '1,250 kilos' stays a Spanish decimal."""
+    if _plural(_counted(m.string, m.end())[0]) and not _MEASURE_PLURAL.match(m.string, m.end()):
+        return m.group(0).replace(",", "")
+    return m.group(0)
+
+
+_OF = re.compile(r"\s+(?:del|de\s+(?:los|las|la|lo|mis|tus|sus|todos|todas))\b")  # not "de este año"
+
+
+def _day_month(m: re.Match) -> str:
+    """'el 31/12' -> 'el 31 de diciembre'; 'el 2/3 de los votos' is a fraction, left to NeMo ('dos tercios')."""
+    if int(m[2]) < int(m[3]) and _OF.match(m.string, m.end()):
+        return m.group(0)
+    return f"{m[1]}{m[2]} de {_MONTH_NAMES[int(m[3]) - 1]}"
+
+
+# "1/10 de segundo", "2/5 del juego" (not "de nota", "de una." nor "8/10 del 1 al 10")
+_FRACTION_OF = re.compile(rf"\s+(?:del\b(?!\s+\d)|de\s+(?!(?:nota|puntaje|calificación)\b|una\b(?!\s+[{_L}])))")
+
+
+def _rating(m: re.Match) -> str:
+    """'8/10' -> '8 de 10' (NeMo: 'ocho décimos'), '8.5/10' too; '1/10 de segundo' is a fraction, left to NeMo."""
+    a, b = m[1], m[2]
+    if a.isdigit() and int(a) < int(b) and _FRACTION_OF.match(m.string, m.end()):
+        return m.group(0)
+    return f"{a} de {b}"
+
+
+_KDA_CUES = frozenset(
+    "fui fuiste voy va vas iba vengo viene quedé quedó quedaste salí salió terminé terminó kda".split()
+)
+_GAME = re.compile(r"(?i)\b(?:kda|partida|ranked|game|kills?|champ|campe[oó]n|lol|dota|valorant)\b")
+
+
+def _kda(m: re.Match) -> str:
+    """'10/2/5' (kills, deaths, assists) -> 'diez dos cinco' (NeMo leaves it); what could be a date
+    ('Nos vemos 7/1/25', 'La última vez fue 3/4/25') is one, unless a player says it ('Quedé 7/1/12',
+    'Mi KDA fue 7/1/12')."""
+    d, mo, y = m.groups()
+    pw, text = _prev_word(m.string, m.start()), m.string
+    cue = pw in _KDA_CUES or (pw == "fue" and _GAME.search(text, max(0, m.start() - 2 * _BACK), m.end() + 2 * _BACK))
+    if 0 < int(d) <= 31 and 0 < int(mo) <= 12 and len(y) == 2 and not cue:
+        return m.group(0)
+    return " ".join(_spell(int(g)) for g in m.groups())
+
+
+_DECADE_BEFORE = re.compile(
+    r"(?i)(?:\b(?:los|mis|tus|sus|años|década|época|estilo|onda|vibes?|vibra|música|moda|temas|canciones|pelis"
+    r"|películas|series|re|muy|tan|s[uú]per|medio)\s+(?:\d0'?s?\s+[oy]\s+)?|\d0'?s\s+[oy]\s+)['’]?$"
+)
+_DECADE_AND = re.compile(r"\s+[oy]\s+(?:1[89]|20)?\d0'?s\b")  # "80s y 90s"
+# before a duration
+_WAIT = "en|llevo|llevás|lleva|llevamos|llevan|hace|esperá|esperen|espero|tardé|tardó|tardo|tarda"
+_WAIT_RE = re.compile(rf"(?i)\b(?:{_WAIT})\s+(?:re|muy|tan|s[uú]per|medio)\s+$")  # "Hace re 30s": seconds
+# "Llevo 45m de stream" is minutes, "Llevo 5m de cable" meters
+_TIME_NOUNS = (
+    "stream|directo|vivo|espera|cola|juego|partida|ranked|video|clip|pausa|descanso|viaje|charla|delay|eso|nuevo|vuelta"
+)
+
+
+def _decade(m: re.Match) -> str:
+    """'los 90s', 'los 40s o 50s', "90's", '1980s', 're 90s' -> the decade; a bare '30s' is seconds ('Vuelvo en 30s'),
+    and so is 'Hace re 30s'."""
+    text, start, back = m.string, m.start(), max(0, m.start() - _BACK)
+    if (
+        len(m[1]) == 4
+        or "'" in m[0]
+        or (_DECADE_BEFORE.search(text, back, start) and not _WAIT_RE.search(text, back, start))
+        or _DECADE_AND.match(text, m.end())
+    ):
+        return m[1]
+    return m[0]
+
+
+# up to 999, thousands with a period ("2.500-3.000"), a year, or round hundreds
+_RANGE_END = r"([1-9]\d{0,2}(?:\.\d{3})+|0|[1-9]\d{0,2}|(?:1[5-9]|20)\d\d|[1-9]\d00)"
+_ROMAN_NOUNS = (
+    "siglos?|cap[ií]tulos?|cap|ep|tomos?|partes?|volumen|temporadas?|actos?|fases?|episodios?|libros?|nivel(?:es)?"
+)
+_DOLLARS = r"(?i:US\s?\$|U\$[SD]|USD)"
+_PESOS = r"(?i:AR\$|ARS)"  # "1500 ars", "us$ 20": codes in any case
+_CUR = rf"(?:{_DOLLARS})\s?\$?|{_PESOS}|(?i:R\$)|\$|€"
+_INT = r"\d{1,3}(?:\.\d{3})+|\d+"
+_AMOUNT = (
+    r"(?P<n>\d{1,3}(?:\.\d{3})+|\d{1,3}(?:,\d{3})+|\d+)(?:[.,](?P<c>\d{1,2}))?(?!\d)(?:\.-)?"
+    r"(?:\s?(?P<mult>mil\s+millones|mil(?:lones|lón)?|[kKM])\b)?"
+)
+_PRE: list[tuple[re.Pattern, str | Callable[[re.Match], str]]] = [
+    (re.compile(p), r)
+    for p, r in [
+        (r"\d{19,}", lambda m: _digits(m.group(0))),  # an id, not a number (and int() has a limit)
+        # "10 000", "1 000 000": thousands grouped with a space, as the RAE recommends ("21:30 500" and
+        # "8/10 500" are two)
+        (
+            r"(?<![\w.,:/])[1-9]\d{0,2}(?:[ \u00a0\u202f]\d{3})+(?![\w.,]?\d|\s\d)",
+            lambda m: re.sub(r"[ \u00a0\u202f]", "", m.group(0)),
+        ),
+        (r"\bRR\.?\s?HH\b\.?", _abbr("recursos humanos")),
+        (r"\bEE\.?\s?UU\b\.?", _abbr("Estados Unidos")),
+        (r"\betc\.", _abbr("etcétera")),
+        (r"\baprox\.", _abbr("aproximadamente")),
+        (r"\bDe?pto\.", _abbr("Departamento")),  # "Depto. 4B"; a bare "depto" is said as is
+        (r"\bde?pto\.", _abbr("departamento")),
+        (r"(?<!\S)(?:(?:<3+)+|:3)(?=[\s.,!?]|$)", _emoticon),  # emoticons: no "tres"
+        # NeMo reads a date only with the full month name, in lower case ("20 de nov." -> "20 de noviembre",
+        # "22 nov" -> "22 de noviembre", "1 de Mayo" -> "1 de mayo")
+        (
+            r"(?<![\w.,:/])([1-9]|[12]\d|3[01])(\s?[º°]?\s+)(de\s+)?"
+            r"(?i:(ene|feb|mar|abr|may|jun|jul|ago|sept?|set|oct|nov|dic))\b(\.)?",
+            _month_abbr,
+        ),
+        (rf"(?<=\d)(\s?[º°]?\s+de\s+)((?i:{_MONTHS}))\b", lambda m: m[1] + m[2].lower()),
+        (r"\b[Vv]ol\.\s?(?=[IVXLCDM]+\b|\d)", "volumen "),
+        (
+            r"\b([Aa]rt|[Cc]ap|[Ee]p|[Tt]el)\.:?\s?(?=[\d+(])|\b([Cc]ap|[Ee]p)\.\s?(?=[IVXLCDM]+\b)"
+            r"|\b(Ing)\.\s(?=[A-ZÁÉÍÓÚÑ])",
+            _abbr_word,
+        ),
+        (r"(?<=\d)\s?([ap])\.\s?m\.", _ampm),  # "6 p. m."
+        # NeMo spells "junio.," and "Dr.," letter by letter ("j u n i o punto coma"); _POST drops the period
+        (r"(?<=[^\s.])\.(?=,)", ". "),
+        (r"\bc/u\b", "cada uno"),
+        (r"\bc/\s?(?=[a-záéíóúñ])", "con "),
+        (r"(?<!\S)\S*_\S*", _underscores),  # (?<!\S): each token is tried once
+        (r"(?<=[a-záéíóúñ])@(?=s?(?![\w@]|\.\w))", "o"),  # "tod@s", "amig@s"
+        # NeMo spells a handle letter by letter, and its comma as "coma"; "@kohai.vtuber" has a "punto"
+        (r"(?<![\w@])@([\w.]*\w)", lambda m: "arroba " + m[1].replace(".", " punto ")),
+        (r"(?<![\w#&])#(?=[A-Za-zÁÉÍÓÚÑáéíóúñ])", ""),  # hashtags
+        (r"(?<=\w)#(?=\d)", " "),  # "Kimox#1234", a Discord tag
+        (r"\b[Nn](?:ro\.?|\.?\s?[º°]|\.)\s?(?=\d)|\bNo\.\s?(?=\d)|\bnúm\.\s?(?=\d)|(?<!\w)#\s?(?=\d)", "número "),
+        (r"(?<!\d)(?<!\d )\b[Kk]m\.?\s?(?=\d)", "kilómetro "),  # "el km 21"
+        (r"\b(GMT|UTC)\s?([+-])\s?(?=\d{1,2}(?![\d:]))", lambda m: f"{m[1]} {'menos' if m[2] == '-' else 'más'} "),
+        (r"(?<=\d)\s?[xX×]\s?(?=[$€]\s?\d)", " por "),  # "2 x $500"
+        (  # "20-30 USD", "1000-1500 ars" (first: in "20-30 usd 1-2" the code is the 20-30's)
+            rf"(?<![\w.,/:$€-])(?P<a>{_INT})(?:[.,](?P<ac>\d\d?))?\s?-\s?"
+            rf"(?P<b>{_INT})(?:[.,](?P<bc>\d\d?))?(?![\d.,]?\d)"
+            r"(?:\s?(?P<mult>mil\s+millones|mil(?:lones|lón)?|[kKM])\b)?"
+            rf"\s?(?P<cur>{_DOLLARS}|{_PESOS}|(?i:R\$)|\$|€)(?!\w)",
+            _money_range,
+        ),
+        (
+            rf"(?<![\w$])(?P<cur>{_CUR})\s?(?P<a>{_INT})(?:[.,](?P<ac>\d\d?))?\s?-\s?(?:{_CUR})?\s?"
+            rf"(?P<b>{_INT})(?:[.,](?P<bc>\d\d?))?(?![\d.,]?\d)"
+            r"(?:\s?(?P<mult>mil\s+millones|mil(?:lones|lón)?|[kKM])\b)?"
+            rf"(?:\s?(?P<cur2>{_DOLLARS}|{_PESOS}|dólares|dolares|pesos|euros)(?!\w))?",
+            _money_range,
+        ),
+        (
+            rf"(?<![\w$])(?P<cur>{_CUR})\s?{_AMOUNT}"
+            rf"(?:\s?(?P<cur2>{_DOLLARS}|{_PESOS}|dólares|dolares|pesos|euros)(?!\w))?(?![/:-]\d)",
+            _money,
+        ),
+        (rf"(?<![\w.,/:$€-]){_AMOUNT}\s?(?P<cur>{_DOLLARS}|{_PESOS}|(?i:R\$)|\$|€)(?!\w)", _money),
+        (r"(?<![\w.,$])[1-9]\d{0,2}(?:,\d{3})+(?![\w.,]?\d)", _comma_thousands),
+        (r"(?<=\w)\s?/\s?(mes|día|dia|hora|año|semana|noche|persona|kilo|unidad)\b", r" por \1"),  # "$1.500/mes"
+        (r"\b24/7/365\b", "veinticuatro siete trescientos sesenta y cinco"),
+        (r"\b24/7\b(?!/\d)", "veinticuatro siete"),  # not "el 24/7/22"
+        (r"\b50/50\b", "cincuenta y cincuenta"),
+        (r"(?<![\w/.,:-])(\d{1,2})/(\d{1,2})/(\d{1,2})(?![\w/.,:-]?\d|\w)", _kda),
+        (  # a season: "2024/25" (NeMo: "veinticincoavos")
+            r"(?<![\w/.,])((?:19|20)\d\d)/(\d\d)(?![\w/.,]?\d)",
+            lambda m: f"{m[1]} {m[2]}" if int(m[2]) == (int(m[1]) + 1) % 100 else m.group(0),
+        ),
+        (r"\b((?i:una?)\s+)(\d{1,2})/10\b", r"\1\2 de 10"),  # "un 15/10" is a rating, not a date
+        (r"(?<![\w/.,])1/2(?=\s)", _half),
+        # "el 31/12": NeMo reads a day and month without a year as a fraction ("treinta y un doceavos")
+        (
+            r"\b((?i:el|del|al|vence|vencen|venció|vencía|hoy es|mañana es|ayer fue|lunes|martes|mi[eé]rcoles"
+            r"|jueves|viernes|s[aá]bado|domingo|lun|mar|mi[eé]r?|jue|vie|s[aá]b|dom)\.?\s+)"  # "el sábado 8/11"
+            r"([1-9]|[12]\d|3[01])/(0?[1-9]|1[0-2])(?![\d/])",
+            _day_month,
+        ),
+        (r"(?<![\w/.,])([1-9]|[12]\d|3[01])/0?1(?![\d/.,]?\d)", r"\1 de enero"),  # NeMo: "un unavo"
+        (
+            r"(?<![\w/.,])(1[3-9]|2\d|3[01])/(0?[1-9]|1[0-2])(?![\d/])",
+            lambda m: f"{m[1]} de {_MONTH_NAMES[int(m[2]) - 1]}",
+        ),
+        (r"(?<![\w/.,])(\d[.,]\d|\d|10)/(10|5)(?![\w/]|[.,]\d)", _rating),  # ratings; NeMo: "ocho décimos"
+        (
+            r"(?<![\d.,])(\d+)\s*(?:vs\.?|VS\.?|v)\s*(\d+)(?![.,]?\d)",
+            lambda m: f"{_spell(int(m[1]))} contra {_spell(int(m[2]))}",
+        ),
+        (r"(?<![\w.])[vV]s\.?(?=\s)", "contra"),  # not "VS Code"
+        (r"(?<=\d)\s?[xX×]\s?(?=\d)(?!\d[A-Z]\b)", " por "),  # not the X of "5800X3D"
+        (r"(?<![\w.])x(?=\d)", "por "),  # "x2", "x1.5"
+        (r"(?<=\d)\s?\+\s?(?=\d)", " más "),
+        (r"(?<![\w+])\+(?=\d)", "más "),
+        (r"(?<=\d)\+(?![\d+])", " más"),  # "18+"
+        (rf"(?<=\s)\+\s?(?=[{_L}])", "más "),  # "+ IVA"
+        (r"(?<![\w.,])([01]?\d|2[0-3]),([0-5]\d)(?=\s?(?:(?i:hs|hrs)|hr|h)\b)", r"\1:\2"),  # "21,30 hs": a time
+        # before the ranges: "2.5k-3k" -> "2.500-3.000"
+        (r"(?<![\w.,:])(\d+)(?:[.,](\d{1,3}))?\s?([kK]|M)\b(\s+de(?=\s+[a-záéíóúñ]))?", _kilo),  # not "21:31 M"
+        # scores, ranges and spans of years; NeMo reads "1-1" as a date and "1990-2000" as a phone number
+        (r"(?<![\d:])(\d{1,2}:\d\d)\s?-\s?(?=\d{1,2}:\d\d(?![\d:]))", r"\1 a "),  # "de 21:00-23:00"
+        (  # a formation or a count: "4-4-2", "1-2-3"
+            r"(?<![\w.,:/-])\d(?:-\d){2,}(?![\w.,:/-]?\d|\w)",
+            lambda m: " ".join(_spell(int(d)) for d in m[0].split("-")),
+        ),
+        (rf"(?<![\w.,:/-]){_RANGE_END}\s?-\s?{_RANGE_END}(?![\w.,:/-]?\d|\w)", _range),
+        (r"(?<=\d)-(?=[A-Za-z])", " "),  # "11-S", "0800-PELADO"
+        # phone numbers; NeMo glues the digits of "0800-333-1234" before a word ("trestrestres")
+        (r"(?<![\w.,/:+-])(?:\+\d{1,3}[ -]?)?(?:\(?\d{1,4}\)?[ -]){0,3}\d{3,4}[ -]\d{4}(?![\w.,/:-]?\d|\w)", _phone),
+        (r"(?<![\w.,/:+-])911(?![\w.,]?\d)", "nueve once"),
+        (r"\b(RTX|GTX)\s?(\d\d)(?!00)(\d\d)\b", lambda m: f"{m[1]} {_spell(int(m[2]))} {_spell(int(m[3]))}"),
+        (r"\b([Ss])alu2\b", r"\1aludos"),
+        (r"\b100pre\b", "siempre"),  # "x100pre": "x" is "por" already
+        (r"(?<![\w.,])(\d+(?:[.,]\d+)?)\s?([GgMmTtKk][Bb])\b", _data),
+        (rf"(?<![\w.,])(-)?(\d+)\s?[º°](?:\s?([CF])(?![{_L}]))?", _degrees),
+        # "1ra", "2do", "1a vez", "2o piso" (º and ª typed as letters)
+        (r"(?<![\w.,])(10|[1-9])\.?((?:er|ero|era|ro|ra|do|da|to|ta|vo|va|mo|ma|no|na|a|o)s?|[º°ª]s?)(?!\w)", _ordinal),
+        (r"(?<![\w./-])([vV])(?=\d+(?:\.\d+)+(?![\w.]?\d))", r"\1 "),  # "v1.2": a version, not "v uno.2"
+        (r"(?<![\w.,])\d+(?:\.\d+){2,}(?![\w.]?\d)", _version),
+        # heights; NeMo reads "1.70" as "uno punto siete cero" and "1.50" as a time
+        (
+            rf"(?i)(?P<pre>\b(?:mid[eoa]n?|midió|midieron|mido|medí|medís|mides|medía|medían|medimos|medir|mediría"
+            rf"|altura|estatura)\s+(?:[{_L}]+\s+)?)(?P<m>[12])[.,](?P<cm>\d\d)\b(?![.,]\d)(?:\s?(?:m|mts?|metros)\b)?",
+            _height,
+        ),
+        (
+            r"(?<![\w.,$])(?P<m>[12])[.,](?P<cm>\d\d)(?:\s?(?:m|mts?|metros)\b|(?=\s+de\s+(?:altura|alto|estatura)\b))",
+            _height,
+        ),
+        (rf"(?<![\w.,$])(?P<m>1)\.(?P<cm>[4-9]\d)(?![\d.,]?\d|{_UNIT}|\s?(?:{_ABBR_UNIT})\b)", _bare_height),
+        (rf"(?<![\w.,$])(?P<m>2)\.(?P<cm>[0-2]\d)(?![\d.,]?\d|{_UNIT}|\s?(?:{_ABBR_UNIT})\b)", _bare_height),
+        (r"(?<![\w.,$])(\d+)\.(\d{1,2}|\d{4,})(?![\d.,]?\d)", _period_decimal),
+        (rf"(?<![\w.,$])(\d+),([1-9]0)\s?({_MEASURE_UNITS}|%)(?![\w²³/])", _decimal_unit),
+        # durations: the m of "2h 30m", "1m 30s" and "vuelvo en 5m" is minutes, not meters; "2h30m" ->
+        # "2 h 30 min", every part on its own for _measure
+        (r"(?<![\w.,])(\d+)\s?(h|hs|hrs?)\s?(\d{1,2})\s?m(?:ins?)?(?![\w²³/])", r"\1 \2 \3 min"),
+        (r"(?<![\w.,])(\d{1,3})\s?m(?:in)?\s?(\d{1,2})\s?s\b", r"\1 min \2 s"),
+        (  # glued, as chat writes minutes ("Le faltan 500 m", "en 2m de distancia" are distances)
+            rf"\b((?i:{_WAIT})\s+\d{{1,2}})m\b(?![²³/])(?!\s+de\s+(?!(?i:{_TIME_NOUNS})\b))",
+            r"\1 min",
+        ),
+        (r"(?<![\w.,])((?:1[89]|20)?[2-9]0|(?:1[89]|20)[0-9]0)'?s\b", _decade),
+        (r"(?<![\w.,])(10|[1-9])(?:st|nd|rd|th)\b", lambda m: _ORDINALS[int(m[1]) - 1]),  # "Quedé 1st."
+        (r"(?<=\d)(?:st|nd|rd|th)\b", ""),
+        (r"(\d:\d\d)\s?(?:(?i:hs|hrs)|hr|h)\b", r"\1"),  # "21:30 hs": the time says it already ("3.45 horas" keeps it)
+        # NeMo reads "13:01" as "trece y un" before a word; the joiner marks the minutes for _POST
+        (r"(?<![\d:])(\d{1,2}:[0-5]1)(?![\d:])(?!\s?(?:[ap]\.?\s?m\b|[AP]M\b))", rf"\1 {_WJ}"),
+        (rf"(?<=\d)\s?({_ABBR_UNIT})\b", _abbr_unit),
+        (r"(?<![\w.,])\d+(?:[.,]\d+)?\s?L(?![\w²³/])", _liters),
+        (r"(?<=\b(?:de|un) )(\d{1,3}(?:[.,]\d)?)\s?(?:\"|”|'')", r"\1 pulgadas"),  # 'un monitor de 27"', 'un 27"'
+        (rf"(?<![\w.,/])(\d{{1,3}}(?:\.\d{{3}})+|\d+)\s?({_MEASURE_UNITS})(?![\w²³/])", _measure),
+        (rf"(?<!\S)\S*(?:\d|\w\.(?:{_EXTENSIONS})\b|\w@\w)\S*", _token),
+        (r"(?<![\w.,:/$€£#+-])(?:\d{1,3}(?:\.\d{3})+|\d+)(?![\w%º°ª€$£]|\.?[ºª°]|[.,:/-]\d|\s?[€$£])", _integer),
+        # Roman numerals in clear contexts
+        (  # "capítulo I y el II"
+            rf"\b((?i:{_ROMAN_NOUNS})\s+)({_ROMAN})\b((?:\s+(?:y|e|o|al|a|-)\s+(?:(?:el|la)\s+)?(?:{_ROMAN})\b)*)",
+            _roman_nouns,
+        ),
+        (r"\b((?i:los|mis|sus|tus)\s+|fiesta\s+de\s+)XV\b", r"\1quince"),  # "los XV de mi prima"
+        (r"\bVaticano\s+(II?)\b", lambda m: f"Vaticano {_ORDINALS[len(m[1]) - 1]}"),
+        (r"\b(II?)(?=\s+(?i:guerra\s+mundial)\b)", lambda m: _ORDINALS[len(m[1]) - 1][:-1] + "a"),
+        (  # "el XX aniversario", "la III edición"
+            rf"\b((?i:el|la|del|al|su|mi|tu|nuestro|nuestra|este|esta|feliz)\s+)([IVXLC]+)(?=\s+(?i:{_EVENTS})\b)",
+            _event,
+        ),
+        (rf"\b([{_L}]+)\s+([IVXLCDM]+)\b", _regnal),
+        (r"\b((?i:del?))\s+([IVXLCDM]+)\s+((?i:al?))\s+([IVXLCDM]+)\b", _span),
+        (rf"\b([A-ZÁÉÍÓÚÑ][{_L}]*)\s+([IVXL]{{2,}})\b", _sequel),
+        # shield the rest from NeMo's Roman numerals and abbreviations
+        (rf"(?<![\w{_WJ}])([IVXLCDM]+|[SN])(?![\w{_WJ}])", _shield),
+        (rf"(?<![\w{_WJ}])(?<!\d\s)([ivxlcdm]{{2,}})(?![\w{_WJ}])", rf"\1{_WJ}"),  # not units: "20 cm"
+        (r"\b([Dd]a|d)(?=\.)", rf"\1{_WJ}"),
+    ]
+]
+
+_FULL = {"un": "uno", "veintiún": "veintiuno"}
+_NUM_END = "|".join(_ONES + _TENS + _HUNDREDS + ["cien", "mil", "millón", "millones"])
+_CLAUSE_END = r"(?=\s*(?:[,;:!?]|\.(?!\.)|$)|\s+(?:de la|hs|horas?)\b)"
+_COUNT_END = re.compile(rf"(?:\b(?:{'|'.join(_TENS)}) y|\b(?:ciento|mil|millón|millones)|ient[oa]s) $")
+
+
+def _one_unit(m: re.Match) -> str:
+    """NeMo's "1:01:01" is "una horas un minutos y un segundos"; "treinta y un minutos" counts them."""
+    return m[0] if _COUNT_END.search(m.string, max(0, m.start() - 13), m.start()) else f"{m[1]} {m[2]}"
+
+
+_POST: list[tuple[re.Pattern, str | Callable[[re.Match], str]]] = [
+    (re.compile(p), r)
+    for p, r in [
+        (rf"\b(un|veintiún) ?{_WJ}", lambda m: _FULL[m[1]]),  # the minutes of "13:01 a casa"
+        (rf" ?{_WJ}", ""),
+        (r"\s+([.,;:!?…]+)(?=\s|$|['\"»)\]])", r"\1"),  # "Capítulo uno ." -> "Capítulo uno."
+        (r"(?<![.\s])\.(?=,)", ""),  # "junio. ," (see _PRE) -> "junio,"
+        (r"([¿¡(\[«])\s+", r"\1"),
+        (r"\s+([)\]»])", r"\1"),
+        # number words NeMo still apocopates in decimals and times: "tres coma un", "trece y un."
+        (rf"\b((?:{_NUM_END}) coma (?:(?:{'|'.join(_TENS)}) y )?)(un|veintiún)\b", lambda m: m[1] + _FULL[m[2]]),
+        (rf"\b((?:y|ciento|mil) )(un|veintiún)\b{_CLAUSE_END}", lambda m: m[1] + _FULL[m[2]]),
+        (rf"\bveintiún\b{_CLAUSE_END}", "veintiuno"),
+        (r"\b(una?) (hora|minuto|segundo)s\b", _one_unit),
+    ]
+]
+
+
+def _apply(rules: list, text: str) -> str:
+    for pattern, repl in rules:
+        text = pattern.sub(repl, text)
+    return text
+
+
+_ANNOTATION = re.compile(r"<([^|>\n]+)\|[^>\n]+>")  # <word|pronunciation>, as in infer_v2_5
+_HELD = re.compile(f"{_HOLD}[^{_HOLD}{_HOLD_END}]*{_HOLD_END}")
+
+
+def normalize(text: str, nemo: Callable[[str], str]) -> str:
+    """Normalize Spanish ``text``: the pre-rules, ``nemo`` (NeMo's normalize for "es"), the post-rules."""
+    if not _ANNOTATION.search(text):
+        return _apply(_POST, nemo(_apply(_PRE, text)))
+    # Pronunciation annotations pass through as written (NeMo read the M of "K IY1 M" as 1000). The
+    # rules see each one's word between two markers, so "1 <perro|...>" still agrees with it; NeMo
+    # reads the pieces between them.
+    text = text.replace(_HOLD, "").replace(_HOLD_END, "")
+    found = list(_ANNOTATION.finditer(text))
+    held = [f"{_HOLD}{m[1]}{_HOLD_END}" for m in found]
+    parts = _HELD.split(_apply(_PRE, _ANNOTATION.sub(lambda m: f"{_HOLD}{m[1]}{_HOLD_END}", text)))
+    if len(parts) != len(found) + 1:  # a rule moved a marker: run the rules on each piece alone
+        parts = [_apply(_PRE, p) for p in _ANNOTATION.split(text)[::2]]
+    said = "".join(
+        re.sub(r"\S(?:.*\S)?", lambda m: nemo(m.group(0)), p, flags=re.S) + h for p, h in zip(parts, held + [""])
+    )
+    notes = iter([m.group(0) for m in found])
+    return _HELD.sub(lambda _: next(notes), _apply(_POST, said))
