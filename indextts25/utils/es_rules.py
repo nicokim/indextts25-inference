@@ -1,3 +1,5 @@
+# Copyright 2026 Kimox
+# SPDX-License-Identifier: Apache-2.0
 """Spanish rules around NeMo's text normalization, tuned for Argentine (Rioplatense) chat text.
 
 ``normalize(text, nemo)`` is ``post(nemo(pre(text)))``. The pre-rules handle what NeMo's
